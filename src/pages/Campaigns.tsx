@@ -104,6 +104,18 @@ export default function Campaigns() {
   };
 
   const handleTemplateSelect = (templateId: string) => {
+    if (templateId === 'none') {
+      // Reset to empty form
+      setSelectedTemplate('');
+      setFormData({
+        ...formData,
+        name: '',
+        message: ''
+      });
+      setTemplateVariables({});
+      return;
+    }
+    
     const template = templates.find(t => t.id === templateId);
     if (template) {
       setSelectedTemplate(templateId);
@@ -220,7 +232,7 @@ export default function Campaigns() {
                     <SelectValue placeholder="Choisir un template existant" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Créer depuis zéro</SelectItem>
+                    <SelectItem value="none">Créer depuis zéro</SelectItem>
                     {templates.map(template => (
                       <SelectItem key={template.id} value={template.id}>
                         {template.name} ({template.category})
