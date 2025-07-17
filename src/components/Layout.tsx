@@ -34,8 +34,9 @@ export default function Layout({ children }: LayoutProps) {
 
   // Navigation for non-authenticated users
   const publicNavigation = [
-    { name: 'Accueil', href: '/', icon: ChefHat },
-    { name: 'QR Scanner', href: '/qr', icon: QrCode },
+    { name: 'Home', href: '/', icon: ChefHat },
+    { name: 'Planos', href: '/plans', icon: Settings },
+    { name: 'Gerar QR', href: '/qr', icon: QrCode },
   ];
 
   // Navigation for authenticated users
