@@ -295,9 +295,12 @@ async function sendViaTwilio(type: string, contact: any, message: string) {
   // Remove any non-digit characters
   formattedPhone = formattedPhone.replace(/\D/g, '');
   
-  // Handle Brazilian phone numbers
-  if (formattedPhone.length === 10 || formattedPhone.length === 11) {
-    // Local Brazilian number (10 or 11 digits) - add country code +55
+  // Handle Brazilian phone numbers more robustly
+  if (formattedPhone.length === 10) {
+    // Local Brazilian landline (10 digits) - add country code +55
+    formattedPhone = '+55' + formattedPhone;
+  } else if (formattedPhone.length === 11) {
+    // Local Brazilian mobile (11 digits) - add country code +55
     formattedPhone = '+55' + formattedPhone;
   } else if (formattedPhone.length === 12 && formattedPhone.startsWith('55')) {
     // Already has 55 country code, just add +
@@ -306,8 +309,13 @@ async function sendViaTwilio(type: string, contact: any, message: string) {
     // 13 digits starting with 55, add +
     formattedPhone = '+' + formattedPhone;
   } else if (!formattedPhone.startsWith('+')) {
-    // Fallback: add + if not present
+    // International number without +, add it
     formattedPhone = '+' + formattedPhone;
+  }
+  
+  // Validate phone number format
+  if (!formattedPhone.match(/^\+\d{10,15}$/)) {
+    throw new Error(`Invalid phone number format: ${contact.phone} (formatted as: ${formattedPhone})`);
   }
 
   console.log(`Sending ${type} message via Twilio to ${contact.name} at ${formattedPhone}...`);
@@ -332,6 +340,7 @@ async function sendViaTwilio(type: string, contact: any, message: string) {
 
     if (!response.ok) {
       const errorData = await response.text();
+      console.error(`Twilio API error response:`, errorData);
       throw new Error(`Twilio API failed: ${response.status} - ${errorData}`);
     }
 
