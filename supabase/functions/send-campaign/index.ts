@@ -281,18 +281,24 @@ async function sendViaTwilio(type: string, contact: any, message: string) {
     throw new Error('Twilio credentials not configured');
   }
 
-  // Format phone number to international format
+  // Format phone number to international format for Brazil
   let formattedPhone = contact.phone;
   
   // Remove any non-digit characters
   formattedPhone = formattedPhone.replace(/\D/g, '');
   
-  // Add +55 country code for Brazil if not present
-  if (!formattedPhone.startsWith('55') && formattedPhone.length >= 10) {
+  // Handle Brazilian phone numbers
+  if (formattedPhone.length === 10 || formattedPhone.length === 11) {
+    // Local Brazilian number (10 or 11 digits) - add country code +55
     formattedPhone = '+55' + formattedPhone;
-  } else if (formattedPhone.startsWith('55')) {
+  } else if (formattedPhone.length === 12 && formattedPhone.startsWith('55')) {
+    // Already has 55 country code, just add +
+    formattedPhone = '+' + formattedPhone;
+  } else if (formattedPhone.length === 13 && formattedPhone.startsWith('55')) {
+    // 13 digits starting with 55, add +
     formattedPhone = '+' + formattedPhone;
   } else if (!formattedPhone.startsWith('+')) {
+    // Fallback: add + if not present
     formattedPhone = '+' + formattedPhone;
   }
 
