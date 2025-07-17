@@ -2,6 +2,8 @@ import { ReactNode, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageSelector from '@/components/LanguageSelector';
 import { 
   ChefHat, 
   QrCode, 
@@ -21,6 +23,7 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const { user, profile, signOut, loading } = useAuth();
+  const { t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isActive = (path: string) => location.pathname === path;
 
@@ -34,18 +37,18 @@ export default function Layout({ children }: LayoutProps) {
 
   // Navigation for non-authenticated users
   const publicNavigation = [
-    { name: 'Home', href: '/', icon: ChefHat },
-    { name: 'Planos', href: '/plans', icon: Settings },
-    { name: 'Gerar QR', href: '/qr', icon: QrCode },
+    { name: t('nav.home'), href: '/', icon: ChefHat },
+    { name: t('nav.plans'), href: '/plans', icon: Settings },
+    { name: t('nav.generateQr'), href: '/qr', icon: QrCode },
   ];
 
   // Navigation for authenticated users
   const authenticatedNavigation = [
-    { name: 'Accueil', href: '/', icon: ChefHat },
-    { name: 'QR Scanner', href: '/qr', icon: QrCode },
-    { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
-    { name: 'Contacts', href: '/contacts', icon: Users },
-    { name: 'Campagnes', href: '/campaigns', icon: MessageSquare },
+    { name: t('nav.home'), href: '/', icon: ChefHat },
+    { name: t('nav.generateQr'), href: '/qr', icon: QrCode },
+    { name: t('nav.dashboard'), href: '/dashboard', icon: BarChart3 },
+    { name: t('nav.contacts'), href: '/contacts', icon: Users },
+    { name: t('nav.campaigns'), href: '/campaigns', icon: MessageSquare },
   ];
 
   // Choose navigation based on auth status
@@ -100,10 +103,11 @@ export default function Layout({ children }: LayoutProps) {
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
+              <LanguageSelector />
               {user ? (
                 <div className="flex items-center space-x-4">
                   <span className="text-sm text-muted-foreground">
-                    Olá, {getDisplayName()}
+                    {t('auth.hello')}, {getDisplayName()}
                   </span>
                   <Button 
                     variant="ghost" 
@@ -112,13 +116,13 @@ export default function Layout({ children }: LayoutProps) {
                     className="flex items-center space-x-2"
                   >
                     <LogOut className="w-4 h-4" />
-                    <span>Sair</span>
+                    <span>{t('nav.logout')}</span>
                   </Button>
                 </div>
               ) : (
                 <Link to="/auth">
                   <Button variant="default" size="sm" className="bg-gradient-primary shadow-warm">
-                    Entrar
+                    {t('nav.login')}
                   </Button>
                 </Link>
               )}
@@ -151,11 +155,14 @@ export default function Layout({ children }: LayoutProps) {
               
               {/* Mobile Auth Actions */}
               <div className="pt-4 border-t border-border">
+                <div className="flex justify-between items-center mb-3">
+                  <LanguageSelector />
+                </div>
                 {user ? (
                   <div className="space-y-3">
                     <div className="px-3 py-2">
                       <p className="text-sm text-muted-foreground">
-                        Logado como: {getDisplayName()}
+                        {t('auth.loggedAs')}: {getDisplayName()}
                       </p>
                     </div>
                     <Button 
@@ -168,13 +175,13 @@ export default function Layout({ children }: LayoutProps) {
                       className="w-full justify-start space-x-2"
                     >
                       <LogOut className="w-4 h-4" />
-                      <span>Sair</span>
+                      <span>{t('nav.logout')}</span>
                     </Button>
                   </div>
                 ) : (
                   <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
                     <Button variant="default" size="sm" className="w-full bg-gradient-primary shadow-warm">
-                      Entrar
+                      {t('nav.login')}
                     </Button>
                   </Link>
                 )}
@@ -201,33 +208,33 @@ export default function Layout({ children }: LayoutProps) {
                 <span className="text-lg font-bold">RestauBoost</span>
               </div>
               <p className="text-muted-foreground text-sm max-w-md">
-                Augmentez votre chiffre d'affaires les jours de faible affluence grâce à notre solution de fidélisation et de marketing ciblé.
+                {t('footer.description')}
               </p>
             </div>
             
             <div>
-              <h3 className="font-semibold mb-4">Fonctionnalités</h3>
+              <h3 className="font-semibold mb-4">{t('footer.features')}</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Collecte de contacts</li>
-                <li>Campagnes automatisées</li>
-                <li>Programme de parrainage</li>
-                <li>Analytics détaillés</li>
+                <li>{t('footer.contactCollection')}</li>
+                <li>{t('footer.automatedCampaigns')}</li>
+                <li>{t('footer.referralProgram')}</li>
+                <li>{t('footer.detailedAnalytics')}</li>
               </ul>
             </div>
             
             <div>
-              <h3 className="font-semibold mb-4">Support</h3>
+              <h3 className="font-semibold mb-4">{t('footer.support')}</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Documentation</li>
-                <li>Contact</li>
-                <li>FAQ</li>
-                <li>Aide en ligne</li>
+                <li>{t('footer.documentation')}</li>
+                <li>{t('footer.contact')}</li>
+                <li>{t('footer.faq')}</li>
+                <li>{t('footer.onlineHelp')}</li>
               </ul>
             </div>
           </div>
           
           <div className="border-t border-border mt-8 pt-8 text-center text-sm text-muted-foreground">
-            © 2024 RestauBoost. Tous droits réservés.
+            © 2024 RestauBoost. {t('footer.allRights')}
           </div>
         </div>
       </footer>
