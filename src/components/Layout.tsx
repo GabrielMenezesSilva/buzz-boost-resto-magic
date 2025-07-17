@@ -9,9 +9,7 @@ import {
   Settings,
   Users,
   MessageSquare,
-  LogOut,
-  FileText,
-  TrendingUp
+  LogOut
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -29,8 +27,6 @@ export default function Layout({ children }: LayoutProps) {
     { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
     { name: 'Contacts', href: '/contacts', icon: Users },
     { name: 'Campagnes', href: '/campaigns', icon: MessageSquare },
-    { name: 'Templates', href: '/templates', icon: FileText },
-    { name: 'Analytics', href: '/analytics', icon: TrendingUp },
   ];
 
   return (
