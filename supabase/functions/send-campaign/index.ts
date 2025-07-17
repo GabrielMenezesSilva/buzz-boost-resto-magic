@@ -126,7 +126,7 @@ serve(async (req) => {
     for (const contact of contacts) {
       try {
         // Send message based on campaign type
-        await sendMessage(campaign.campaign_type, contact, campaign.message, resend);
+        await sendMessage(campaign.campaign_type, contact, campaign.message, resend, campaign);
         
         // Update campaign send status
         await supabase
@@ -210,7 +210,7 @@ serve(async (req) => {
 });
 
 // Real message sending function
-async function sendMessage(type: string, contact: any, message: string, resend: any) {
+async function sendMessage(type: string, contact: any, message: string, resend: any, campaign: any) {
   console.log(`Sending ${type} message to ${contact.name}...`);
   
   switch (type) {
@@ -253,14 +253,6 @@ async function sendMessage(type: string, contact: any, message: string, resend: 
         throw new Error('Contact does not have a phone number');
       }
       
-      // SMS not implemented yet - needs Twilio integration
-      throw new Error('SMS sending not yet configured. Please add Twilio API keys.');
-      
-    case 'sms':
-      if (!contact.phone) {
-        throw new Error('Contact does not have a phone number');
-      }
-      
       // SMS via Zapier webhook
       await sendViaZapier('sms', contact, message, campaign.zapier_webhook_url);
       break;
@@ -278,3 +270,44 @@ async function sendMessage(type: string, contact: any, message: string, resend: 
       throw new Error(`Unsupported message type: ${type}`);
   }
 }
+
+// Function to send messages via Zapier webhook
+async function sendViaZapier(type: string, contact: any, message: string, webhookUrl?: string) {
+  if (!webhookUrl) {
+    throw new Error(`Zapier webhook URL not configured for ${type} messages`);
+  }
+
+  console.log(`Sending ${type} message via Zapier to ${contact.name}...`);
+  
+  try {
+    const payload = {
+      type: type,
+      contact: {
+        name: contact.name,
+        phone: contact.phone,
+        email: contact.email
+      },
+      message: message,
+      timestamp: new Date().toISOString(),
+      campaign_info: {
+        sent_from: 'restaurant_campaign_system'
+      }
+    };
+
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Zapier webhook failed with status: ${response.status}`);
+    }
+
+    console.log(`${type} message sent successfully via Zapier to ${contact.name}`);
+  } catch (error) {
+    console.error(`Failed to send ${type} via Zapier to ${contact.name}:`, error);
+    throw new Error(`Failed to send ${type} message via Zapier: ${error.message}`);
+  }

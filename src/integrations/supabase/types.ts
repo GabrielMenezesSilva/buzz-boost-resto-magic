@@ -120,6 +120,7 @@ export type Database = {
           updated_at: string
           user_id: string
           variables: Json | null
+          zapier_webhook_url: string | null
         }
         Insert: {
           campaign_type?: string
@@ -139,6 +140,7 @@ export type Database = {
           updated_at?: string
           user_id: string
           variables?: Json | null
+          zapier_webhook_url?: string | null
         }
         Update: {
           campaign_type?: string
@@ -158,6 +160,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
           variables?: Json | null
+          zapier_webhook_url?: string | null
         }
         Relationships: [
           {
