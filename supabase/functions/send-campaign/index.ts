@@ -334,10 +334,33 @@ function formatPhoneByCountry(phone: string, countryCode: string) {
   // Country-specific formatting
   switch (countryCode) {
     case 'BR': // Brazil
-      if (!digits.startsWith('55')) {
-        digits = '55' + digits;
+      // Handle different Brazilian number formats
+      if (digits.length === 13 && digits.startsWith('55')) {
+        // Complete number: 55 + area code + number
+        return '+' + digits;
+      } else if (digits.length === 11) {
+        // Local number without country code: area code + number
+        return '+55' + digits;
+      } else if (digits.length === 10) {
+        // Landline without country code: area code + number  
+        return '+55' + digits;
+      } else if (digits.length === 9 && digits.startsWith('9')) {
+        // Mobile number without area code, add default São Paulo area code
+        console.log(`Adding default area code 11 to Brazilian mobile: ${digits}`);
+        return '+5511' + digits;
+      } else if (digits.startsWith('55') && digits.length === 11) {
+        // This case: 55 + 9 digits (missing area code)
+        // Extract the mobile number and add default area code
+        const mobileNumber = digits.substring(2); // Remove '55'
+        console.log(`Fixing Brazilian number missing area code: ${digits} -> +5511${mobileNumber}`);
+        return '+5511' + mobileNumber;
+      } else {
+        // Default: add country code if not present
+        if (!digits.startsWith('55')) {
+          digits = '55' + digits;
+        }
+        return '+' + digits;
       }
-      return '+' + digits;
       
     case 'US': // United States
       if (!digits.startsWith('1')) {
