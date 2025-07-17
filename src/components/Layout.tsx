@@ -9,7 +9,6 @@ import {
   Settings,
   Users,
   MessageSquare,
-  FileText,
   LogOut
 } from 'lucide-react';
 
@@ -28,7 +27,6 @@ export default function Layout({ children }: LayoutProps) {
     { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
     { name: 'Contacts', href: '/contacts', icon: Users },
     { name: 'Campagnes', href: '/campaigns', icon: MessageSquare },
-    { name: 'Templates', href: '/templates', icon: FileText },
   ];
 
   return (
