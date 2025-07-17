@@ -281,14 +281,29 @@ async function sendViaTwilio(type: string, contact: any, message: string) {
     throw new Error('Twilio credentials not configured');
   }
 
-  console.log(`Sending ${type} message via Twilio to ${contact.name}...`);
+  // Format phone number to international format
+  let formattedPhone = contact.phone;
+  
+  // Remove any non-digit characters
+  formattedPhone = formattedPhone.replace(/\D/g, '');
+  
+  // Add +55 country code for Brazil if not present
+  if (!formattedPhone.startsWith('55') && formattedPhone.length >= 10) {
+    formattedPhone = '+55' + formattedPhone;
+  } else if (formattedPhone.startsWith('55')) {
+    formattedPhone = '+' + formattedPhone;
+  } else if (!formattedPhone.startsWith('+')) {
+    formattedPhone = '+' + formattedPhone;
+  }
+
+  console.log(`Sending ${type} message via Twilio to ${contact.name} at ${formattedPhone}...`);
   
   try {
     const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
     
     const body = new URLSearchParams({
       From: type === 'whatsapp' ? `whatsapp:${fromPhone}` : fromPhone,
-      To: type === 'whatsapp' ? `whatsapp:${contact.phone}` : contact.phone,
+      To: type === 'whatsapp' ? `whatsapp:${formattedPhone}` : formattedPhone,
       Body: message
     });
 
