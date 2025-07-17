@@ -18,30 +18,36 @@ export type Database = {
         Row: {
           campaign_id: string
           contact_id: string
+          cost: number | null
           created_at: string
           delivered_at: string | null
           error_message: string | null
           id: string
+          response_data: Json | null
           sent_at: string | null
           status: string
         }
         Insert: {
           campaign_id: string
           contact_id: string
+          cost?: number | null
           created_at?: string
           delivered_at?: string | null
           error_message?: string | null
           id?: string
+          response_data?: Json | null
           sent_at?: string | null
           status?: string
         }
         Update: {
           campaign_id?: string
           contact_id?: string
+          cost?: number | null
           created_at?: string
           delivered_at?: string | null
           error_message?: string | null
           id?: string
+          response_data?: Json | null
           sent_at?: string | null
           status?: string
         }
@@ -62,11 +68,45 @@ export type Database = {
           },
         ]
       }
+      campaign_templates: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          message: string
+          name: string
+          updated_at: string
+          user_id: string
+          variables: Json | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          name: string
+          updated_at?: string
+          user_id: string
+          variables?: Json | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+          variables?: Json | null
+        }
+        Relationships: []
+      }
       campaigns: {
         Row: {
           campaign_type: string
           created_at: string
           failed_sends: number | null
+          filters: Json | null
           id: string
           message: string
           name: string
@@ -75,14 +115,17 @@ export type Database = {
           status: string
           successful_sends: number | null
           target_audience: Json | null
+          template_id: string | null
           total_recipients: number | null
           updated_at: string
           user_id: string
+          variables: Json | null
         }
         Insert: {
           campaign_type?: string
           created_at?: string
           failed_sends?: number | null
+          filters?: Json | null
           id?: string
           message: string
           name: string
@@ -91,14 +134,17 @@ export type Database = {
           status?: string
           successful_sends?: number | null
           target_audience?: Json | null
+          template_id?: string | null
           total_recipients?: number | null
           updated_at?: string
           user_id: string
+          variables?: Json | null
         }
         Update: {
           campaign_type?: string
           created_at?: string
           failed_sends?: number | null
+          filters?: Json | null
           id?: string
           message?: string
           name?: string
@@ -107,11 +153,21 @@ export type Database = {
           status?: string
           successful_sends?: number | null
           target_audience?: Json | null
+          template_id?: string | null
           total_recipients?: number | null
           updated_at?: string
           user_id?: string
+          variables?: Json | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "campaigns_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "campaign_templates"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       contacts: {
         Row: {

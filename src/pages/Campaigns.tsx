@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
+import { useCampaigns } from '@/hooks/useCampaigns';
 import { 
   Plus, 
   Send, 
@@ -16,54 +18,97 @@ import {
   Clock,
   Users,
   Edit,
-  Trash2
+  Trash2,
+  Loader2
 } from 'lucide-react';
 
 export default function Campaigns() {
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    message: '',
+    campaign_type: 'sms',
+    scheduled_at: '',
+    filters: {}
+  });
+  
+  const { toast } = useToast();
+  const { 
+    campaigns, 
+    stats, 
+    isLoading, 
+    createCampaign, 
+    updateCampaign, 
+    deleteCampaign, 
+    sendCampaign 
+  } = useCampaigns();
 
-  const campaigns = [
-    {
-      id: 1,
-      name: 'Lundi Boost',
-      message: 'Uniquement aujourd\'hui : bières en double ! 🍺',
-      schedule: 'Tous les lundis à 11h',
-      status: 'active',
-      sent: 124,
-      responses: 45,
-      revenue: 230,
-      nextSend: '2024-01-22'
-    },
-    {
-      id: 2,
-      name: 'Happy Hour Mardi',
-      message: 'Happy Hour jusqu\'à 19h - Cocktails à -50% ! 🍹',
-      schedule: 'Tous les mardis à 16h',
-      status: 'active',
-      sent: 156,
-      responses: 67,
-      revenue: 450,
-      nextSend: '2024-01-23'
-    },
-    {
-      id: 3,
-      name: 'Weekend Special',
-      message: 'Menu famille à 39€ ce weekend !',
-      schedule: 'Vendredis à 18h',
-      status: 'draft',
-      sent: 0,
-      responses: 0,
-      revenue: 0,
-      nextSend: '2024-01-26'
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.name || !formData.message) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs obligatoires",
+        variant: "destructive",
+      });
+      return;
     }
-  ];
 
-  const stats = [
-    { title: 'Campagnes actives', value: '2', icon: MessageSquare },
-    { title: 'Messages envoyés', value: '280', icon: Send },
-    { title: 'Taux de réponse', value: '23%', icon: Target },
-    { title: 'Revenus générés', value: '€680', icon: BarChart3 },
-  ];
+    try {
+      await createCampaign(formData);
+      setShowCreateForm(false);
+      setFormData({
+        name: '',
+        message: '',
+        campaign_type: 'sms',
+        scheduled_at: '',
+        filters: {}
+      });
+      toast({
+        title: "Succès",
+        description: "Campagne créée avec succès",
+      });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer la campagne",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSendCampaign = async (campaignId: string) => {
+    try {
+      await sendCampaign(campaignId);
+      toast({
+        title: "Succès",
+        description: "Campagne envoyée avec succès",
+      });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible d'envoyer la campagne",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteCampaign = async (campaignId: string) => {
+    try {
+      await deleteCampaign(campaignId);
+      toast({
+        title: "Succès",
+        description: "Campagne supprimée avec succès",
+      });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer la campagne",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -86,20 +131,17 @@ export default function Campaigns() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <Card key={stat.title}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                <Icon className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-              </CardContent>
-            </Card>
-          );
-        })}
+        {stats.map((stat) => (
+          <Card key={stat.title}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+              <stat.icon className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stat.value}</div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Create Campaign Form */}
@@ -112,29 +154,30 @@ export default function Campaigns() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="campaignName">Nom de la campagne</Label>
                   <Input
                     id="campaignName"
                     placeholder="Ex: Lundi Boost"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="dayOfWeek">Jour de la semaine</Label>
-                  <Select>
+                  <Label htmlFor="campaignType">Type de campagne</Label>
+                  <Select 
+                    value={formData.campaign_type} 
+                    onValueChange={(value) => setFormData({...formData, campaign_type: value})}
+                  >
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner un jour" />
+                      <SelectValue placeholder="Sélectionner un type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="monday">Lundi</SelectItem>
-                      <SelectItem value="tuesday">Mardi</SelectItem>
-                      <SelectItem value="wednesday">Mercredi</SelectItem>
-                      <SelectItem value="thursday">Jeudi</SelectItem>
-                      <SelectItem value="friday">Vendredi</SelectItem>
-                      <SelectItem value="saturday">Samedi</SelectItem>
-                      <SelectItem value="sunday">Dimanche</SelectItem>
+                      <SelectItem value="sms">SMS</SelectItem>
+                      <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                      <SelectItem value="email">Email</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -146,40 +189,44 @@ export default function Campaigns() {
                   id="message"
                   placeholder="Rédigez votre message promotionnel..."
                   rows={3}
+                  value={formData.message}
+                  onChange={(e) => setFormData({...formData, message: e.target.value})}
                 />
                 <p className="text-sm text-muted-foreground">
-                  Maximum 160 caractères pour SMS
+                  {formData.message.length}/160 caractères pour SMS
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="sendTime">Heure d'envoi</Label>
-                  <Input
-                    id="sendTime"
-                    type="time"
-                    defaultValue="11:00"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="targetGroup">Groupe cible</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Tous les contacts" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Tous les contacts</SelectItem>
-                      <SelectItem value="active">Clients actifs</SelectItem>
-                      <SelectItem value="inactive">Clients inactifs</SelectItem>
-                      <SelectItem value="new">Nouveaux clients</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="scheduledAt">Date et heure d'envoi (optionnel)</Label>
+                <Input
+                  id="scheduledAt"
+                  type="datetime-local"
+                  value={formData.scheduled_at}
+                  onChange={(e) => setFormData({...formData, scheduled_at: e.target.value})}
+                />
+                <p className="text-sm text-muted-foreground">
+                  Laissez vide pour envoyer immédiatement
+                </p>
               </div>
 
               <div className="flex space-x-4">
-                <Button type="submit" className="bg-gradient-primary shadow-warm">
-                  Créer la campagne
+                <Button 
+                  type="submit" 
+                  className="bg-gradient-primary shadow-warm"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Création...
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Créer la campagne
+                    </>
+                  )}
                 </Button>
                 <Button 
                   type="button" 
@@ -203,72 +250,115 @@ export default function Campaigns() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {campaigns.map((campaign) => (
-              <div key={campaign.id} className="border rounded-lg p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="text-lg font-semibold">{campaign.name}</h3>
-                      <Badge 
-                        variant={
-                          campaign.status === 'active' ? 'default' : 'outline'
-                        }
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          ) : campaigns.length === 0 ? (
+            <div className="text-center py-8">
+              <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">Aucune campagne</h3>
+              <p className="text-muted-foreground mb-4">
+                Créez votre première campagne pour commencer à engager vos clients.
+              </p>
+              <Button 
+                onClick={() => setShowCreateForm(true)}
+                className="bg-gradient-primary shadow-warm"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Créer une campagne
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {campaigns.map((campaign) => (
+                <div key={campaign.id} className="border rounded-lg p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <div className="flex items-center space-x-3 mb-2">
+                        <h3 className="text-lg font-semibold">{campaign.name}</h3>
+                        <Badge 
+                          variant={
+                            campaign.status === 'active' || campaign.status === 'sent' ? 'default' : 'outline'
+                          }
+                        >
+                          {campaign.status === 'active' ? 'Actif' : 
+                           campaign.status === 'sent' ? 'Envoyé' : 
+                           campaign.status === 'scheduled' ? 'Programmé' : 'Brouillon'}
+                        </Badge>
+                        <Badge variant="secondary" className="text-xs">
+                          {campaign.campaign_type.toUpperCase()}
+                        </Badge>
+                      </div>
+                      <p className="text-muted-foreground mb-2">{campaign.message}</p>
+                      {campaign.scheduled_at && (
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Clock className="w-4 h-4 mr-1" />
+                          Programmé pour {new Date(campaign.scheduled_at).toLocaleString('fr-FR')}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex space-x-2">
+                      {campaign.status === 'draft' && (
+                        <Button 
+                          variant="default" 
+                          size="sm"
+                          onClick={() => handleSendCampaign(campaign.id)}
+                          className="bg-gradient-primary shadow-warm"
+                        >
+                          <Send className="w-4 h-4 mr-1" />
+                          Envoyer
+                        </Button>
+                      )}
+                      <Button variant="outline" size="sm">
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleDeleteCampaign(campaign.id)}
                       >
-                        {campaign.status === 'active' ? 'Actif' : 'Brouillon'}
-                      </Badge>
-                    </div>
-                    <p className="text-muted-foreground mb-2">{campaign.message}</p>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Clock className="w-4 h-4 mr-1" />
-                      {campaign.schedule}
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex space-x-2">
-                    <Button variant="outline" size="sm">
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="flex items-center space-x-2">
-                    <Send className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">{campaign.sent}</p>
-                      <p className="text-xs text-muted-foreground">Envoyés</p>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="flex items-center space-x-2">
+                      <Send className="w-4 h-4 text-muted-foreground" />
+                      <div>
+                        <p className="text-sm font-medium">{campaign.total_recipients || 0}</p>
+                        <p className="text-xs text-muted-foreground">Total envoyés</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Users className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">{campaign.responses}</p>
-                      <p className="text-xs text-muted-foreground">Réponses</p>
+                    <div className="flex items-center space-x-2">
+                      <Users className="w-4 h-4 text-muted-foreground" />
+                      <div>
+                        <p className="text-sm font-medium">{campaign.successful_sends || 0}</p>
+                        <p className="text-xs text-muted-foreground">Succès</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <BarChart3 className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">€{campaign.revenue}</p>
-                      <p className="text-xs text-muted-foreground">Revenus</p>
+                    <div className="flex items-center space-x-2">
+                      <BarChart3 className="w-4 h-4 text-muted-foreground" />
+                      <div>
+                        <p className="text-sm font-medium">{campaign.failed_sends || 0}</p>
+                        <p className="text-xs text-muted-foreground">Échecs</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">
-                        {new Date(campaign.nextSend).toLocaleDateString('fr-FR')}
-                      </p>
-                      <p className="text-xs text-muted-foreground">Prochain envoi</p>
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="w-4 h-4 text-muted-foreground" />
+                      <div>
+                        <p className="text-sm font-medium">
+                          {campaign.sent_at ? new Date(campaign.sent_at).toLocaleDateString('fr-FR') : '-'}
+                        </p>
+                        <p className="text-xs text-muted-foreground">Envoyé le</p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
