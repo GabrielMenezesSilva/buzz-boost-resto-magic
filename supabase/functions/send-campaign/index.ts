@@ -225,7 +225,7 @@ async function sendMessage(type: string, contact: any, message: string, resend: 
       
       try {
         const emailResponse = await resend.emails.send({
-          from: 'Restaurant <onboarding@resend.dev>',
+          from: 'Restaurant <noreply@seudominio.com>', // Substitua pelo seu domínio
           to: [contact.email],
           subject: 'Mensagem do Restaurante',
           html: `
