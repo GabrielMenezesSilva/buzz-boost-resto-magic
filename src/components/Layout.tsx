@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
@@ -9,7 +9,9 @@ import {
   Settings,
   Users,
   MessageSquare,
-  LogOut
+  LogOut,
+  Menu,
+  X
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -18,16 +20,27 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isActive = (path: string) => location.pathname === path;
 
-  const navigation = [
+  // Navigation for non-authenticated users
+  const publicNavigation = [
+    { name: 'Accueil', href: '/', icon: ChefHat },
+    { name: 'QR Scanner', href: '/qr', icon: QrCode },
+  ];
+
+  // Navigation for authenticated users
+  const authenticatedNavigation = [
     { name: 'Accueil', href: '/', icon: ChefHat },
     { name: 'QR Scanner', href: '/qr', icon: QrCode },
     { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
     { name: 'Contacts', href: '/contacts', icon: Users },
     { name: 'Campagnes', href: '/campaigns', icon: MessageSquare },
   ];
+
+  // Choose navigation based on auth status
+  const navigation = user ? authenticatedNavigation : publicNavigation;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-light/20 to-background">
@@ -62,7 +75,22 @@ export default function Layout({ children }: LayoutProps) {
               })}
             </nav>
 
-            <div className="flex items-center space-x-4">
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? (
+                  <X className="w-5 h-5" />
+                ) : (
+                  <Menu className="w-5 h-5" />
+                )}
+              </Button>
+            </div>
+
+            <div className="hidden md:flex items-center space-x-4">
               {user ? (
                 <div className="flex items-center space-x-4">
                   <span className="text-sm text-muted-foreground">
@@ -88,6 +116,63 @@ export default function Layout({ children }: LayoutProps) {
             </div>
           </div>
         </div>
+
+        {/* Mobile Navigation Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-sm">
+            <div className="px-4 py-2 space-y-1">
+              {navigation.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center space-x-3 px-3 py-3 rounded-md text-sm font-medium transition-colors ${
+                      isActive(item.href)
+                        ? 'text-primary bg-primary/10'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              })}
+              
+              {/* Mobile Auth Actions */}
+              <div className="pt-4 border-t border-border">
+                {user ? (
+                  <div className="space-y-3">
+                    <div className="px-3 py-2">
+                      <p className="text-sm text-muted-foreground">
+                        Logado como: {user.email}
+                      </p>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => {
+                        signOut();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full justify-start space-x-2"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Sair</span>
+                    </Button>
+                  </div>
+                ) : (
+                  <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="default" size="sm" className="w-full bg-gradient-primary shadow-warm">
+                      Entrar
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Main Content */}
