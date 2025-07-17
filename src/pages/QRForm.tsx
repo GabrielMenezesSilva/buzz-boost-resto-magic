@@ -1,343 +1,433 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { useQRScanner } from "@/hooks/useQRScanner";
+import { useContacts } from "@/hooks/useContacts";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { 
-  Gift, 
-  Star, 
-  Coffee, 
-  Utensils, 
-  MapPin,
-  Clock,
+  QrCode,
+  Camera,
+  CameraOff,
+  User,
+  Phone,
+  Mail,
+  Save,
+  ArrowLeft,
   CheckCircle,
-  Users
-} from 'lucide-react';
+  AlertCircle,
+  Plus,
+  X
+} from "lucide-react";
 
-const formSchema = z.object({
-  firstName: z.string().min(2, "Le prénom doit contenir au moins 2 caractères"),
-  lastName: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
-  phone: z.string().min(10, "Numéro de téléphone invalide"),
-  email: z.string().email("Email invalide").optional().or(z.literal("")),
-  rating: z.string().min(1, "Veuillez donner une note"),
-  comment: z.string().optional(),
-  referral: z.string().optional(),
-});
+interface ContactForm {
+  name: string;
+  phone: string;
+  email: string;
+  notes: string;
+  tags: string[];
+}
 
-type FormData = z.infer<typeof formSchema>;
-
-export default function QRForm() {
-  const [isSubmitted, setIsSubmitted] = useState(false);
+const QRForm = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
+  const { addContact } = useContacts();
   
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      phone: '',
-      email: '',
-      rating: '',
-      comment: '',
-      referral: '',
-    },
+  const [scannedData, setScannedData] = useState<string>('');
+  const [contactForm, setContactForm] = useState<ContactForm>({
+    name: '',
+    phone: '',
+    email: '',
+    notes: '',
+    tags: []
+  });
+  const [newTag, setNewTag] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+
+  const handleScan = (result: string) => {
+    setScannedData(result);
+    
+    // Try to parse QR code data
+    try {
+      const data = JSON.parse(result);
+      if (data.name || data.phone || data.email) {
+        setContactForm(prev => ({
+          ...prev,
+          name: data.name || '',
+          phone: data.phone || '',
+          email: data.email || '',
+          notes: data.notes || ''
+        }));
+      }
+    } catch {
+      // If not JSON, check if it looks like a phone number or email
+      if (result.includes('@')) {
+        setContactForm(prev => ({ ...prev, email: result }));
+      } else if (result.match(/[\d\s\-\+\(\)]+/)) {
+        setContactForm(prev => ({ ...prev, phone: result }));
+      } else {
+        setContactForm(prev => ({ ...prev, notes: `QR Code: ${result}` }));
+      }
+    }
+    
+    setShowForm(true);
+    
+    toast({
+      title: "QR Code escaneado!",
+      description: "Preencha os dados do contato abaixo.",
+      variant: "default"
+    });
+  };
+
+  const { videoRef, isScanning, hasPermission, toggleScanning } = useQRScanner({
+    onScan: handleScan,
+    onError: (error) => {
+      console.error('QR Scanner error:', error);
+    }
   });
 
-  const onSubmit = async (data: FormData) => {
-    try {
-      // Simulation d'envoi des données
-      console.log('Form submitted:', data);
-      
-      // Afficher un message de succès
-      toast({
-        title: "Merci !",
-        description: "Votre formulaire a été envoyé avec succès. Votre récompense vous attend !",
-      });
-      
-      setIsSubmitted(true);
-    } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue. Veuillez réessayer.",
-        variant: "destructive",
-      });
+  const addTag = () => {
+    if (newTag.trim() && !contactForm.tags.includes(newTag.trim())) {
+      setContactForm(prev => ({
+        ...prev,
+        tags: [...prev.tags, newTag.trim()]
+      }));
+      setNewTag('');
     }
   };
 
-  if (isSubmitted) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-light/20 to-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-md text-center shadow-card-warm">
-          <CardHeader>
-            <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
-              <Gift className="w-8 h-8 text-primary-foreground" />
-            </div>
-            <CardTitle className="text-2xl text-green-fresh">Félicitations !</CardTitle>
-            <CardDescription className="text-base">
-              Votre formulaire a été envoyé avec succès
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="bg-green-fresh/10 border border-green-fresh/20 rounded-lg p-4">
-              <div className="flex items-center space-x-2 text-green-fresh mb-2">
-                <CheckCircle className="w-5 h-5" />
-                <span className="font-medium">Récompense débloquée</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Présentez ce message à votre serveur pour recevoir votre entrée ou boisson offerte !
-              </p>
-            </div>
-            
-            <div className="bg-muted/50 rounded-lg p-4">
-              <div className="flex items-center space-x-2 text-primary mb-2">
-                <Users className="w-5 h-5" />
-                <span className="font-medium">Programme de parrainage</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Amenez un ami qui n'a jamais visité ce restaurant et recevez une récompense supplémentaire !
-              </p>
-            </div>
+  const removeTag = (tagToRemove: string) => {
+    setContactForm(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }));
+  };
 
-            <Button className="w-full bg-gradient-primary" onClick={() => setIsSubmitted(false)}>
-              Remplir un autre formulaire
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!contactForm.name || !contactForm.phone) {
+      toast({
+        title: "Campos obrigatórios",
+        description: "Nome e telefone são obrigatórios.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const result = await addContact({
+      ...contactForm,
+      source: 'qr_scan'
+    });
+
+    if (result.success) {
+      toast({
+        title: "Contato adicionado!",
+        description: `${contactForm.name} foi adicionado aos seus contatos.`,
+        variant: "default"
+      });
+      
+      // Reset form
+      setContactForm({
+        name: '',
+        phone: '',
+        email: '',
+        notes: '',
+        tags: []
+      });
+      setScannedData('');
+      setShowForm(false);
+      
+      // Navigate to contacts or dashboard
+      navigate('/contacts');
+    }
+
+    setIsSubmitting(false);
+  };
+
+  const resetScanner = () => {
+    setScannedData('');
+    setShowForm(false);
+    setContactForm({
+      name: '',
+      phone: '',
+      email: '',
+      notes: '',
+      tags: []
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-background p-6">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" onClick={() => navigate('/dashboard')}>
+              <ArrowLeft className="w-4 h-4" />
             </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">QR Scanner</h1>
+              <p className="text-muted-foreground">
+                Escaneie QR codes para adicionar novos contatos
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Scanner Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <QrCode className="w-5 h-5" />
+                Câmera Scanner
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Camera Preview */}
+              <div className="relative">
+                <video
+                  ref={videoRef}
+                  className="w-full aspect-square object-cover rounded-lg bg-muted"
+                  playsInline
+                  muted
+                />
+                
+                {!isScanning && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-muted rounded-lg">
+                    <div className="text-center">
+                      <Camera className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+                      <p className="text-muted-foreground">
+                        {hasPermission === false 
+                          ? 'Permissão de câmera negada' 
+                          : 'Clique em "Iniciar Scanner" para começar'
+                        }
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Scanning overlay */}
+                {isScanning && (
+                  <div className="absolute inset-4 border-2 border-primary border-dashed rounded-lg flex items-center justify-center">
+                    <div className="text-center text-white bg-black/50 p-2 rounded">
+                      <p className="text-sm">Aponte para um QR code</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Scanner Controls */}
+              <div className="flex gap-3">
+                <Button
+                  onClick={toggleScanning}
+                  className="flex-1 flex items-center gap-2"
+                  variant={isScanning ? "destructive" : "default"}
+                >
+                  {isScanning ? (
+                    <>
+                      <CameraOff className="w-4 h-4" />
+                      Parar Scanner
+                    </>
+                  ) : (
+                    <>
+                      <Camera className="w-4 h-4" />
+                      Iniciar Scanner
+                    </>
+                  )}
+                </Button>
+                
+                {(scannedData || showForm) && (
+                  <Button variant="outline" onClick={resetScanner}>
+                    Resetar
+                  </Button>
+                )}
+              </div>
+
+              {/* Scanned Data */}
+              {scannedData && (
+                <div className="p-3 bg-muted rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-sm">QR Code detectado:</p>
+                      <p className="text-sm text-muted-foreground break-all">
+                        {scannedData}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Instructions */}
+              <div className="text-sm text-muted-foreground space-y-2">
+                <p className="flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" />
+                  Posicione o QR code no centro da câmera
+                </p>
+                <p>• QR codes com dados de contato serão preenchidos automaticamente</p>
+                <p>• Outros QR codes serão salvos nas observações</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Contact Form */}
+          <Card className={showForm ? '' : 'opacity-50'}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="w-5 h-5" />
+                Dados do Contato
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {showForm ? (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Nome *</Label>
+                    <Input
+                      id="name"
+                      value={contactForm.name}
+                      onChange={(e) => setContactForm(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="Nome do cliente"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Telefone *</Label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="phone"
+                        value={contactForm.phone}
+                        onChange={(e) => setContactForm(prev => ({ ...prev, phone: e.target.value }))}
+                        placeholder="(11) 99999-9999"
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="email"
+                        type="email"
+                        value={contactForm.email}
+                        onChange={(e) => setContactForm(prev => ({ ...prev, email: e.target.value }))}
+                        placeholder="email@exemplo.com"
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Tags</Label>
+                    <div className="flex gap-2 mb-2">
+                      <Input
+                        value={newTag}
+                        onChange={(e) => setNewTag(e.target.value)}
+                        placeholder="Adicionar tag"
+                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                      />
+                      <Button type="button" onClick={addTag} size="sm">
+                        <Plus className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {contactForm.tags.map((tag, index) => (
+                        <Badge key={index} variant="secondary" className="text-xs">
+                          {tag}
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="ml-1 h-auto p-0"
+                            onClick={() => removeTag(tag)}
+                          >
+                            <X className="w-3 h-3" />
+                          </Button>
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="notes">Observações</Label>
+                    <Textarea
+                      id="notes"
+                      value={contactForm.notes}
+                      onChange={(e) => setContactForm(prev => ({ ...prev, notes: e.target.value }))}
+                      placeholder="Observações sobre o cliente..."
+                      rows={3}
+                    />
+                  </div>
+
+                  <Button type="submit" className="w-full" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      "Salvando..."
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4 mr-2" />
+                        Salvar Contato
+                      </>
+                    )}
+                  </Button>
+                </form>
+              ) : (
+                <div className="text-center py-12 text-muted-foreground">
+                  <QrCode className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                  <p>Escaneie um QR code para preencher os dados</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Tips */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Dicas para melhor escaneamento</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="flex items-start gap-2">
+                <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
+                <div>
+                  <p className="font-medium">Boa iluminação</p>
+                  <p className="text-muted-foreground">Use em ambientes bem iluminados</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
+                <div>
+                  <p className="font-medium">Distância adequada</p>
+                  <p className="text-muted-foreground">Mantenha 10-30cm de distância</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
+                <div>
+                  <p className="font-medium">QR code limpo</p>
+                  <p className="text-muted-foreground">Certifique-se que esteja legível</p>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-light/20 to-background flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl shadow-card-warm">
-        <CardHeader className="text-center space-y-4">
-          <div className="flex items-center justify-center space-x-2">
-            <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center">
-              <Gift className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <Badge variant="secondary" className="bg-primary/10 text-primary">
-              Récompense offerte
-            </Badge>
-          </div>
-          
-          <CardTitle className="text-2xl lg:text-3xl">
-            Recevez une entrée ou boisson offerte !
-          </CardTitle>
-          
-          <CardDescription className="text-base">
-            Remplissez ce rapide formulaire et recevez immédiatement votre récompense.
-            Cela nous aide à améliorer votre expérience.
-          </CardDescription>
-
-          <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground bg-muted/30 rounded-lg p-3">
-            <div className="flex items-center space-x-1">
-              <Clock className="w-4 h-4" />
-              <span>2 minutes</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <Gift className="w-4 h-4" />
-              <span>Récompense garantie</span>
-            </div>
-          </div>
-        </CardHeader>
-
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="firstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Prénom *</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Votre prénom" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nom *</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Votre nom" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Numéro de téléphone *</FormLabel>
-                    <FormControl>
-                      <Input placeholder="06 12 34 56 78" type="tel" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Pour recevoir nos promotions exclusives les jours de faible affluence
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email (optionnel)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="votre@email.com" type="email" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Pour recevoir notre newsletter mensuelle avec des offres spéciales
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="rating"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Comment évaluez-vous l'ambiance de notre restaurant ? *</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="grid grid-cols-5 gap-4"
-                      >
-                        {[1, 2, 3, 4, 5].map((rating) => (
-                          <div key={rating} className="flex flex-col items-center space-y-2">
-                            <RadioGroupItem
-                              value={rating.toString()}
-                              id={`rating-${rating}`}
-                              className="peer sr-only"
-                            />
-                            <Label
-                              htmlFor={`rating-${rating}`}
-                              className="flex flex-col items-center space-y-1 cursor-pointer peer-checked:text-primary"
-                            >
-                              <div className="flex">
-                                {[...Array(5)].map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    className={`w-5 h-5 ${
-                                      i < rating
-                                        ? 'fill-primary text-primary peer-checked:fill-primary'
-                                        : 'fill-muted text-muted-foreground'
-                                    }`}
-                                  />
-                                ))}
-                              </div>
-                              <span className="text-xs text-center">
-                                {rating === 1 && 'Décevant'}
-                                {rating === 2 && 'Moyen'}
-                                {rating === 3 && 'Correct'}
-                                {rating === 4 && 'Très bien'}
-                                {rating === 5 && 'Excellent'}
-                              </span>
-                            </Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="comment"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Commentaire (optionnel)</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Partagez votre expérience ou vos suggestions..."
-                        className="resize-none"
-                        rows={3}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Vos retours nous aident à améliorer constamment notre service
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="referral"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Qui vous a recommandé notre restaurant ? (optionnel)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Nom de la personne qui vous a recommandé" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Si un ami vous a recommandé, il recevra aussi une récompense !
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button
-                type="submit"
-                className="w-full bg-gradient-primary shadow-warm text-lg py-6"
-                disabled={form.formState.isSubmitting}
-              >
-                {form.formState.isSubmitting ? (
-                  "Envoi en cours..."
-                ) : (
-                  <div className="flex items-center space-x-2">
-                    <Gift className="w-5 h-5" />
-                    <span>Recevoir ma récompense</span>
-                  </div>
-                )}
-              </Button>
-
-              <p className="text-xs text-center text-muted-foreground">
-                En soumettant ce formulaire, vous acceptez de recevoir des promotions par SMS/WhatsApp.
-                Vous pouvez vous désabonner à tout moment en répondant STOP.
-              </p>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
     </div>
   );
-}
+};
+
+export default QRForm;
