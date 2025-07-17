@@ -256,13 +256,23 @@ async function sendMessage(type: string, contact: any, message: string, resend: 
       // SMS not implemented yet - needs Twilio integration
       throw new Error('SMS sending not yet configured. Please add Twilio API keys.');
       
+    case 'sms':
+      if (!contact.phone) {
+        throw new Error('Contact does not have a phone number');
+      }
+      
+      // SMS via Zapier webhook
+      await sendViaZapier('sms', contact, message, campaign.zapier_webhook_url);
+      break;
+      
     case 'whatsapp':
       if (!contact.phone) {
         throw new Error('Contact does not have a phone number');
       }
       
-      // WhatsApp not implemented yet - needs Twilio/Meta integration
-      throw new Error('WhatsApp sending not yet configured. Please add WhatsApp Business API keys.');
+      // WhatsApp via Zapier webhook
+      await sendViaZapier('whatsapp', contact, message, campaign.zapier_webhook_url);
+      break;
       
     default:
       throw new Error(`Unsupported message type: ${type}`);
