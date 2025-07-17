@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useCampaigns } from '@/hooks/useCampaigns';
+import { useTemplates } from '@/hooks/useTemplates';
 import { 
   Plus, 
   Send, 
@@ -24,6 +25,8 @@ import {
 
 export default function Campaigns() {
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
+  const [templateVariables, setTemplateVariables] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     name: '',
     message: '',
@@ -43,10 +46,23 @@ export default function Campaigns() {
     sendCampaign 
   } = useCampaigns();
 
+  const { 
+    templates, 
+    replaceVariables,
+    getTemplatesByCategory 
+  } = useTemplates();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.message) {
+    let finalMessage = formData.message;
+    
+    // If using a template, replace variables
+    if (selectedTemplate && Object.keys(templateVariables).length > 0) {
+      finalMessage = replaceVariables(formData.message, templateVariables);
+    }
+    
+    if (!formData.name || !finalMessage) {
       toast({
         title: "Erreur",
         description: "Veuillez remplir tous les champs obligatoires",
@@ -56,15 +72,12 @@ export default function Campaigns() {
     }
 
     try {
-      await createCampaign(formData);
-      setShowCreateForm(false);
-      setFormData({
-        name: '',
-        message: '',
-        campaign_type: 'sms',
-        scheduled_at: '',
-        filters: {}
+      await createCampaign({
+        ...formData,
+        message: finalMessage
       });
+      setShowCreateForm(false);
+      resetForm();
       toast({
         title: "Succès",
         description: "Campagne créée avec succès",
@@ -76,6 +89,44 @@ export default function Campaigns() {
         variant: "destructive",
       });
     }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      message: '',
+      campaign_type: 'sms',
+      scheduled_at: '',
+      filters: {}
+    });
+    setSelectedTemplate('');
+    setTemplateVariables({});
+  };
+
+  const handleTemplateSelect = (templateId: string) => {
+    const template = templates.find(t => t.id === templateId);
+    if (template) {
+      setSelectedTemplate(templateId);
+      setFormData({
+        ...formData,
+        name: template.name,
+        message: template.message
+      });
+      
+      // Initialize template variables
+      const initialVariables: Record<string, string> = {};
+      template.variables.forEach(variable => {
+        initialVariables[variable] = '';
+      });
+      setTemplateVariables(initialVariables);
+    }
+  };
+
+  const handleVariableChange = (variable: string, value: string) => {
+    setTemplateVariables(prev => ({
+      ...prev,
+      [variable]: value
+    }));
   };
 
   const handleSendCampaign = async (campaignId: string) => {
@@ -120,10 +171,13 @@ export default function Campaigns() {
             Gérez vos campagnes de marketing automatisées
           </p>
         </div>
-        <Button 
-          onClick={() => setShowCreateForm(!showCreateForm)}
-          className="bg-gradient-primary shadow-warm"
-        >
+                <Button 
+                  onClick={() => {
+                    setShowCreateForm(!showCreateForm);
+                    if (showCreateForm) resetForm();
+                  }}
+                  className="bg-gradient-primary shadow-warm"
+                >
           <Plus className="w-4 h-4 mr-2" />
           Nouvelle campagne
         </Button>
@@ -155,6 +209,32 @@ export default function Campaigns() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Template Selection */}
+              <div className="space-y-2">
+                <Label htmlFor="templateSelect">Utiliser un template (optionnel)</Label>
+                <Select 
+                  value={selectedTemplate} 
+                  onValueChange={handleTemplateSelect}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choisir un template existant" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Créer depuis zéro</SelectItem>
+                    {templates.map(template => (
+                      <SelectItem key={template.id} value={template.id}>
+                        {template.name} ({template.category})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {selectedTemplate && (
+                  <p className="text-sm text-muted-foreground">
+                    Template sélectionné. Vous pouvez modifier le message ci-dessous.
+                  </p>
+                )}
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="campaignName">Nom de la campagne</Label>
@@ -183,18 +263,56 @@ export default function Campaigns() {
                 </div>
               </div>
 
+              {/* Template Variables */}
+              {selectedTemplate && Object.keys(templateVariables).length > 0 && (
+                <div className="space-y-4 p-4 border rounded-lg bg-muted/50">
+                  <Label className="text-sm font-medium">Variables du template</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {Object.entries(templateVariables).map(([variable, value]) => (
+                      <div key={variable} className="space-y-2">
+                        <Label htmlFor={`var-${variable}`} className="text-sm">
+                          {'{'}{'{'}{variable}{'}'}{'}'} 
+                        </Label>
+                        <Input
+                          id={`var-${variable}`}
+                          placeholder={`Valeur pour ${variable}`}
+                          value={value}
+                          onChange={(e) => handleVariableChange(variable, e.target.value)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Ces variables seront remplacées dans le message final.
+                  </p>
+                </div>
+              )}
+
               <div className="space-y-2">
                 <Label htmlFor="message">Message promotionnel</Label>
                 <Textarea
                   id="message"
                   placeholder="Rédigez votre message promotionnel..."
-                  rows={3}
+                  rows={4}
                   value={formData.message}
                   onChange={(e) => setFormData({...formData, message: e.target.value})}
                 />
-                <p className="text-sm text-muted-foreground">
-                  {formData.message.length}/160 caractères pour SMS
-                </p>
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>{formData.message.length}/160 caractères pour SMS</span>
+                  {selectedTemplate && Object.keys(templateVariables).length > 0 && (
+                    <span className="text-primary">Aperçu avec variables appliquées ci-dessous</span>
+                  )}
+                </div>
+                
+                {/* Message Preview */}
+                {selectedTemplate && Object.keys(templateVariables).length > 0 && (
+                  <div className="p-3 bg-muted rounded-md border">
+                    <Label className="text-xs text-muted-foreground">Aperçu du message final:</Label>
+                    <p className="text-sm mt-1">
+                      {replaceVariables(formData.message, templateVariables)}
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -231,7 +349,10 @@ export default function Campaigns() {
                 <Button 
                   type="button" 
                   variant="outline"
-                  onClick={() => setShowCreateForm(false)}
+                  onClick={() => {
+                    setShowCreateForm(false);
+                    resetForm();
+                  }}
                 >
                   Annuler
                 </Button>
