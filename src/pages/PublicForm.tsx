@@ -49,12 +49,16 @@ export default function PublicForm() {
         return;
       }
 
+      console.log('QR Code recebido:', qrCode);
+      console.log('QR Code length:', qrCode.length);
+      console.log('QR Code trimmed:', qrCode.trim());
+
       setIsLoading(true);
       try {
         const { data, error } = await supabase
           .from('profiles')
           .select('restaurant_name, owner_name')
-          .eq('qr_code', qrCode)
+          .eq('qr_code', qrCode.trim())
           .maybeSingle();
 
         if (error) {
@@ -104,7 +108,7 @@ export default function PublicForm() {
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('user_id')
-        .eq('qr_code', qrCode)
+        .eq('qr_code', qrCode.trim())
         .single();
 
       if (profileError || !profileData) {
