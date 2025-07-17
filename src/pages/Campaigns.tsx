@@ -32,7 +32,6 @@ export default function Campaigns() {
     message: '',
     campaign_type: 'sms',
     scheduled_at: '',
-    zapier_webhook_url: '',
     filters: {}
   });
   
@@ -72,15 +71,6 @@ export default function Campaigns() {
       return;
     }
 
-    // Validate Zapier webhook for SMS/WhatsApp
-    if ((formData.campaign_type === 'sms' || formData.campaign_type === 'whatsapp') && !formData.zapier_webhook_url) {
-      toast({
-        title: "Webhook Zapier requis",
-        description: `Pour les campagnes ${formData.campaign_type.toUpperCase()}, vous devez configurer un webhook Zapier`,
-        variant: "destructive",
-      });
-      return;
-    }
 
     try {
       await createCampaign({
@@ -108,7 +98,6 @@ export default function Campaigns() {
       message: '',
       campaign_type: 'sms',
       scheduled_at: '',
-      zapier_webhook_url: '',
       filters: {}
     });
     setSelectedTemplate('');
@@ -352,22 +341,17 @@ export default function Campaigns() {
                 </p>
               </div>
 
-              {/* Zapier Webhook URL for SMS/WhatsApp */}
+              {/* Twilio Configuration Info */}
               {(formData.campaign_type === 'sms' || formData.campaign_type === 'whatsapp') && (
-                <div className="space-y-2 p-4 border rounded-lg bg-yellow-50 dark:bg-yellow-950/20">
-                  <Label htmlFor="zapierWebhook">URL Webhook Zapier</Label>
-                  <Input
-                    id="zapierWebhook"
-                    placeholder="https://hooks.zapier.com/hooks/catch/..."
-                    value={formData.zapier_webhook_url}
-                    onChange={(e) => setFormData({...formData, zapier_webhook_url: e.target.value})}
-                  />
+                <div className="space-y-2 p-4 border rounded-lg bg-blue-50 dark:bg-blue-950/20">
+                  <div className="flex items-center space-x-2">
+                    <div className="text-lg">📱</div>
+                    <Label className="font-medium">Envio via Twilio</Label>
+                  </div>
                   <div className="text-sm text-muted-foreground space-y-1">
-                    <p>📋 <strong>Como configurar:</strong></p>
-                    <p>1. Crie um Zap no Zapier com um trigger "Webhooks"</p>
-                    <p>2. Cole a URL do webhook aqui</p>
-                    <p>3. Configure o Zap para enviar {formData.campaign_type === 'sms' ? 'SMS' : 'WhatsApp'}</p>
-                    <p className="text-primary font-medium">⚡ 100 zaps/mês grátis no Zapier!</p>
+                    <p>✅ Configuração do Twilio já configurada</p>
+                    <p>📧 Mensagens {formData.campaign_type === 'sms' ? 'SMS' : 'WhatsApp'} serão enviadas diretamente</p>
+                    <p className="text-primary font-medium">🔧 API Twilio configurada nos secrets</p>
                   </div>
                 </div>
               )}

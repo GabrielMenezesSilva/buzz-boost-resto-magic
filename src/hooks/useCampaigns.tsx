@@ -23,7 +23,6 @@ interface CreateCampaignData {
   message: string;
   campaign_type: string;
   scheduled_at?: string;
-  zapier_webhook_url?: string;
   filters?: any;
 }
 
@@ -72,7 +71,6 @@ export function useCampaigns() {
         message: campaignData.message,
         campaign_type: campaignData.campaign_type,
         scheduled_at: campaignData.scheduled_at || null,
-        zapier_webhook_url: campaignData.zapier_webhook_url || null,
         filters: campaignData.filters || {},
         status: 'draft'
       })

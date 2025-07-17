@@ -253,8 +253,8 @@ async function sendMessage(type: string, contact: any, message: string, resend: 
         throw new Error('Contact does not have a phone number');
       }
       
-      // SMS via Zapier webhook
-      await sendViaZapier('sms', contact, message, campaign.zapier_webhook_url);
+      // SMS via Twilio
+      await sendViaTwilio('sms', contact, message);
       break;
       
     case 'whatsapp':
@@ -262,8 +262,8 @@ async function sendMessage(type: string, contact: any, message: string, resend: 
         throw new Error('Contact does not have a phone number');
       }
       
-      // WhatsApp via Zapier webhook
-      await sendViaZapier('whatsapp', contact, message, campaign.zapier_webhook_url);
+      // WhatsApp via Twilio
+      await sendViaTwilio('whatsapp', contact, message);
       break;
       
     default:
@@ -271,43 +271,45 @@ async function sendMessage(type: string, contact: any, message: string, resend: 
   }
 }
 
-// Function to send messages via Zapier webhook
-async function sendViaZapier(type: string, contact: any, message: string, webhookUrl?: string) {
-  if (!webhookUrl) {
-    throw new Error(`Zapier webhook URL not configured for ${type} messages`);
+// Function to send messages via Twilio
+async function sendViaTwilio(type: string, contact: any, message: string) {
+  const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID');
+  const authToken = Deno.env.get('TWILIO_AUTH_TOKEN');
+  const fromPhone = Deno.env.get('TWILIO_PHONE_NUMBER');
+
+  if (!accountSid || !authToken || !fromPhone) {
+    throw new Error('Twilio credentials not configured');
   }
 
-  console.log(`Sending ${type} message via Zapier to ${contact.name}...`);
+  console.log(`Sending ${type} message via Twilio to ${contact.name}...`);
   
   try {
-    const payload = {
-      type: type,
-      contact: {
-        name: contact.name,
-        phone: contact.phone,
-        email: contact.email
-      },
-      message: message,
-      timestamp: new Date().toISOString(),
-      campaign_info: {
-        sent_from: 'restaurant_campaign_system'
-      }
-    };
+    const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+    
+    const body = new URLSearchParams({
+      From: type === 'whatsapp' ? `whatsapp:${fromPhone}` : fromPhone,
+      To: type === 'whatsapp' ? `whatsapp:${contact.phone}` : contact.phone,
+      Body: message
+    });
 
-    const response = await fetch(webhookUrl, {
+    const response = await fetch(twilioUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Authorization': `Basic ${btoa(`${accountSid}:${authToken}`)}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: JSON.stringify(payload)
+      body: body.toString()
     });
 
     if (!response.ok) {
-      throw new Error(`Zapier webhook failed with status: ${response.status}`);
+      const errorData = await response.text();
+      throw new Error(`Twilio API failed: ${response.status} - ${errorData}`);
     }
 
-    console.log(`${type} message sent successfully via Zapier to ${contact.name}`);
+    const responseData = await response.json();
+    console.log(`${type} message sent successfully via Twilio to ${contact.name}:`, responseData.sid);
   } catch (error) {
-    console.error(`Failed to send ${type} via Zapier to ${contact.name}:`, error);
-    throw new Error(`Failed to send ${type} message via Zapier: ${error.message}`);
+    console.error(`Failed to send ${type} via Twilio to ${contact.name}:`, error);
+    throw new Error(`Failed to send ${type} message via Twilio: ${error.message}`);
   }
+}
