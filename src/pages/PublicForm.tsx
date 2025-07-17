@@ -14,7 +14,10 @@ import { Loader2, Utensils } from 'lucide-react';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
-  phone: z.string().min(10, 'Telefone deve ter pelo menos 10 dígitos'),
+  phone: z.string().min(8, 'Telefone deve ter pelo menos 8 dígitos').regex(
+    /^(\+41|0041|\+55|0055|\(\d{2}\)|\d{2}|\d{1,4})[0-9\s\-\(\)]{6,15}$/,
+    'Formato de telefone inválido (aceita Brasil, Suíça e outros formatos internacionais)'
+  ),
   email: z.string().email('Email inválido').optional().or(z.literal('')),
   notes: z.string().optional(),
 });
