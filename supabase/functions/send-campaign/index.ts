@@ -18,9 +18,17 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Starting campaign send process...');
+    
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error('Supabase environment variables not set');
+      throw new Error('Server configuration error');
+    }
+    
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Initialize Resend client
