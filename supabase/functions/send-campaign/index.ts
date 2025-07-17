@@ -292,30 +292,39 @@ async function sendViaTwilio(type: string, contact: any, message: string) {
   // Format phone number to international format for Brazil
   let formattedPhone = contact.phone;
   
-  // Remove any non-digit characters
-  formattedPhone = formattedPhone.replace(/\D/g, '');
-  
-  // Handle Brazilian phone numbers more robustly
-  if (formattedPhone.length === 10) {
-    // Local Brazilian landline (10 digits) - add country code +55
-    formattedPhone = '+55' + formattedPhone;
-  } else if (formattedPhone.length === 11) {
-    // Local Brazilian mobile (11 digits) - add country code +55
-    formattedPhone = '+55' + formattedPhone;
-  } else if (formattedPhone.length === 12 && formattedPhone.startsWith('55')) {
-    // Already has 55 country code, just add +
-    formattedPhone = '+' + formattedPhone;
-  } else if (formattedPhone.length === 13 && formattedPhone.startsWith('55')) {
-    // 13 digits starting with 55, add +
-    formattedPhone = '+' + formattedPhone;
-  } else if (!formattedPhone.startsWith('+')) {
-    // International number without +, add it
-    formattedPhone = '+' + formattedPhone;
+  // Remove any non-digit characters except + if it's at the beginning
+  formattedPhone = formattedPhone.replace(/[^\d+]/g, '');
+  if (formattedPhone.includes('+') && !formattedPhone.startsWith('+')) {
+    formattedPhone = formattedPhone.replace(/\+/g, '');
   }
   
-  // Validate phone number format
-  if (!formattedPhone.match(/^\+\d{10,15}$/)) {
-    throw new Error(`Invalid phone number format: ${contact.phone} (formatted as: ${formattedPhone})`);
+  // Remove any leading zeros
+  formattedPhone = formattedPhone.replace(/^0+/, '');
+  
+  // Handle Brazilian phone numbers more robustly
+  if (!formattedPhone.startsWith('+')) {
+    if (formattedPhone.startsWith('55')) {
+      // Already has country code
+      formattedPhone = '+' + formattedPhone;
+    } else if (formattedPhone.length === 10) {
+      // Local Brazilian landline (10 digits) - add country code +55
+      formattedPhone = '+55' + formattedPhone;
+    } else if (formattedPhone.length === 11) {
+      // Local Brazilian mobile (11 digits) - add country code +55
+      formattedPhone = '+55' + formattedPhone;
+    } else if (formattedPhone.length === 9) {
+      // Missing area code - this is invalid, throw error
+      throw new Error(`Phone number appears to be missing area code: ${contact.phone}`);
+    } else {
+      // International number without +, add it
+      formattedPhone = '+' + formattedPhone;
+    }
+  }
+  
+  // Validate phone number format (must be between 10-15 digits total)
+  const digitsOnly = formattedPhone.replace(/\D/g, '');
+  if (digitsOnly.length < 10 || digitsOnly.length > 15) {
+    throw new Error(`Invalid phone number format: ${contact.phone} (formatted as: ${formattedPhone}) - must have 10-15 digits`);
   }
 
   console.log(`Sending ${type} message via Twilio to ${contact.name} at ${formattedPhone}...`);
