@@ -1,221 +1,377 @@
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { 
-  Search, 
-  Filter, 
-  Download, 
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { useContacts } from "@/hooks/useContacts";
+import ContactDialog from "@/components/ContactDialog";
+import { Link } from "react-router-dom";
+import {
+  Users,
   Plus,
-  Mail,
+  Search,
+  Filter,
   Phone,
-  Calendar,
-  MapPin
-} from 'lucide-react';
+  Mail,
+  Edit,
+  Trash2,
+  QrCode,
+  Download,
+  Calendar
+} from "lucide-react";
 
-export default function Contacts() {
-  const [searchTerm, setSearchTerm] = useState('');
+const Contacts = () => {
+  const {
+    contacts,
+    loading,
+    searchTerm,
+    setSearchTerm,
+    filterSource,
+    setFilterSource,
+    addContact,
+    updateContact,
+    deleteContact
+  } = useContacts();
 
-  const contacts = [
-    {
-      id: 1,
-      name: 'Marie Dubois',
-      email: 'marie.dubois@email.com',
-      phone: '+33 6 12 34 56 78',
-      firstVisit: '2024-01-15',
-      lastVisit: '2024-01-20',
-      visits: 3,
-      rating: 5,
-      status: 'active',
-      referral: false
-    },
-    {
-      id: 2,
-      name: 'Pierre Martin',
-      email: 'p.martin@email.com',
-      phone: '+33 6 87 65 43 21',
-      firstVisit: '2024-01-10',
-      lastVisit: '2024-01-18',
-      visits: 5,
-      rating: 4,
-      status: 'active',
-      referral: true
-    },
-    {
-      id: 3,
-      name: 'Sophie Laurent',
-      email: 'sophie.l@email.com',
-      phone: '+33 6 98 76 54 32',
-      firstVisit: '2024-01-12',
-      lastVisit: '2024-01-12',
-      visits: 1,
-      rating: 5,
-      status: 'new',
-      referral: false
-    },
-    {
-      id: 4,
-      name: 'Jean Moreau',
-      email: 'j.moreau@email.com',
-      phone: '+33 6 11 22 33 44',
-      firstVisit: '2023-12-20',
-      lastVisit: '2024-01-05',
-      visits: 8,
-      rating: 4,
-      status: 'inactive',
-      referral: true
+  const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
+
+  const handleSelectContact = (contactId: string) => {
+    setSelectedContacts(prev =>
+      prev.includes(contactId)
+        ? prev.filter(id => id !== contactId)
+        : [...prev, contactId]
+    );
+  };
+
+  const handleSelectAll = () => {
+    setSelectedContacts(
+      selectedContacts.length === contacts.length ? [] : contacts.map(c => c.id)
+    );
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+
+  const getSourceLabel = (source: string) => {
+    switch (source) {
+      case 'qr_scan':
+        return 'QR Code';
+      case 'manual':
+        return 'Manual';
+      case 'import':
+        return 'Importação';
+      default:
+        return source;
     }
-  ];
+  };
 
-  const stats = [
-    { title: 'Total contacts', value: contacts.length, icon: Mail },
-    { title: 'Nouveaux ce mois', value: 12, icon: Plus },
-    { title: 'Clients fidèles', value: 45, icon: Calendar },
-    { title: 'Parrainages', value: 8, icon: MapPin },
-  ];
+  const getSourceIcon = (source: string) => {
+    switch (source) {
+      case 'qr_scan':
+        return <QrCode className="w-3 h-3" />;
+      default:
+        return <Users className="w-3 h-3" />;
+    }
+  };
 
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    contact.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Contacts</h1>
-          <p className="text-muted-foreground mt-2">
-            Gérez votre base de contacts clients
-          </p>
+    <div className="min-h-screen bg-background p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Contatos</h1>
+            <p className="text-muted-foreground">
+              Gerencie sua base de clientes
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <Link to="/qr">
+              <Button variant="outline" className="flex items-center gap-2">
+                <QrCode className="w-4 h-4" />
+                Escanear QR
+              </Button>
+            </Link>
+            <ContactDialog
+              onSave={addContact}
+              trigger={
+                <Button className="flex items-center gap-2">
+                  <Plus className="w-4 h-4" />
+                  Novo Contato
+                </Button>
+              }
+            />
+          </div>
         </div>
-        <Button className="bg-gradient-primary shadow-warm">
-          <Download className="w-4 h-4 mr-2" />
-          Exporter
-        </Button>
-      </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <Card key={stat.title}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                <Icon className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Total</p>
+                  <p className="text-2xl font-bold">{contacts.length}</p>
+                </div>
+                <Users className="w-8 h-8 text-primary opacity-80" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Via QR Code</p>
+                  <p className="text-2xl font-bold">
+                    {contacts.filter(c => c.source === 'qr_scan').length}
+                  </p>
+                </div>
+                <QrCode className="w-8 h-8 text-secondary opacity-80" />
+              </div>
+            </CardContent>
+          </Card>
 
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Liste des contacts</CardTitle>
-          <CardDescription>
-            Tous vos contacts collectés via les QR codes
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex space-x-4 mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input
-                placeholder="Rechercher par nom ou email..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Com Email</p>
+                  <p className="text-2xl font-bold">
+                    {contacts.filter(c => c.email).length}
+                  </p>
+                </div>
+                <Mail className="w-8 h-8 text-accent opacity-80" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Esta Semana</p>
+                  <p className="text-2xl font-bold">
+                    {contacts.filter(c => {
+                      const weekAgo = new Date();
+                      weekAgo.setDate(weekAgo.getDate() - 7);
+                      return new Date(c.created_at) > weekAgo;
+                    }).length}
+                  </p>
+                </div>
+                <Calendar className="w-8 h-8 text-muted-foreground opacity-80" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Filters */}
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Buscar por nome, telefone ou email..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex gap-3">
+                <Select value={filterSource} onValueChange={setFilterSource}>
+                  <SelectTrigger className="w-40">
+                    <Filter className="w-4 h-4 mr-2" />
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas as origens</SelectItem>
+                    <SelectItem value="qr_scan">QR Code</SelectItem>
+                    <SelectItem value="manual">Manual</SelectItem>
+                    <SelectItem value="import">Importação</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {selectedContacts.length > 0 && (
+                  <Button variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Exportar ({selectedContacts.length})
+                  </Button>
+                )}
+              </div>
             </div>
-            <Button variant="outline">
-              <Filter className="w-4 h-4 mr-2" />
-              Filtres
-            </Button>
-          </div>
+          </CardContent>
+        </Card>
 
-          {/* Contacts Table */}
-          <div className="border rounded-lg">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Client</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead>Visites</TableHead>
-                  <TableHead>Note</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead>Dernière visite</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredContacts.map((contact) => (
-                  <TableRow key={contact.id}>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <div>
-                          <p className="font-medium">{contact.name}</p>
-                          {contact.referral && (
-                            <Badge variant="secondary" className="text-xs">
-                              Parrain
-                            </Badge>
+        {/* Contacts List */}
+        <Card>
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <CardTitle>
+                {contacts.length > 0 ? `${contacts.length} contatos` : 'Nenhum contato encontrado'}
+              </CardTitle>
+              {contacts.length > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSelectAll}
+                >
+                  {selectedContacts.length === contacts.length ? 'Desmarcar todos' : 'Selecionar todos'}
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            {contacts.length > 0 ? (
+              <div className="space-y-3">
+                {contacts.map((contact) => (
+                  <div
+                    key={contact.id}
+                    className={`flex items-center justify-between p-4 rounded-lg border transition-colors hover:bg-muted/50 ${
+                      selectedContacts.includes(contact.id) ? 'bg-muted border-primary' : ''
+                    }`}
+                  >
+                    <div className="flex items-center space-x-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedContacts.includes(contact.id)}
+                        onChange={() => handleSelectContact(contact.id)}
+                        className="rounded"
+                      />
+                      
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Users className="w-6 h-6 text-primary" />
+                      </div>
+                      
+                      <div>
+                        <h3 className="font-medium text-lg">{contact.name}</h3>
+                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                          <div className="flex items-center space-x-1">
+                            <Phone className="w-3 h-3" />
+                            <span>{contact.phone}</span>
+                          </div>
+                          {contact.email && (
+                            <div className="flex items-center space-x-1">
+                              <Mail className="w-3 h-3" />
+                              <span>{contact.email}</span>
+                            </div>
                           )}
+                          <div className="flex items-center space-x-1">
+                            {getSourceIcon(contact.source)}
+                            <span>{getSourceLabel(contact.source)}</span>
+                          </div>
                         </div>
+                        {contact.tags && contact.tags.length > 0 && (
+                          <div className="flex gap-1 mt-2">
+                            {contact.tags.map((tag, index) => (
+                              <Badge key={index} variant="secondary" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="space-y-1">
-                        <div className="flex items-center text-sm">
-                          <Mail className="w-3 h-3 mr-1" />
-                          {contact.email}
-                        </div>
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Phone className="w-3 h-3 mr-1" />
-                          {contact.phone}
-                        </div>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <div className="text-right text-sm text-muted-foreground">
+                        <p>Adicionado em</p>
+                        <p>{formatDate(contact.created_at)}</p>
                       </div>
-                    </TableCell>
-                    <TableCell>{contact.visits}</TableCell>
-                    <TableCell>
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <span
-                            key={i}
-                            className={`text-sm ${
-                              i < contact.rating ? 'text-yellow-400' : 'text-gray-300'
-                            }`}
-                          >
-                            ★
-                          </span>
-                        ))}
+                      
+                      <div className="flex space-x-1">
+                        <ContactDialog
+                          contact={contact}
+                          onSave={(data) => updateContact(contact.id, data)}
+                          trigger={
+                            <Button variant="ghost" size="sm">
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                          }
+                        />
+                        
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Tem certeza que deseja excluir o contato "{contact.name}"? 
+                                Esta ação não pode ser desfeita.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => deleteContact(contact.id)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Excluir
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge 
-                        variant={
-                          contact.status === 'active' ? 'default' : 
-                          contact.status === 'new' ? 'secondary' : 'outline'
-                        }
-                      >
-                        {contact.status === 'active' ? 'Actif' : 
-                         contact.status === 'new' ? 'Nouveau' : 'Inactif'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {new Date(contact.lastVisit).toLocaleDateString('fr-FR')}
-                    </TableCell>
-                  </TableRow>
+                    </div>
+                  </div>
                 ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <Users className="w-16 h-16 mx-auto text-muted-foreground mb-4 opacity-50" />
+                <h3 className="text-lg font-medium mb-2">Nenhum contato encontrado</h3>
+                <p className="text-muted-foreground mb-6">
+                  {searchTerm || filterSource !== 'all' 
+                    ? 'Tente ajustar os filtros ou termos de busca'
+                    : 'Comece escaneando QR codes ou adicionando contatos manualmente'
+                  }
+                </p>
+                <div className="flex justify-center gap-3">
+                  <Link to="/qr">
+                    <Button variant="outline">
+                      <QrCode className="w-4 h-4 mr-2" />
+                      Escanear QR Code
+                    </Button>
+                  </Link>
+                  <ContactDialog
+                    onSave={addContact}
+                    trigger={
+                      <Button>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Adicionar Contato
+                      </Button>
+                    }
+                  />
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
-}
+};
+
+export default Contacts;
