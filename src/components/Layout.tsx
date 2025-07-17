@@ -1,13 +1,15 @@
 import { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/useAuth';
 import { 
   ChefHat, 
   QrCode, 
   BarChart3, 
   Settings,
   Users,
-  MessageSquare 
+  MessageSquare,
+  LogOut
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -16,6 +18,7 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
+  const { user, signOut } = useAuth();
   const isActive = (path: string) => location.pathname === path;
 
   const navigation = [
@@ -60,16 +63,28 @@ export default function Layout({ children }: LayoutProps) {
             </nav>
 
             <div className="flex items-center space-x-4">
-              <Link to="/login">
-                <Button variant="ghost" size="sm">
-                  Connexion
-                </Button>
-              </Link>
-              <Link to="/signup">
-                <Button variant="default" size="sm" className="bg-gradient-primary shadow-warm">
-                  Inscription
-                </Button>
-              </Link>
+              {user ? (
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm text-muted-foreground">
+                    Olá, {user.email}
+                  </span>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={signOut}
+                    className="flex items-center space-x-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Sair</span>
+                  </Button>
+                </div>
+              ) : (
+                <Link to="/auth">
+                  <Button variant="default" size="sm" className="bg-gradient-primary shadow-warm">
+                    Entrar
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
