@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.51.0";
+import { Resend } from "npm:resend@2.0.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -21,6 +22,10 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Initialize Resend client
+    const resendApiKey = Deno.env.get('RESEND_API_KEY');
+    const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
     // Get the authorization header
     const authHeader = req.headers.get('Authorization');
@@ -120,9 +125,8 @@ serve(async (req) => {
 
     for (const contact of contacts) {
       try {
-        // Simulate sending process
-        // In a real implementation, you would integrate with SMS/WhatsApp/Email providers
-        await simulateSend(campaign.campaign_type, contact, campaign.message);
+        // Send message based on campaign type
+        await sendMessage(campaign.campaign_type, contact, campaign.message, resend);
         
         // Update campaign send status
         await supabase
@@ -205,20 +209,62 @@ serve(async (req) => {
   }
 });
 
-// Simulate sending function (replace with real integrations)
-async function simulateSend(type: string, contact: any, message: string) {
-  // Simulate processing time
-  await new Promise(resolve => setTimeout(resolve, 100));
+// Real message sending function
+async function sendMessage(type: string, contact: any, message: string, resend: any) {
+  console.log(`Sending ${type} message to ${contact.name}...`);
   
-  // Simulate random failures (5% failure rate)
-  if (Math.random() < 0.05) {
-    throw new Error(`Failed to send ${type} message`);
+  switch (type) {
+    case 'email':
+      if (!contact.email) {
+        throw new Error('Contact does not have an email address');
+      }
+      
+      if (!resend) {
+        throw new Error('Resend API key not configured');
+      }
+      
+      try {
+        const emailResponse = await resend.emails.send({
+          from: 'Restaurant <onboarding@resend.dev>',
+          to: [contact.email],
+          subject: 'Mensagem do Restaurante',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #333;">Olá ${contact.name}!</h2>
+              <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                ${message.replace(/\n/g, '<br>')}
+              </div>
+              <p style="color: #666; font-size: 14px;">
+                Esta mensagem foi enviada pelo seu restaurante favorito.
+              </p>
+            </div>
+          `
+        });
+        
+        console.log(`Email sent successfully to ${contact.email}:`, emailResponse.id);
+      } catch (error) {
+        console.error(`Failed to send email to ${contact.email}:`, error);
+        throw new Error(`Failed to send email: ${error.message}`);
+      }
+      break;
+      
+    case 'sms':
+      if (!contact.phone) {
+        throw new Error('Contact does not have a phone number');
+      }
+      
+      // SMS not implemented yet - needs Twilio integration
+      throw new Error('SMS sending not yet configured. Please add Twilio API keys.');
+      
+    case 'whatsapp':
+      if (!contact.phone) {
+        throw new Error('Contact does not have a phone number');
+      }
+      
+      // WhatsApp not implemented yet - needs Twilio/Meta integration
+      throw new Error('WhatsApp sending not yet configured. Please add WhatsApp Business API keys.');
+      
+    default:
+      throw new Error(`Unsupported message type: ${type}`);
   }
-  
-  // In a real implementation, you would:
-  // - For SMS: Use Twilio, MessageBird, or similar
-  // - For WhatsApp: Use WhatsApp Business API
-  // - For Email: Use SendGrid, Mailgun, or similar
-  
-  console.log(`Simulated ${type} send to ${contact.name}: ${message}`);
 }
