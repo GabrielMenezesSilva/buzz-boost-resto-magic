@@ -249,6 +249,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      copy_default_templates_to_user: {
+        Args: { target_user_id: string }
+        Returns: undefined
+      }
       generate_unique_qr_code: {
         Args: Record<PropertyKey, never>
         Returns: string

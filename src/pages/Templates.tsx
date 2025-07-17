@@ -8,6 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useTemplates } from '@/hooks/useTemplates';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import { 
   Plus, 
   Edit,
@@ -49,6 +51,7 @@ export default function Templates() {
   });
 
   const { toast } = useToast();
+  const { user } = useAuth();
   const { 
     templates, 
     isLoading, 
@@ -56,8 +59,34 @@ export default function Templates() {
     updateTemplate, 
     deleteTemplate,
     parseVariables,
-    getCategories
+    getCategories,
+    refreshTemplates
   } = useTemplates();
+
+  // Load default templates for new users
+  const loadDefaultTemplates = async () => {
+    if (!user) return;
+    
+    try {
+      const { error } = await supabase.rpc('copy_default_templates_to_user', {
+        target_user_id: user.id
+      });
+      
+      if (error) throw error;
+      
+      await refreshTemplates();
+      toast({
+        title: "Succès",
+        description: "Templates par défaut ajoutés avec succès",
+      });
+    } catch (error) {
+      toast({
+        title: "Erreur", 
+        description: "Impossible de charger les templates par défaut",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -319,15 +348,24 @@ export default function Templates() {
               <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium mb-2">Aucun template</h3>
               <p className="text-muted-foreground mb-4">
-                Créez votre premier template pour faciliter la création de campagnes.
+                Créez votre premier template ou utilisez nos templates professionnels.
               </p>
-              <Button 
-                onClick={() => setShowCreateForm(true)}
-                className="bg-gradient-primary shadow-warm"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Créer un template
-              </Button>
+              <div className="flex gap-3 justify-center">
+                <Button 
+                  onClick={() => setShowCreateForm(true)}
+                  className="bg-gradient-primary shadow-warm"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Créer un template
+                </Button>
+                <Button 
+                  onClick={loadDefaultTemplates}
+                  variant="outline"
+                >
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  Charger templates pro
+                </Button>
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
