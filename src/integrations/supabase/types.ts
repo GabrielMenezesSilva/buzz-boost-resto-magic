@@ -161,6 +161,7 @@ export type Database = {
           id: string
           owner_name: string | null
           phone: string | null
+          qr_code: string
           restaurant_name: string | null
           updated_at: string
           user_id: string
@@ -170,6 +171,7 @@ export type Database = {
           id?: string
           owner_name?: string | null
           phone?: string | null
+          qr_code?: string
           restaurant_name?: string | null
           updated_at?: string
           user_id: string
@@ -179,6 +181,7 @@ export type Database = {
           id?: string
           owner_name?: string | null
           phone?: string | null
+          qr_code?: string
           restaurant_name?: string | null
           updated_at?: string
           user_id?: string
@@ -190,7 +193,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_unique_qr_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

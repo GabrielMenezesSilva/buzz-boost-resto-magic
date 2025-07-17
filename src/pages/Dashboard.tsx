@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import QRGenerator from "@/components/QRGenerator";
 import { Link } from "react-router-dom";
 import {
   Users,
@@ -13,7 +14,8 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
-  Plus
+  Plus,
+  QrCode
 } from "lucide-react";
 
 const Dashboard = () => {
@@ -283,6 +285,9 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* QR Code Generator */}
+        <QRGenerator />
 
         {/* Quick Actions */}
         <Card>
