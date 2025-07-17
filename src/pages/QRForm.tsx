@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { PhoneInput } from "@/components/ui/phone-input";
+import { InternationalPhoneInput } from "@/components/ui/international-phone-input";
 import { useQRScanner } from "@/hooks/useQRScanner";
 import { useContacts } from "@/hooks/useContacts";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +30,7 @@ interface ContactForm {
   email: string;
   notes: string;
   tags: string[];
+  country_code: string;
 }
 
 const QRForm = () => {
@@ -43,7 +44,8 @@ const QRForm = () => {
     phone: '',
     email: '',
     notes: '',
-    tags: []
+    tags: [],
+    country_code: 'BR'
   });
   const [newTag, setNewTag] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -140,7 +142,8 @@ const QRForm = () => {
         phone: '',
         email: '',
         notes: '',
-        tags: []
+        tags: [],
+        country_code: 'BR'
       });
       setScannedData('');
       setShowForm(false);
@@ -160,7 +163,8 @@ const QRForm = () => {
       phone: '',
       email: '',
       notes: '',
-      tags: []
+      tags: [],
+      country_code: 'BR'
     });
   };
 
@@ -301,11 +305,16 @@ const QRForm = () => {
                     />
                   </div>
 
-                  <PhoneInput
+                  <InternationalPhoneInput
                     id="phone"
                     value={contactForm.phone}
-                    onChange={(value) => setContactForm(prev => ({ ...prev, phone: value }))}
+                    onChange={(value, country) => setContactForm(prev => ({ 
+                      ...prev, 
+                      phone: value,
+                      country_code: country.code
+                    }))}
                     label="Telefone"
+                    defaultCountry={contactForm.country_code}
                     required
                   />
 

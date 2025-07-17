@@ -11,6 +11,7 @@ interface Contact {
   source: string;
   notes?: string;
   tags?: string[];
+  country_code?: string;
   last_contact_date?: string;
   created_at: string;
   updated_at: string;

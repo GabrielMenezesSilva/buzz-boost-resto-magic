@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { PhoneInput } from "@/components/ui/phone-input";
+import { InternationalPhoneInput } from "@/components/ui/international-phone-input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, X } from "lucide-react";
 
@@ -17,6 +17,7 @@ interface Contact {
   source: string;
   notes?: string;
   tags?: string[];
+  country_code?: string;
 }
 
 interface ContactDialogProps {
@@ -33,7 +34,8 @@ const ContactDialog = ({ contact, onSave, trigger }: ContactDialogProps) => {
     email: contact?.email || '',
     source: contact?.source || 'manual',
     notes: contact?.notes || '',
-    tags: contact?.tags || []
+    tags: contact?.tags || [],
+    country_code: contact?.country_code || 'BR'
   });
   const [newTag, setNewTag] = useState('');
   const [loading, setLoading] = useState(false);
@@ -54,7 +56,8 @@ const ContactDialog = ({ contact, onSave, trigger }: ContactDialogProps) => {
           email: '',
           source: 'manual',
           notes: '',
-          tags: []
+          tags: [],
+          country_code: 'BR'
         });
       }
     }
@@ -103,11 +106,16 @@ const ContactDialog = ({ contact, onSave, trigger }: ContactDialogProps) => {
             />
           </div>
 
-          <PhoneInput
+          <InternationalPhoneInput
             id="phone"
             value={formData.phone}
-            onChange={(value) => setFormData(prev => ({ ...prev, phone: value }))}
+            onChange={(value, country) => setFormData(prev => ({ 
+              ...prev, 
+              phone: value,
+              country_code: country.code
+            }))}
             label="Telefone"
+            defaultCountry={formData.country_code}
             required
           />
 
