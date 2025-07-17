@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { MessageSquare, Send, Target, BarChart3 } from 'lucide-react';
 import { useAuth } from './useAuth';
 
 interface Campaign {
@@ -28,7 +29,7 @@ interface CreateCampaignData {
 interface CampaignStats {
   title: string;
   value: string;
-  icon: any;
+  icon: React.ComponentType<any>;
 }
 
 export function useCampaigns() {
@@ -135,12 +136,12 @@ export function useCampaigns() {
     {
       title: 'Campagnes actives',
       value: campaigns.filter(c => c.status === 'active' || c.status === 'sending').length.toString(),
-      icon: 'MessageSquare'
+      icon: MessageSquare
     },
     {
       title: 'Messages envoyés',
       value: campaigns.reduce((sum, c) => sum + (c.total_recipients || 0), 0).toString(),
-      icon: 'Send'
+      icon: Send
     },
     {
       title: 'Taux de succès',
@@ -150,12 +151,12 @@ export function useCampaigns() {
              Math.max(campaigns.reduce((sum, c) => sum + (c.total_recipients || 0), 0), 1)) * 100
           )}%`
         : '0%',
-      icon: 'Target'
+      icon: Target
     },
     {
       title: 'Campagnes totales',
       value: campaigns.length.toString(),
-      icon: 'BarChart3'
+      icon: BarChart3
     }
   ];
 
