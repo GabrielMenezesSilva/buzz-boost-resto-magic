@@ -150,9 +150,10 @@ export default function Campaigns() {
         description: "Campagne envoyée avec succès",
       });
     } catch (error) {
+      console.error('Error sending campaign:', error);
       toast({
         title: "Erreur",
-        description: "Impossible d'envoyer la campagne",
+        description: error instanceof Error ? error.message : "Impossible d'envoyer la campagne",
         variant: "destructive",
       });
     }
