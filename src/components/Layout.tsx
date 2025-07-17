@@ -20,9 +20,17 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
-  const { user, signOut, loading } = useAuth();
+  const { user, profile, signOut, loading } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isActive = (path: string) => location.pathname === path;
+
+  // Get display name - prefer owner_name, fallback to email
+  const getDisplayName = () => {
+    if (profile?.owner_name) {
+      return profile.owner_name;
+    }
+    return user?.email || 'Usuário';
+  };
 
   // Navigation for non-authenticated users
   const publicNavigation = [
@@ -94,7 +102,7 @@ export default function Layout({ children }: LayoutProps) {
               {user ? (
                 <div className="flex items-center space-x-4">
                   <span className="text-sm text-muted-foreground">
-                    Olá, {user.email}
+                    Olá, {getDisplayName()}
                   </span>
                   <Button 
                     variant="ghost" 
@@ -146,7 +154,7 @@ export default function Layout({ children }: LayoutProps) {
                   <div className="space-y-3">
                     <div className="px-3 py-2">
                       <p className="text-sm text-muted-foreground">
-                        Logado como: {user.email}
+                        Logado como: {getDisplayName()}
                       </p>
                     </div>
                     <Button 
