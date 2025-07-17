@@ -60,12 +60,16 @@ export default function Layout({ children }: LayoutProps) {
             </nav>
 
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
-                Connexion
-              </Button>
-              <Button variant="default" size="sm" className="bg-gradient-primary shadow-warm">
-                Inscription
-              </Button>
+              <Link to="/login">
+                <Button variant="ghost" size="sm">
+                  Connexion
+                </Button>
+              </Link>
+              <Link to="/signup">
+                <Button variant="default" size="sm" className="bg-gradient-primary shadow-warm">
+                  Inscription
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
