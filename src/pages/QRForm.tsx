@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { useQRScanner } from "@/hooks/useQRScanner";
 import { useContacts } from "@/hooks/useContacts";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +15,6 @@ import {
   Camera,
   CameraOff,
   User,
-  Phone,
   Mail,
   Save,
   ArrowLeft,
@@ -301,20 +301,13 @@ const QRForm = () => {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Telefone *</Label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="phone"
-                        value={contactForm.phone}
-                        onChange={(e) => setContactForm(prev => ({ ...prev, phone: e.target.value }))}
-                        placeholder="(11) 99999-9999"
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
+                  <PhoneInput
+                    id="phone"
+                    value={contactForm.phone}
+                    onChange={(value) => setContactForm(prev => ({ ...prev, phone: value }))}
+                    label="Telefone"
+                    required
+                  />
 
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>

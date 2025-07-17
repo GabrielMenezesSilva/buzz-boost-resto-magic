@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, X } from "lucide-react";
 
@@ -102,16 +103,13 @@ const ContactDialog = ({ contact, onSave, trigger }: ContactDialogProps) => {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="phone">Telefone *</Label>
-            <Input
-              id="phone"
-              value={formData.phone}
-              onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-              placeholder="(11) 99999-9999"
-              required
-            />
-          </div>
+          <PhoneInput
+            id="phone"
+            value={formData.phone}
+            onChange={(value) => setFormData(prev => ({ ...prev, phone: value }))}
+            label="Telefone"
+            required
+          />
 
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
