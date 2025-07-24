@@ -46,7 +46,7 @@ export default function DashboardOverview() {
         <div>
           <h2 className="text-2xl font-bold">Visão Geral</h2>
           <p className="text-muted-foreground">
-            Dashboard principal do seu RestauBoost
+            Dashboard principal do seu DopplerDine
           </p>
         </div>
         <div className="flex gap-3">

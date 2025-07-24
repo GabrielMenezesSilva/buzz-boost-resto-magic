@@ -64,7 +64,7 @@ export default function Layout({ children }: LayoutProps) {
               <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center">
                 <ChefHat className="w-6 h-6 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold text-foreground">RestauBoost</span>
+              <span className="text-xl font-bold text-foreground">DopplerDine</span>
             </Link>
 
             <nav className="hidden md:flex space-x-8">
@@ -205,7 +205,7 @@ export default function Layout({ children }: LayoutProps) {
                 <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
                   <ChefHat className="w-5 h-5 text-primary-foreground" />
                 </div>
-                <span className="text-lg font-bold">RestauBoost</span>
+                <span className="text-lg font-bold">DopplerDine</span>
               </div>
               <p className="text-muted-foreground text-sm max-w-md">
                 {t('footer.description')}
@@ -234,7 +234,7 @@ export default function Layout({ children }: LayoutProps) {
           </div>
           
           <div className="border-t border-border mt-8 pt-8 text-center text-sm text-muted-foreground">
-            © 2024 RestauBoost. {t('footer.allRights')}
+            © 2024 DopplerDine. {t('footer.allRights')}
           </div>
         </div>
       </footer>

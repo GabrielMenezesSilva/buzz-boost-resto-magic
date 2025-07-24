@@ -1,6 +1,6 @@
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 
-type Language = 'fr' | 'en';
+type Language = 'fr' | 'en' | 'it' | 'de';
 
 interface LanguageContextType {
   language: Language;
@@ -147,6 +147,142 @@ const translations = {
     'footer.onlineHelp': 'Online help',
     'footer.allRights': 'All rights reserved.',
     'footer.description': 'Increase your revenue on low-traffic days with our customer loyalty and targeted marketing solution.',
+  },
+  it: {
+    // Navigation
+    'nav.home': 'Home',
+    'nav.plans': 'Prezzi',
+    'nav.generateQr': 'Genera QR',
+    'nav.dashboard': 'Dashboard',
+    'nav.contacts': 'Contatti',
+    'nav.campaigns': 'Campagne',
+    'nav.templates': 'Modelli',
+    'nav.login': 'Accedi',
+    'nav.logout': 'Esci',
+    
+    // Auth
+    'auth.hello': 'Ciao',
+    'auth.loggedAs': 'Connesso come',
+    'auth.user': 'Utente',
+    
+    // Plans page
+    'plans.badge': 'Sistema di Marketing Premium',
+    'plans.title': 'Rivoluziona il Marketing del Tuo Ristorante',
+    'plans.subtitle': 'Cattura contatti, costruisci relazioni e aumenta le tue vendite con la nostra piattaforma completa di marketing digitale per ristoranti.',
+    'plans.whyChoose': 'Perché scegliere la nostra piattaforma?',
+    'plans.captureMore': 'Cattura Più Clienti',
+    'plans.captureDesc': 'Trasforma i visitatori in contatti con QR code strategici',
+    'plans.directComm': 'Comunicazione Diretta',
+    'plans.directCommDesc': 'Invia campagne SMS personalizzate ai tuoi clienti',
+    'plans.measurableResults': 'Risultati Misurabili',
+    'plans.measurableDesc': 'Traccia le metriche e ottimizza le tue campagne marketing',
+    'plans.singlePlan': 'Piano Unico, Funzionalità Complete',
+    'plans.transformDesc': 'Tutto ciò di cui hai bisogno per trasformare il tuo ristorante',
+    'plans.mostPopular': 'Più Popolare',
+    'plans.professional': 'Piano Professionale',
+    'plans.forRestaurants': 'Per i ristoranti che vogliono crescere',
+    'plans.perMonth': '/mese',
+    'plans.startNow': 'Inizia Ora',
+    'plans.cancelAnytime': 'Cancella in qualsiasi momento • Support 24/7 • Nessun costo nascosto',
+    'plans.joinRestaurants': 'Unisciti ai ristoranti che stanno già crescendo',
+    'plans.contactIncrease': 'Aumento nella cattura di contatti',
+    'plans.openRate': 'Tasso di apertura campagne SMS',
+    'plans.customerReturn': 'Ritorno dei clienti',
+    'plans.readyTransform': 'Pronto a trasformare il tuo ristorante?',
+    'plans.seeResults': 'Inizia oggi e vedi i risultati in 30 giorni o meno',
+    'plans.startTransformation': 'Inizia La Mia Trasformazione',
+    
+    // Features
+    'features.qrCode': 'QR Code personalizzato per il tuo ristorante',
+    'features.unlimitedCapture': 'Cattura illimitata di contatti clienti',
+    'features.smsCompaigns': 'Campagne SMS professionali',
+    'features.templates': 'Modelli di messaggi personalizzabili',
+    'features.analytics': 'Analytics dettagliate delle campagne',
+    'features.contactManagement': 'Gestione completa dei contatti',
+    'features.prioritySupport': 'Supporto tecnico prioritario',
+    'features.autoUpdates': 'Aggiornamenti automatici',
+    
+    // Footer
+    'footer.features': 'Funzionalità',
+    'footer.contactCollection': 'Raccolta contatti',
+    'footer.automatedCampaigns': 'Campagne automatizzate',
+    'footer.referralProgram': 'Programma di referral',
+    'footer.detailedAnalytics': 'Analytics dettagliate',
+    'footer.support': 'Supporto',
+    'footer.documentation': 'Documentazione',
+    'footer.contact': 'Contatto',
+    'footer.faq': 'FAQ',
+    'footer.onlineHelp': 'Aiuto online',
+    'footer.allRights': 'Tutti i diritti riservati.',
+    'footer.description': 'Aumenta i tuoi ricavi nei giorni di basso traffico con la nostra soluzione di fidelizzazione e marketing mirato.',
+  },
+  de: {
+    // Navigation
+    'nav.home': 'Startseite',
+    'nav.plans': 'Preise',
+    'nav.generateQr': 'QR Generieren',
+    'nav.dashboard': 'Dashboard',
+    'nav.contacts': 'Kontakte',
+    'nav.campaigns': 'Kampagnen',
+    'nav.templates': 'Vorlagen',
+    'nav.login': 'Anmelden',
+    'nav.logout': 'Abmelden',
+    
+    // Auth
+    'auth.hello': 'Hallo',
+    'auth.loggedAs': 'Angemeldet als',
+    'auth.user': 'Benutzer',
+    
+    // Plans page
+    'plans.badge': 'Premium Marketing System',
+    'plans.title': 'Revolutionieren Sie Ihr Restaurant Marketing',
+    'plans.subtitle': 'Erfassen Sie Kontakte, bauen Sie Beziehungen auf und steigern Sie Ihre Verkäufe mit unserer kompletten digitalen Marketing-Plattform für Restaurants.',
+    'plans.whyChoose': 'Warum unsere Plattform wählen?',
+    'plans.captureMore': 'Mehr Kunden Erfassen',
+    'plans.captureDesc': 'Verwandeln Sie Besucher in Kontakte mit strategischen QR-Codes',
+    'plans.directComm': 'Direkte Kommunikation',
+    'plans.directCommDesc': 'Senden Sie personalisierte SMS-Kampagnen an Ihre Kunden',
+    'plans.measurableResults': 'Messbare Ergebnisse',
+    'plans.measurableDesc': 'Verfolgen Sie Metriken und optimieren Sie Ihre Marketing-Kampagnen',
+    'plans.singlePlan': 'Ein Plan, Vollständige Funktionen',
+    'plans.transformDesc': 'Alles was Sie brauchen, um Ihr Restaurant zu transformieren',
+    'plans.mostPopular': 'Am Beliebtesten',
+    'plans.professional': 'Professional Plan',
+    'plans.forRestaurants': 'Für Restaurants, die wachsen wollen',
+    'plans.perMonth': '/Monat',
+    'plans.startNow': 'Jetzt Starten',
+    'plans.cancelAnytime': 'Jederzeit kündbar • 24/7 Support • Keine versteckten Gebühren',
+    'plans.joinRestaurants': 'Schließen Sie sich Restaurants an, die bereits wachsen',
+    'plans.contactIncrease': 'Steigerung der Kontakterfassung',
+    'plans.openRate': 'SMS-Kampagnen Öffnungsrate',
+    'plans.customerReturn': 'Kundenrückkehr',
+    'plans.readyTransform': 'Bereit, Ihr Restaurant zu transformieren?',
+    'plans.seeResults': 'Starten Sie heute und sehen Sie Ergebnisse in 30 Tagen oder weniger',
+    'plans.startTransformation': 'Meine Transformation Starten',
+    
+    // Features
+    'features.qrCode': 'Benutzerdefinierter QR-Code für Ihr Restaurant',
+    'features.unlimitedCapture': 'Unbegrenzte Kundenkontakt-Erfassung',
+    'features.smsCompaigns': 'Professionelle SMS-Kampagnen',
+    'features.templates': 'Anpassbare Nachrichten-Vorlagen',
+    'features.analytics': 'Detaillierte Kampagnen-Analytics',
+    'features.contactManagement': 'Vollständige Kontaktverwaltung',
+    'features.prioritySupport': 'Priority technischer Support',
+    'features.autoUpdates': 'Automatische Updates',
+    
+    // Footer
+    'footer.features': 'Funktionen',
+    'footer.contactCollection': 'Kontaktsammlung',
+    'footer.automatedCampaigns': 'Automatisierte Kampagnen',
+    'footer.referralProgram': 'Empfehlungsprogramm',
+    'footer.detailedAnalytics': 'Detaillierte Analytics',
+    'footer.support': 'Support',
+    'footer.documentation': 'Dokumentation',
+    'footer.contact': 'Kontakt',
+    'footer.faq': 'FAQ',
+    'footer.onlineHelp': 'Online-Hilfe',
+    'footer.allRights': 'Alle Rechte vorbehalten.',
+    'footer.description': 'Steigern Sie Ihren Umsatz an schwächeren Tagen mit unserer Kundenbindungs- und gezielten Marketing-Lösung.',
   }
 };
 
@@ -155,7 +291,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('language') as Language;
-    if (savedLanguage && (savedLanguage === 'fr' || savedLanguage === 'en')) {
+    if (savedLanguage && ['fr', 'en', 'it', 'de'].includes(savedLanguage)) {
       setLanguageState(savedLanguage);
     }
   }, []);
