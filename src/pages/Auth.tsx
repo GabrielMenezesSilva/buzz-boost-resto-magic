@@ -6,11 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useEffect } from "react";
 import { Mail, Lock, User, Store } from "lucide-react";
 
 const Auth = () => {
   const { signIn, signUp, user, loading } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   
   const [loginData, setLoginData] = useState({
@@ -74,7 +76,7 @@ const Auth = () => {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">DopplerDine</CardTitle>
           <CardDescription>
-            Faça login ou crie sua conta para começar
+            {t('auth.loginSubtitle')}
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -79,6 +79,37 @@ const translations = {
     'footer.onlineHelp': 'Aide en ligne',
     'footer.allRights': 'Tous droits réservés.',
     'footer.description': 'Augmentez votre chiffre d\'affaires les jours de faible affluence grâce à notre solution de fidélisation et de marketing ciblé.',
+    
+    // Home page
+    'home.heroTitle': 'Boostez votre restaurant les jours calmes',
+    'home.heroSubtitle': 'Collectez des contacts via QR code et envoyez des promotions ciblées pour augmenter votre chiffre d\'affaires jusqu\'à 40%.',
+    'home.tryNow': 'Essayer maintenant',
+    'home.seeDemo': 'Voir la démo',
+    'home.openRate': 'Taux d\'ouverture SMS',
+    'home.revenueIncrease': 'Augmentation du CA',
+    'home.quickSetup': 'Configuration rapide',
+    'home.support': 'Support client',
+    'home.innovative': 'Solution innovante',
+    'home.featuresTitle': 'Tout ce dont vous avez besoin',
+    'home.featuresSubtitle': 'Une solution complète pour transformer vos jours de faible affluence en opportunités de croissance.',
+    'home.howItWorks': 'Comment ça marche',
+    'home.simpleSteps': 'Simple et efficace en 3 étapes',
+    'home.ctaTitle': 'Prêt à booster votre restaurant ?',
+    'home.ctaSubtitle': 'Rejoignez des centaines de restaurateurs qui ont déjà augmenté leur chiffre d\'affaires.',
+    'home.testFree': 'Tester gratuitement',
+    'home.scheduleDemo': 'Planifier une démo',
+    
+    // Dashboard
+    'dashboard.title': 'Tableau de bord',
+    'dashboard.subtitle': 'Aperçu de votre entreprise et métriques de performance',
+    'dashboard.overview': 'Aperçu',
+    'dashboard.overviewTitle': 'Aperçu',
+    'dashboard.overviewSubtitle': 'Tableau de bord principal de votre DopplerDine',
+    'dashboard.scanQr': 'Scanner QR',
+    'dashboard.newCampaign': 'Nouvelle Campagne',
+    
+    // Auth
+    'auth.loginSubtitle': 'Connectez-vous ou créez votre compte pour commencer',
   },
   en: {
     // Navigation
@@ -147,6 +178,37 @@ const translations = {
     'footer.onlineHelp': 'Online help',
     'footer.allRights': 'All rights reserved.',
     'footer.description': 'Increase your revenue on low-traffic days with our customer loyalty and targeted marketing solution.',
+    
+    // Home page
+    'home.heroTitle': 'Boost your restaurant on slow days',
+    'home.heroSubtitle': 'Collect contacts via QR code and send targeted promotions to increase your revenue by up to 40%.',
+    'home.tryNow': 'Try now',
+    'home.seeDemo': 'See demo',
+    'home.openRate': 'SMS open rate',
+    'home.revenueIncrease': 'Revenue increase',
+    'home.quickSetup': 'Quick setup',
+    'home.support': 'Customer support',
+    'home.innovative': 'Innovative solution',
+    'home.featuresTitle': 'Everything you need',
+    'home.featuresSubtitle': 'A complete solution to transform your low-traffic days into growth opportunities.',
+    'home.howItWorks': 'How it works',
+    'home.simpleSteps': 'Simple and effective in 3 steps',
+    'home.ctaTitle': 'Ready to boost your restaurant?',
+    'home.ctaSubtitle': 'Join hundreds of restaurateurs who have already increased their revenue.',
+    'home.testFree': 'Test for free',
+    'home.scheduleDemo': 'Schedule demo',
+    
+    // Dashboard
+    'dashboard.title': 'Dashboard',
+    'dashboard.subtitle': 'Overview of your business and performance metrics',
+    'dashboard.overview': 'Overview',
+    'dashboard.overviewTitle': 'Overview',
+    'dashboard.overviewSubtitle': 'Main dashboard of your DopplerDine',
+    'dashboard.scanQr': 'Scan QR',
+    'dashboard.newCampaign': 'New Campaign',
+    
+    // Auth
+    'auth.loginSubtitle': 'Log in or create your account to get started',
   },
   it: {
     // Navigation
@@ -215,6 +277,37 @@ const translations = {
     'footer.onlineHelp': 'Aiuto online',
     'footer.allRights': 'Tutti i diritti riservati.',
     'footer.description': 'Aumenta i tuoi ricavi nei giorni di basso traffico con la nostra soluzione di fidelizzazione e marketing mirato.',
+    
+    // Home page
+    'home.heroTitle': 'Potenzia il tuo ristorante nei giorni tranquilli',
+    'home.heroSubtitle': 'Raccogli contatti tramite QR code e invia promozioni mirate per aumentare i tuoi ricavi fino al 40%.',
+    'home.tryNow': 'Prova ora',
+    'home.seeDemo': 'Vedi demo',
+    'home.openRate': 'Tasso apertura SMS',
+    'home.revenueIncrease': 'Aumento ricavi',
+    'home.quickSetup': 'Configurazione rapida',
+    'home.support': 'Supporto clienti',
+    'home.innovative': 'Soluzione innovativa',
+    'home.featuresTitle': 'Tutto quello di cui hai bisogno',
+    'home.featuresSubtitle': 'Una soluzione completa per trasformare i tuoi giorni di basso traffico in opportunità di crescita.',
+    'home.howItWorks': 'Come funziona',
+    'home.simpleSteps': 'Semplice ed efficace in 3 passaggi',
+    'home.ctaTitle': 'Pronto a potenziare il tuo ristorante?',
+    'home.ctaSubtitle': 'Unisciti a centinaia di ristoratori che hanno già aumentato i loro ricavi.',
+    'home.testFree': 'Testa gratis',
+    'home.scheduleDemo': 'Programma demo',
+    
+    // Dashboard
+    'dashboard.title': 'Dashboard',
+    'dashboard.subtitle': 'Panoramica della tua attività e metriche di performance',
+    'dashboard.overview': 'Panoramica',
+    'dashboard.overviewTitle': 'Panoramica',
+    'dashboard.overviewSubtitle': 'Dashboard principale del tuo DopplerDine',
+    'dashboard.scanQr': 'Scansiona QR',
+    'dashboard.newCampaign': 'Nuova Campagna',
+    
+    // Auth
+    'auth.loginSubtitle': 'Accedi o crea il tuo account per iniziare',
   },
   de: {
     // Navigation
@@ -283,6 +376,37 @@ const translations = {
     'footer.onlineHelp': 'Online-Hilfe',
     'footer.allRights': 'Alle Rechte vorbehalten.',
     'footer.description': 'Steigern Sie Ihren Umsatz an schwächeren Tagen mit unserer Kundenbindungs- und gezielten Marketing-Lösung.',
+    
+    // Home page
+    'home.heroTitle': 'Boosten Sie Ihr Restaurant an ruhigen Tagen',
+    'home.heroSubtitle': 'Sammeln Sie Kontakte über QR-Code und senden Sie gezielte Aktionen, um Ihren Umsatz um bis zu 40% zu steigern.',
+    'home.tryNow': 'Jetzt testen',
+    'home.seeDemo': 'Demo ansehen',
+    'home.openRate': 'SMS-Öffnungsrate',
+    'home.revenueIncrease': 'Umsatzsteigerung',
+    'home.quickSetup': 'Schnelle Einrichtung',
+    'home.support': 'Kundensupport',
+    'home.innovative': 'Innovative Lösung',
+    'home.featuresTitle': 'Alles was Sie brauchen',
+    'home.featuresSubtitle': 'Eine komplette Lösung, um Ihre schwachen Tage in Wachstumschancen zu verwandeln.',
+    'home.howItWorks': 'Wie es funktioniert',
+    'home.simpleSteps': 'Einfach und effektiv in 3 Schritten',
+    'home.ctaTitle': 'Bereit, Ihr Restaurant zu boosten?',
+    'home.ctaSubtitle': 'Schließen Sie sich Hunderten von Gastronomen an, die bereits ihre Umsätze gesteigert haben.',
+    'home.testFree': 'Kostenlos testen',
+    'home.scheduleDemo': 'Demo planen',
+    
+    // Dashboard
+    'dashboard.title': 'Dashboard',
+    'dashboard.subtitle': 'Überblick über Ihr Unternehmen und Leistungsmetriken',
+    'dashboard.overview': 'Überblick',
+    'dashboard.overviewTitle': 'Überblick',
+    'dashboard.overviewSubtitle': 'Haupt-Dashboard Ihres DopplerDine',
+    'dashboard.scanQr': 'QR scannen',
+    'dashboard.newCampaign': 'Neue Kampagne',
+    
+    // Auth
+    'auth.loginSubtitle': 'Melden Sie sich an oder erstellen Sie Ihr Konto, um zu beginnen',
   }
 };
 

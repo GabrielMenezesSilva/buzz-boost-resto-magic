@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import QRGenerator from '@/components/QRGenerator';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Link } from 'react-router-dom';
 import { 
   Users, 
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 
 export default function DashboardOverview() {
+  const { t } = useLanguage();
   const { stats, recentContacts, recentCampaigns, loading, refetch } = useDashboardData();
 
   if (loading) {
@@ -44,20 +46,20 @@ export default function DashboardOverview() {
       {/* Header with actions */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold">Visão Geral</h2>
+          <h2 className="text-2xl font-bold">{t('dashboard.overviewTitle')}</h2>
           <p className="text-muted-foreground">
-            Dashboard principal do seu DopplerDine
+            {t('dashboard.overviewSubtitle')}
           </p>
         </div>
         <div className="flex gap-3">
           <Link to="/qr">
             <Button variant="outline" size="sm">
-              Escanear QR
+              {t('dashboard.scanQr')}
             </Button>
           </Link>
           <Link to="/campaigns">
             <Button size="sm" className="bg-gradient-primary shadow-warm">
-              Nova Campanha
+              {t('dashboard.newCampaign')}
             </Button>
           </Link>
         </div>

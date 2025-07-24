@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { 
   QrCode, 
   MessageSquare, 
@@ -17,6 +18,8 @@ import {
 import restaurantHero from '@/assets/restaurant-hero.jpg';
 
 export default function Home() {
+  const { t } = useLanguage();
+
   const features = [
     {
       icon: QrCode,
@@ -51,10 +54,10 @@ export default function Home() {
   ];
 
   const stats = [
-    { value: "95%", label: "Taux d'ouverture SMS" },
-    { value: "+40%", label: "Augmentation du CA" },
-    { value: "3 min", label: "Configuration rapide" },
-    { value: "24/7", label: "Support client" }
+    { value: "95%", label: t('home.openRate') },
+    { value: "+40%", label: t('home.revenueIncrease') },
+    { value: "3 min", label: t('home.quickSetup') },
+    { value: "24/7", label: t('home.support') }
   ];
 
   return (
@@ -68,14 +71,13 @@ export default function Home() {
               <div className="space-y-4">
                 <Badge variant="secondary" className="bg-primary/10 text-primary">
                   <Zap className="w-3 h-3 mr-1" />
-                  Solution innovante
+                  {t('home.innovative')}
                 </Badge>
                 <h1 className="text-4xl lg:text-6xl font-bold text-foreground leading-tight">
-                  Boostez votre restaurant les 
-                  <span className="text-primary"> jours calmes</span>
+                  {t('home.heroTitle')}
                 </h1>
                 <p className="text-xl text-muted-foreground max-w-lg">
-                  Collectez des contacts via QR code et envoyez des promotions ciblées pour augmenter votre chiffre d'affaires jusqu'à 40%.
+                  {t('home.heroSubtitle')}
                 </p>
               </div>
               
@@ -83,11 +85,11 @@ export default function Home() {
                 <Button size="lg" className="bg-gradient-primary shadow-warm text-lg px-8">
                   <Link to="/qr" className="flex items-center space-x-2">
                     <QrCode className="w-5 h-5" />
-                    <span>Essayer maintenant</span>
+                    <span>{t('home.tryNow')}</span>
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" className="text-lg px-8">
-                  Voir la démo
+                  {t('home.seeDemo')}
                 </Button>
               </div>
 
@@ -118,13 +120,13 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-16">
             <Badge variant="secondary" className="bg-primary/10 text-primary">
-              Fonctionnalités
+              {t('footer.features')}
             </Badge>
             <h2 className="text-3xl lg:text-4xl font-bold text-foreground">
-              Tout ce dont vous avez besoin
+              {t('home.featuresTitle')}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Une solution complète pour transformer vos jours de faible affluence en opportunités de croissance.
+              {t('home.featuresSubtitle')}
             </p>
           </div>
 
@@ -156,10 +158,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-16">
             <Badge variant="secondary" className="bg-primary/10 text-primary">
-              Comment ça marche
+              {t('home.howItWorks')}
             </Badge>
             <h2 className="text-3xl lg:text-4xl font-bold text-foreground">
-              Simple et efficace en 3 étapes
+              {t('home.simpleSteps')}
             </h2>
           </div>
 
@@ -203,20 +205,20 @@ export default function Home() {
           <div className="bg-gradient-primary rounded-3xl p-12 shadow-warm">
             <div className="space-y-6">
               <h2 className="text-3xl lg:text-4xl font-bold text-primary-foreground">
-                Prêt à booster votre restaurant ?
+                {t('home.ctaTitle')}
               </h2>
               <p className="text-xl text-primary-foreground/90">
-                Rejoignez des centaines de restaurateurs qui ont déjà augmenté leur chiffre d'affaires.
+                {t('home.ctaSubtitle')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                 <Button size="lg" variant="secondary" className="text-lg px-8">
                   <Link to="/qr" className="flex items-center space-x-2">
                     <Smartphone className="w-5 h-5" />
-                    <span>Tester gratuitement</span>
+                    <span>{t('home.testFree')}</span>
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" className="text-lg px-8 border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground hover:text-primary">
-                  Planifier une démo
+                  {t('home.scheduleDemo')}
                 </Button>
               </div>
             </div>
