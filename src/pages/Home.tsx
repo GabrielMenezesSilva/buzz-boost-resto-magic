@@ -3,65 +3,51 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { 
-  QrCode, 
-  MessageSquare, 
-  Users, 
-  TrendingUp, 
-  Zap, 
-  Shield,
-  Smartphone,
-  BarChart3,
-  Gift,
-  Target
-} from 'lucide-react';
+import { QrCode, MessageSquare, Users, TrendingUp, Zap, Shield, Smartphone, BarChart3, Gift, Target } from 'lucide-react';
 import restaurantHero from '@/assets/restaurant-hero.jpg';
-
 export default function Home() {
-  const { t } = useLanguage();
-
-  const features = [
-    {
-      icon: QrCode,
-      title: "QR Code Intelligent",
-      description: "Placez simplement un QR code sur vos tables ou tickets de caisse pour commencer à collecter des contacts."
-    },
-    {
-      icon: MessageSquare,
-      title: "SMS/WhatsApp Automatisés",
-      description: "Envoyez des promotions flash les jours de faible affluence avec notre système d'envoi automatisé."
-    },
-    {
-      icon: Users,
-      title: "Programme de Parrainage",
-      description: "Récompensez vos clients fidèles quand ils amènent de nouveaux clients dans votre restaurant."
-    },
-    {
-      icon: BarChart3,
-      title: "Analytics Détaillés",
-      description: "Suivez vos performances, taux de conversion et ROI de vos campagnes en temps réel."
-    },
-    {
-      icon: Gift,
-      title: "Récompenses Personnalisées",
-      description: "Offrez des entrées, boissons ou réductions pour inciter vos clients à revenir."
-    },
-    {
-      icon: Target,
-      title: "Ciblage Intelligent",
-      description: "Identifiez automatiquement vos jours de faible affluence et envoyez des promotions ciblées."
-    }
-  ];
-
-  const stats = [
-    { value: "95%", label: t('home.openRate') },
-    { value: "+40%", label: t('home.revenueIncrease') },
-    { value: "3 min", label: t('home.quickSetup') },
-    { value: "24/7", label: t('home.support') }
-  ];
-
-  return (
-    <div className="space-y-20">
+  const {
+    t
+  } = useLanguage();
+  const features = [{
+    icon: QrCode,
+    title: "QR Code Intelligent",
+    description: "Placez simplement un QR code sur vos tables ou tickets de caisse pour commencer à collecter des contacts."
+  }, {
+    icon: MessageSquare,
+    title: "SMS/WhatsApp Automatisés",
+    description: "Envoyez des promotions flash les jours de faible affluence avec notre système d'envoi automatisé."
+  }, {
+    icon: Users,
+    title: "Programme de Parrainage",
+    description: "Récompensez vos clients fidèles quand ils amènent de nouveaux clients dans votre restaurant."
+  }, {
+    icon: BarChart3,
+    title: "Analytics Détaillés",
+    description: "Suivez vos performances, taux de conversion et ROI de vos campagnes en temps réel."
+  }, {
+    icon: Gift,
+    title: "Récompenses Personnalisées",
+    description: "Offrez des entrées, boissons ou réductions pour inciter vos clients à revenir."
+  }, {
+    icon: Target,
+    title: "Ciblage Intelligent",
+    description: "Identifiez automatiquement vos jours de faible affluence et envoyez des promotions ciblées."
+  }];
+  const stats = [{
+    value: "95%",
+    label: t('home.openRate')
+  }, {
+    value: "+40%",
+    label: t('home.revenueIncrease')
+  }, {
+    value: "3 min",
+    label: t('home.quickSetup')
+  }, {
+    value: "24/7",
+    label: t('home.support')
+  }];
+  return <div className="space-y-20">
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-orange-light/5 to-transparent"></div>
@@ -94,22 +80,16 @@ export default function Home() {
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-8">
-                {stats.map((stat, index) => (
-                  <div key={index} className="text-center">
+                {stats.map((stat, index) => <div key={index} className="text-center">
                     <div className="text-2xl font-bold text-primary">{stat.value}</div>
                     <div className="text-sm text-muted-foreground">{stat.label}</div>
-                  </div>
-                ))}
+                  </div>)}
               </div>
             </div>
             
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-primary rounded-3xl transform rotate-3 opacity-20"></div>
-              <img
-                src={restaurantHero}
-                alt="Restaurant moderne"
-                className="relative rounded-3xl shadow-2xl w-full h-auto transform -rotate-1 hover:rotate-0 transition-transform duration-500"
-              />
+              <img src={restaurantHero} alt="Restaurant moderne" className="relative rounded-3xl shadow-2xl w-full h-auto transform -rotate-1 hover:rotate-0 transition-transform duration-500" />
             </div>
           </div>
         </div>
@@ -132,9 +112,8 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <Card key={index} className="group hover:shadow-card-warm transition-all duration-300 border-border/50 hover:border-primary/20">
+            const Icon = feature.icon;
+            return <Card key={index} className="group hover:shadow-card-warm transition-all duration-300 border-border/50 hover:border-primary/20">
                   <CardHeader>
                     <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                       <Icon className="w-6 h-6 text-primary-foreground" />
@@ -146,9 +125,8 @@ export default function Home() {
                       {feature.description}
                     </CardDescription>
                   </CardContent>
-                </Card>
-              );
-            })}
+                </Card>;
+          })}
           </div>
         </div>
       </section>
@@ -217,7 +195,7 @@ export default function Home() {
                     <span>{t('home.testFree')}</span>
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="text-lg px-8 border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground hover:text-primary">
+                <Button size="lg" variant="outline" className="px-8 border-primary-foreground/20 hover:bg-primary-foreground text-lg text-gray-950">
                   {t('home.scheduleDemo')}
                 </Button>
               </div>
@@ -225,6 +203,5 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 }
