@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -23,6 +24,7 @@ import {
 } from "lucide-react";
 
 const Contacts = () => {
+  const { t } = useLanguage();
   const {
     contacts,
     loading,
@@ -95,9 +97,9 @@ const Contacts = () => {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Contatos</h1>
+            <h1 className="text-3xl font-bold text-foreground">{t('contacts.title')}</h1>
             <p className="text-muted-foreground">
-              Gerencie sua base de clientes
+              {t('contacts.subtitle')}
             </p>
           </div>
           <div className="flex gap-3">

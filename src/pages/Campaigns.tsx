@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
@@ -24,6 +25,7 @@ import {
 } from 'lucide-react';
 
 export default function Campaigns() {
+  const { t } = useLanguage();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
   const [templateVariables, setTemplateVariables] = useState<Record<string, string>>({});
@@ -180,9 +182,9 @@ export default function Campaigns() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Campagnes</h1>
+          <h1 className="text-3xl font-bold">{t('campaigns.title')}</h1>
           <p className="text-muted-foreground mt-2">
-            Gérez vos campagnes de marketing automatisées
+            {t('campaigns.subtitle')}
           </p>
         </div>
                 <Button 

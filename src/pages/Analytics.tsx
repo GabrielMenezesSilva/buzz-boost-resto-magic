@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   BarChart,
   Bar,
@@ -32,12 +33,6 @@ import {
   Download
 } from 'lucide-react';
 
-const TIME_RANGES = [
-  { value: '7d', label: 'Últimos 7 dias' },
-  { value: '30d', label: 'Últimos 30 dias' },
-  { value: '90d', label: 'Últimos 90 dias' },
-  { value: '365d', label: 'Último ano' }
-];
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8dd1e1'];
 
@@ -58,6 +53,14 @@ const TYPE_LABELS = {
 export default function Analytics() {
   const [timeRange, setTimeRange] = useState('30d');
   const { data, isLoading, refreshAnalytics } = useAnalytics(timeRange);
+  const { t } = useLanguage();
+
+  const TIME_RANGES = [
+    { value: '7d', label: t('analytics.last7days') },
+    { value: '30d', label: t('analytics.last30days') },
+    { value: '90d', label: t('analytics.last90days') },
+    { value: '365d', label: t('analytics.lastYear') }
+  ];
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -75,9 +78,9 @@ export default function Analytics() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold">📊 Analytics</h1>
+          <h1 className="text-3xl font-bold">📊 {t('analytics.title')}</h1>
           <p className="text-muted-foreground mt-2">
-            Acompanhe o desempenho das suas campanhas e contatos
+            {t('analytics.subtitle')}
           </p>
         </div>
         
@@ -102,7 +105,7 @@ export default function Analytics() {
             disabled={isLoading}
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-            Atualizar
+            {t('analytics.refresh')}
           </Button>
         </div>
       </div>
@@ -111,52 +114,52 @@ export default function Analytics() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Campanhas</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('analytics.totalCampaigns')}</CardTitle>
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{data.totalCampaigns}</div>
             <p className="text-xs text-muted-foreground">
-              No período selecionado
+              {t('analytics.selectedPeriod')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Contatos</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('analytics.totalContacts')}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{data.totalContacts}</div>
             <p className="text-xs text-muted-foreground">
-              Novos contatos adicionados
+              {t('analytics.newContactsAdded')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Mensagens Enviadas</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('analytics.messagesSent')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{data.totalSent}</div>
             <p className="text-xs text-muted-foreground">
-              Taxa de sucesso: {formatPercentage(data.successRate)}
+              {t('analytics.successRate')}: {formatPercentage(data.successRate)}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Custo Total</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('analytics.totalCost')}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(data.totalCost)}</div>
             <p className="text-xs text-muted-foreground">
-              Gastos com campanhas
+              {t('analytics.campaignExpenses')}
             </p>
           </CardContent>
         </Card>
@@ -167,9 +170,9 @@ export default function Analytics() {
         {/* Trend Chart */}
         <Card>
           <CardHeader>
-            <CardTitle>Tendência de Envios</CardTitle>
+            <CardTitle>{t('analytics.sendTrend')}</CardTitle>
             <CardDescription>
-              Últimos 7 dias - Enviadas vs Entregues
+              {t('analytics.sentVsDelivered')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -184,14 +187,14 @@ export default function Analytics() {
                   type="monotone" 
                   dataKey="sent" 
                   stroke="#8884d8" 
-                  name="Enviadas"
+                  name={t('analytics.sent')}
                   strokeWidth={2}
                 />
                 <Line 
                   type="monotone" 
                   dataKey="delivered" 
                   stroke="#82ca9d" 
-                  name="Entregues"
+                  name={t('analytics.delivered')}
                   strokeWidth={2}
                 />
               </LineChart>
@@ -202,9 +205,9 @@ export default function Analytics() {
         {/* Campaign Types Chart */}
         <Card>
           <CardHeader>
-            <CardTitle>Campanhas por Tipo</CardTitle>
+            <CardTitle>{t('analytics.campaignsByType')}</CardTitle>
             <CardDescription>
-              Distribuição dos tipos de campanha
+              {t('analytics.typeDistribution')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -238,9 +241,9 @@ export default function Analytics() {
         {/* Campaign Status */}
         <Card>
           <CardHeader>
-            <CardTitle>Status das Campanhas</CardTitle>
+            <CardTitle>{t('analytics.campaignStatus')}</CardTitle>
             <CardDescription>
-              Estado atual das campanhas
+              {t('analytics.currentState')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -265,16 +268,16 @@ export default function Analytics() {
         {/* Recent Activity */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Atividade Recente</CardTitle>
+            <CardTitle>{t('analytics.recentActivity')}</CardTitle>
             <CardDescription>
-              Últimas ações realizadas
+              {t('analytics.lastActions')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {data.recentActivity.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Nenhuma atividade recente</p>
+                <p>{t('analytics.noActivity')}</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -292,7 +295,7 @@ export default function Analytics() {
                       </div>
                     </div>
                     <Badge variant={activity.type === 'campaign' ? 'default' : 'secondary'}>
-                      {activity.type === 'campaign' ? 'Campanha' : 'Contato'}
+                      {activity.type === 'campaign' ? t('analytics.campaign') : t('analytics.contact')}
                     </Badge>
                   </div>
                 ))}
@@ -305,9 +308,9 @@ export default function Analytics() {
       {/* Success Rate Details */}
       <Card>
         <CardHeader>
-          <CardTitle>Detalhes de Performance</CardTitle>
+          <CardTitle>{t('analytics.performance')}</CardTitle>
           <CardDescription>
-            Métricas detalhadas de sucesso das campanhas
+            {t('analytics.detailedMetrics')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -316,21 +319,21 @@ export default function Analytics() {
               <div className="text-3xl font-bold text-green-600">
                 {formatPercentage(data.successRate)}
               </div>
-              <p className="text-sm text-muted-foreground">Taxa de Entrega</p>
+              <p className="text-sm text-muted-foreground">{t('analytics.deliveryRate')}</p>
             </div>
             
             <div className="text-center">
               <div className="text-3xl font-bold text-blue-600">
                 {data.totalSent > 0 ? (data.totalCost / data.totalSent).toFixed(4) : '0.0000'}
               </div>
-              <p className="text-sm text-muted-foreground">Custo por Mensagem (R$)</p>
+              <p className="text-sm text-muted-foreground">{t('analytics.costPerMessage')}</p>
             </div>
             
             <div className="text-center">
               <div className="text-3xl font-bold text-purple-600">
                 {data.totalContacts > 0 ? (data.totalSent / data.totalContacts).toFixed(1) : '0.0'}
               </div>
-              <p className="text-sm text-muted-foreground">Mensagens por Contato</p>
+              <p className="text-sm text-muted-foreground">{t('analytics.messagesPerContact')}</p>
             </div>
           </div>
         </CardContent>
