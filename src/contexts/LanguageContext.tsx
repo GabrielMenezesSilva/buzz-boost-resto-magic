@@ -673,6 +673,11 @@ const translations = {
     'templateCategories.event': 'Event',
     'templateCategories.special_offer': 'Special Offer',
     'templateCategories.feedback': 'Feedback',
+    
+    // Not Found
+    'notFound.title': '404',
+    'notFound.message': 'Oops! Page not found',
+    'notFound.returnHome': 'Return to Home',
   },
   it: {
     // Navigation

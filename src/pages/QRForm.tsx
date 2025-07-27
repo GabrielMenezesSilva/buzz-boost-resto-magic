@@ -10,6 +10,7 @@ import { useQRScanner } from "@/hooks/useQRScanner";
 import { useContacts } from "@/hooks/useContacts";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   QrCode,
   Camera,
@@ -37,6 +38,7 @@ const QRForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { addContact } = useContacts();
+  const { t } = useLanguage();
   
   const [scannedData, setScannedData] = useState<string>('');
   const [contactForm, setContactForm] = useState<ContactForm>({
@@ -114,11 +116,11 @@ const QRForm = () => {
     e.preventDefault();
     
     if (!contactForm.name || !contactForm.phone) {
-      toast({
-        title: "Campos obrigatórios",
-        description: "Nome e telefone são obrigatórios.",
-        variant: "destructive"
-      });
+        toast({
+          title: t('qrForm.requiredFields'),
+          description: t('qrForm.namePhoneRequired'),
+          variant: "destructive"
+        });
       return;
     }
 

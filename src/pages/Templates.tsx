@@ -20,6 +20,7 @@ import {
   Loader2,
   FileText
 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const CATEGORIES = [
   'general',
@@ -31,15 +32,6 @@ const CATEGORIES = [
   'feedback'
 ];
 
-const CATEGORY_LABELS = {
-  general: 'Général',
-  promotion: 'Promotion',
-  welcome: 'Bienvenue',
-  reminder: 'Rappel',
-  event: 'Événement',
-  special_offer: 'Offre spéciale',
-  feedback: 'Avis client'
-};
 
 export default function Templates() {
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -52,6 +44,7 @@ export default function Templates() {
 
   const { toast } = useToast();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { 
     templates, 
     isLoading, 
@@ -62,6 +55,11 @@ export default function Templates() {
     getCategories,
     refreshTemplates
   } = useTemplates();
+
+  // Get category label from translations
+  const getCategoryLabel = (category: string) => {
+    return t(`templateCategories.${category}`);
+  };
 
   // Load default templates for new users
   const loadDefaultTemplates = async () => {
@@ -76,13 +74,13 @@ export default function Templates() {
       
       await refreshTemplates();
       toast({
-        title: "Succès",
-        description: "Templates par défaut ajoutés avec succès",
+        title: t('templates.success'),
+        description: t('templates.defaultTemplatesAdded'),
       });
     } catch (error) {
       toast({
-        title: "Erreur", 
-        description: "Impossible de charger les templates par défaut",
+        title: t('templates.error'), 
+        description: t('templates.cannotLoadDefaults'),
         variant: "destructive",
       });
     }
@@ -93,8 +91,8 @@ export default function Templates() {
     
     if (!formData.name || !formData.message) {
       toast({
-        title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires",
+        title: t('templates.error'),
+        description: t('templates.fillRequired'),
         variant: "destructive",
       });
       return;
@@ -110,8 +108,8 @@ export default function Templates() {
         });
         setEditingTemplate(null);
         toast({
-          title: "Succès",
-          description: "Template modifié avec succès",
+          title: t('templates.success'),
+          description: t('templates.templateModified'),
         });
       } else {
         await createTemplate({
@@ -119,8 +117,8 @@ export default function Templates() {
           variables
         });
         toast({
-          title: "Succès",
-          description: "Template créé avec succès",
+          title: t('templates.success'),
+          description: t('templates.templateCreated'),
         });
       }
       
@@ -132,8 +130,8 @@ export default function Templates() {
       });
     } catch (error) {
       toast({
-        title: "Erreur",
-        description: "Impossible de sauvegarder le template",
+        title: t('templates.error'),
+        description: t('templates.cannotSave'),
         variant: "destructive",
       });
     }
@@ -153,13 +151,13 @@ export default function Templates() {
     try {
       await deleteTemplate(templateId);
       toast({
-        title: "Succès",
-        description: "Template supprimé avec succès",
+        title: t('templates.success'),
+        description: t('templates.templateDeleted'),
       });
     } catch (error) {
       toast({
-        title: "Erreur",
-        description: "Impossible de supprimer le template",
+        title: t('templates.error'),
+        description: t('templates.cannotDelete'),
         variant: "destructive",
       });
     }
@@ -168,8 +166,8 @@ export default function Templates() {
   const handleCopyTemplate = (message: string) => {
     navigator.clipboard.writeText(message);
     toast({
-      title: "Copié",
-      description: "Template copié dans le presse-papier",
+      title: t('templates.copied'),
+      description: t('templates.copiedToClipboard'),
     });
   };
 
@@ -188,9 +186,9 @@ export default function Templates() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Templates de Messages</h1>
+          <h1 className="text-3xl font-bold">{t('templates.title')}</h1>
           <p className="text-muted-foreground mt-2">
-            Créez et gérez vos templates de messages réutilisables
+            {t('templates.subtitle')}
           </p>
         </div>
         <Button 
@@ -198,7 +196,7 @@ export default function Templates() {
           className="bg-gradient-primary shadow-warm"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Nouveau template
+          {t('templates.newTemplate')}
         </Button>
       </div>
 
@@ -206,7 +204,7 @@ export default function Templates() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Templates</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('templates.totalTemplates')}</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -216,7 +214,7 @@ export default function Templates() {
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Catégories</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('templates.categories')}</CardTitle>
             <Tag className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -226,12 +224,12 @@ export default function Templates() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Plus Utilisé</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('templates.mostUsed')}</CardTitle>
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-sm font-medium">
-              {templates.length > 0 ? CATEGORY_LABELS[templates[0]?.category as keyof typeof CATEGORY_LABELS] || 'Général' : 'Aucun'}
+              {templates.length > 0 ? getCategoryLabel(templates[0]?.category) || t('templates.general') : t('templates.none')}
             </div>
           </CardContent>
         </Card>
@@ -242,37 +240,37 @@ export default function Templates() {
         <Card>
           <CardHeader>
             <CardTitle>
-              {editingTemplate ? 'Modifier le template' : 'Créer un nouveau template'}
+              {editingTemplate ? t('templates.editTemplate') : t('templates.createNewTemplate')}
             </CardTitle>
             <CardDescription>
-              Utilisez des variables avec la syntaxe: {'{'}{'{'} nomVariable {'}'}{'}'}
+              {t('templates.useVariables')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="templateName">Nom du template</Label>
+                  <Label htmlFor="templateName">{t('templates.templateName')}</Label>
                   <Input
                     id="templateName"
-                    placeholder="Ex: Promotion Lundi"
+                    placeholder={t('templates.templateNameExample')}
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="category">Catégorie</Label>
+                  <Label htmlFor="category">{t('templates.category')}</Label>
                   <Select 
                     value={formData.category} 
                     onValueChange={(value) => setFormData({...formData, category: value})}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner une catégorie" />
+                      <SelectValue placeholder={t('templates.selectCategory')} />
                     </SelectTrigger>
                     <SelectContent>
                       {CATEGORIES.map(category => (
                         <SelectItem key={category} value={category}>
-                          {CATEGORY_LABELS[category as keyof typeof CATEGORY_LABELS]}
+                          {getCategoryLabel(category)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -281,16 +279,16 @@ export default function Templates() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="message">Message du template</Label>
+                <Label htmlFor="message">{t('templates.templateMessage')}</Label>
                 <Textarea
                   id="message"
-                  placeholder="Ex: Bonjour {{nom}}, profitez de notre offre spéciale {{offre}} valable jusqu'au {{date}} !"
+                  placeholder={t('templates.messageExample')}
                   rows={4}
                   value={formData.message}
                   onChange={(e) => setFormData({...formData, message: e.target.value})}
                 />
                 <div className="flex flex-wrap gap-2 mt-2">
-                  <p className="text-sm text-muted-foreground">Variables détectées:</p>
+                  <p className="text-sm text-muted-foreground">{t('templates.variablesDetected')}</p>
                   {parseVariables(formData.message).map(variable => (
                     <Badge key={variable} variant="secondary" className="text-xs">
                       {'{'}{'{'}{variable}{'}'}{'}'}
@@ -308,12 +306,12 @@ export default function Templates() {
                   {isLoading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      {editingTemplate ? 'Modification...' : 'Création...'}
+                      {editingTemplate ? t('templates.modifying') : t('templates.creating')}
                     </>
                   ) : (
                     <>
                       {editingTemplate ? <Edit className="w-4 h-4 mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
-                      {editingTemplate ? 'Modifier' : 'Créer'} le template
+                      {editingTemplate ? t('templates.modify') : t('templates.create')} 
                     </>
                   )}
                 </Button>
@@ -322,7 +320,7 @@ export default function Templates() {
                   variant="outline"
                   onClick={cancelEdit}
                 >
-                  Annuler
+                  {t('templates.cancel')}
                 </Button>
               </div>
             </form>
@@ -333,9 +331,9 @@ export default function Templates() {
       {/* Templates List */}
       <Card>
         <CardHeader>
-          <CardTitle>Mes Templates</CardTitle>
+          <CardTitle>{t('templates.myTemplates')}</CardTitle>
           <CardDescription>
-            Gérez vos templates de messages réutilisables
+            {t('templates.manageTemplates')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -346,9 +344,9 @@ export default function Templates() {
           ) : templates.length === 0 ? (
             <div className="text-center py-8">
               <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">Aucun template</h3>
+              <h3 className="text-lg font-medium mb-2">{t('templates.noTemplates')}</h3>
               <p className="text-muted-foreground mb-4">
-                Créez votre premier template ou utilisez nos templates professionnels.
+                {t('templates.createFirstTemplate')}
               </p>
               <div className="flex gap-3 justify-center">
                 <Button 
@@ -356,14 +354,14 @@ export default function Templates() {
                   className="bg-gradient-primary shadow-warm"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Créer un template
+                  {t('templates.createTemplate')}
                 </Button>
                 <Button 
                   onClick={loadDefaultTemplates}
                   variant="outline"
                 >
                   <MessageSquare className="w-4 h-4 mr-2" />
-                  Charger templates pro
+                  {t('templates.loadProTemplates')}
                 </Button>
               </div>
             </div>
@@ -377,11 +375,11 @@ export default function Templates() {
                         <CardTitle className="text-lg">{template.name}</CardTitle>
                         <div className="flex items-center space-x-2 mt-2">
                           <Badge variant="outline" className="text-xs">
-                            {CATEGORY_LABELS[template.category as keyof typeof CATEGORY_LABELS]}
+                            {getCategoryLabel(template.category)}
                           </Badge>
                           {template.variables && template.variables.length > 0 && (
                             <Badge variant="secondary" className="text-xs">
-                              {template.variables.length} variable{template.variables.length > 1 ? 's' : ''}
+                              {template.variables.length} {template.variables.length > 1 ? t('templates.variables') : t('templates.variable')}
                             </Badge>
                           )}
                         </div>
@@ -395,7 +393,7 @@ export default function Templates() {
                     
                     {template.variables && template.variables.length > 0 && (
                       <div className="mb-4">
-                        <p className="text-xs text-muted-foreground mb-2">Variables:</p>
+                        <p className="text-xs text-muted-foreground mb-2">{t('templates.variables')}</p>
                         <div className="flex flex-wrap gap-1">
                           {template.variables.map(variable => (
                             <Badge key={variable} variant="outline" className="text-xs">
@@ -414,7 +412,7 @@ export default function Templates() {
                         className="flex-1"
                       >
                         <Copy className="w-4 h-4 mr-1" />
-                        Copier
+                        {t('templates.copy')}
                       </Button>
                       <Button 
                         variant="outline" 

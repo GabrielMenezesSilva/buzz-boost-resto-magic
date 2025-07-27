@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Utensils } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
@@ -33,6 +34,7 @@ export default function PublicForm() {
   const { qrCode } = useParams<{ qrCode: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [restaurantInfo, setRestaurantInfo] = useState<RestaurantInfo | null>(null);
@@ -66,21 +68,21 @@ export default function PublicForm() {
 
         if (error) {
           console.error('Error fetching restaurant:', error);
-          toast({
-            title: "Erro",
-            description: "Não foi possível carregar as informações do restaurante.",
-            variant: "destructive"
-          });
+        toast({
+          title: t('publicForm.error'),
+          description: t('publicForm.couldNotLoad'),
+          variant: "destructive"
+        });
           navigate('/');
           return;
         }
 
         if (!data) {
-          toast({
-            title: "QR Code inválido",
-            description: "Este QR code não é válido ou expirou.",
-            variant: "destructive"
-          });
+        toast({
+          title: t('publicForm.invalidQR'),
+          description: t('publicForm.invalidOrExpired'),
+          variant: "destructive"
+        });
           navigate('/');
           return;
         }
@@ -89,8 +91,8 @@ export default function PublicForm() {
       } catch (error) {
         console.error('Error:', error);
         toast({
-          title: "Erro",
-          description: "Ocorreu um erro inesperado.",
+          title: t('publicForm.error'),
+          description: t('publicForm.unexpectedError'),
           variant: "destructive"
         });
         navigate('/');
@@ -115,7 +117,7 @@ export default function PublicForm() {
         .single();
 
       if (profileError || !profileData) {
-        throw new Error('Restaurante não encontrado');
+        throw new Error(t('publicForm.restaurantNotFound'));
       }
 
       // Insert contact
@@ -136,8 +138,8 @@ export default function PublicForm() {
       }
 
       toast({
-        title: "Sucesso!",
-        description: `Obrigado ${data.name}! Seus dados foram salvos com sucesso.`,
+        title: t('publicForm.success'),
+        description: `${t('publicForm.thankYou')} ${data.name}! ${t('publicForm.dataSaved')}`,
       });
 
       // Redirect to a thank you page or clear form
@@ -148,8 +150,8 @@ export default function PublicForm() {
     } catch (error: any) {
       console.error('Error submitting form:', error);
       toast({
-        title: "Erro",
-        description: error.message || "Não foi possível salvar seus dados. Tente novamente.",
+        title: t('publicForm.error'),
+        description: error.message || t('publicForm.cannotSave'),
         variant: "destructive"
       });
     } finally {
@@ -162,7 +164,7 @@ export default function PublicForm() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
         <div className="flex items-center gap-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Carregando...</span>
+          <span>{t('publicForm.loading')}</span>
         </div>
       </div>
     );
@@ -185,7 +187,7 @@ export default function PublicForm() {
                 {restaurantInfo.restaurant_name}
               </CardTitle>
               <CardDescription className="text-base">
-                Deixe seus dados para receber ofertas exclusivas!
+                {t('publicForm.leaveData')}
               </CardDescription>
             </div>
           </CardHeader>
@@ -193,10 +195,10 @@ export default function PublicForm() {
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nome completo *</Label>
+                <Label htmlFor="name">{t('publicForm.fullName')} *</Label>
                 <Input
                   id="name"
-                  placeholder="Seu nome"
+                  placeholder={t('publicForm.yourName')}
                   {...register('name')}
                   className={errors.name ? 'border-destructive' : ''}
                 />
@@ -206,7 +208,7 @@ export default function PublicForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">WhatsApp/Telefone *</Label>
+                <Label htmlFor="phone">{t('publicForm.whatsappPhone')} *</Label>
                 <Input
                   id="phone"
                   placeholder="(11) 99999-9999"
@@ -219,7 +221,7 @@ export default function PublicForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email (opcional)</Label>
+                <Label htmlFor="email">{t('publicForm.emailOptional')}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -233,10 +235,10 @@ export default function PublicForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="notes">Comentários (opcional)</Label>
+                <Label htmlFor="notes">{t('publicForm.commentsOptional')}</Label>
                 <Textarea
                   id="notes"
-                  placeholder="Deixe um comentário..."
+                  placeholder={t('publicForm.leaveComment')}
                   rows={3}
                   {...register('notes')}
                 />
@@ -251,16 +253,16 @@ export default function PublicForm() {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Salvando...
+                    {t('publicForm.saving')}
                   </>
                 ) : (
-                  'Salvar meus dados'
+                  t('publicForm.saveData')
                 )}
               </Button>
             </form>
 
             <div className="mt-6 text-center text-sm text-muted-foreground">
-              <p>Seus dados estão seguros e serão usados apenas para ofertas especiais do {restaurantInfo.restaurant_name}.</p>
+              <p>{t('publicForm.dataSecure')} {restaurantInfo.restaurant_name}.</p>
             </div>
           </CardContent>
         </Card>
