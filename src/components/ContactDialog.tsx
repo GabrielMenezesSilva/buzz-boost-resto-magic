@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,6 +28,7 @@ interface ContactDialogProps {
 }
 
 const ContactDialog = ({ contact, onSave, trigger }: ContactDialogProps) => {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: contact?.name || '',
@@ -90,7 +92,7 @@ const ContactDialog = ({ contact, onSave, trigger }: ContactDialogProps) => {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {contact ? 'Editar Contato' : 'Novo Contato'}
+            {contact ? t('contact.editContact') : t('contact.newContact')}
           </DialogTitle>
         </DialogHeader>
         

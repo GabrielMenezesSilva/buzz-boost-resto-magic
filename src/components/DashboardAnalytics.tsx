@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
@@ -56,6 +57,7 @@ const TYPE_LABELS = {
 export default function DashboardAnalytics() {
   const [timeRange, setTimeRange] = useState('30d');
   const { data, isLoading, refreshAnalytics } = useAnalytics(timeRange);
+  const { t } = useLanguage();
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -73,9 +75,9 @@ export default function DashboardAnalytics() {
       {/* Controls */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold">📊 Analytics</h2>
+          <h2 className="text-2xl font-bold">📊 {t('analytics.title')}</h2>
           <p className="text-muted-foreground">
-            Métricas detalhadas de performance
+            {t('analytics.subtitle')}
           </p>
         </div>
         

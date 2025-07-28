@@ -68,52 +68,52 @@ export default function DashboardOverview() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Contatos</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.totalContacts')}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalContacts}</div>
             <p className="text-xs text-muted-foreground">
-              {stats.recentContacts > 0 && `+${stats.recentContacts} esta semana`}
+              {stats.recentContacts > 0 && `+${stats.recentContacts} ${t('dashboard.thisWeek')}`}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Campanhas Ativas</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.activeCampaigns')}</CardTitle>
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.activeCampaigns}</div>
             <p className="text-xs text-muted-foreground">
-              {stats.totalCampaigns} total
+              {stats.totalCampaigns} {t('dashboard.total')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Taxa de Conversão</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.conversionRate')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">85.5%</div>
             <p className="text-xs text-muted-foreground">
-              Últimos 30 dias
+              {t('dashboard.last30Days')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">QR Code Único</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.uniqueQr')}</CardTitle>
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">ABC123</div>
             <p className="text-xs text-muted-foreground">
-              Seu código de acesso
+              {t('dashboard.yourAccessCode')}
             </p>
           </CardContent>
         </Card>
@@ -124,16 +124,16 @@ export default function DashboardOverview() {
         {/* Recent Campaigns */}
         <Card>
           <CardHeader>
-            <CardTitle>Campanhas Recentes</CardTitle>
+            <CardTitle>{t('dashboard.recentCampaigns')}</CardTitle>
             <CardDescription>
-              Suas últimas campanhas criadas
+              {t('dashboard.recentCampaignsDesc')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {recentCampaigns.length === 0 ? (
               <div className="text-center py-6 text-muted-foreground">
                 <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Nenhuma campanha criada ainda</p>
+                <p>{t('dashboard.noCampaignsYet')}</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -143,7 +143,7 @@ export default function DashboardOverview() {
                       <p className="text-sm font-medium">{campaign.name}</p>
                       <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                         <Calendar className="h-3 w-3" />
-                        <span>{new Date(campaign.created_at).toLocaleDateString('pt-BR')}</span>
+                        <span>{new Date(campaign.created_at).toLocaleDateString()}</span>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -168,16 +168,16 @@ export default function DashboardOverview() {
         {/* Recent Contacts */}
         <Card>
           <CardHeader>
-            <CardTitle>Contatos Recentes</CardTitle>
+            <CardTitle>{t('dashboard.recentContacts')}</CardTitle>
             <CardDescription>
-              Novos contatos adicionados
+              {t('dashboard.recentContactsDesc')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {recentContacts.length === 0 ? (
               <div className="text-center py-6 text-muted-foreground">
                 <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Nenhum contato adicionado ainda</p>
+                <p>{t('dashboard.noContactsYet')}</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -196,7 +196,7 @@ export default function DashboardOverview() {
                       </div>
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      {new Date(contact.created_at).toLocaleDateString('pt-BR')}
+                      {new Date(contact.created_at).toLocaleDateString()}
                     </div>
                   </div>
                 ))}
@@ -212,9 +212,9 @@ export default function DashboardOverview() {
       {/* Quick Actions */}
       <Card>
         <CardHeader>
-          <CardTitle>Ações Rápidas</CardTitle>
+          <CardTitle>{t('dashboard.quickActions')}</CardTitle>
           <CardDescription>
-            Principais ações do seu dashboard
+            {t('dashboard.quickActionsDesc')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -222,9 +222,9 @@ export default function DashboardOverview() {
             <Link to="/qr" className="block">
               <div className="p-4 rounded-lg border border-border hover:bg-muted/50 transition-colors cursor-pointer text-center">
                 <QrCode className="w-8 h-8 mx-auto mb-2 text-primary" />
-                <h3 className="font-medium mb-1">Capturar Contato</h3>
+                <h3 className="font-medium mb-1">{t('dashboard.captureContact')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Escaneie QR code para adicionar novo cliente
+                  {t('dashboard.captureContactDesc')}
                 </p>
               </div>
             </Link>
@@ -232,9 +232,9 @@ export default function DashboardOverview() {
             <Link to="/campaigns" className="block">
               <div className="p-4 rounded-lg border border-border hover:bg-muted/50 transition-colors cursor-pointer text-center">
                 <MessageSquare className="w-8 h-8 mx-auto mb-2 text-primary" />
-                <h3 className="font-medium mb-1">Nova Campanha</h3>
+                <h3 className="font-medium mb-1">{t('dashboard.newCampaignAction')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Crie campanha de SMS/WhatsApp
+                  {t('dashboard.newCampaignDesc')}
                 </p>
               </div>
             </Link>
@@ -242,9 +242,9 @@ export default function DashboardOverview() {
             <Link to="/contacts" className="block">
               <div className="p-4 rounded-lg border border-border hover:bg-muted/50 transition-colors cursor-pointer text-center">
                 <Users className="w-8 h-8 mx-auto mb-2 text-primary" />
-                <h3 className="font-medium mb-1">Gerenciar Contatos</h3>
+                <h3 className="font-medium mb-1">{t('dashboard.manageContacts')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Visualize e organize sua base de clientes
+                  {t('dashboard.manageContactsDesc')}
                 </p>
               </div>
             </Link>
