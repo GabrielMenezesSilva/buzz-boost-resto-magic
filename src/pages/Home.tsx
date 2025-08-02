@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { QrCode, MessageSquare, Users, TrendingUp, Zap, Shield, Smartphone, BarChart3, Gift, Target } from 'lucide-react';
 import restaurantHero from '@/assets/restaurant-hero.jpg';
+import logo from '@/assets/logo.png';
 export default function Home() {
   const {
     t
@@ -54,6 +55,10 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
+              <div className="flex items-center space-x-4 mb-6">
+                <img src={logo} alt="Logo" className="w-12 h-12" />
+                <div className="text-2xl font-bold text-primary">RestaurantPro</div>
+              </div>
               <div className="space-y-4">
                 <Badge variant="secondary" className="bg-primary/10 text-primary">
                   <Zap className="w-3 h-3 mr-1" />
