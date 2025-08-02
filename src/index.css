@@ -7,23 +7,23 @@
 
 @layer base {
   :root {
-    --background: 210 51% 25%;
-    --foreground: 0 0% 98%;
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
 
-    --card: 210 51% 25%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
 
-    --popover: 210 51% 25%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
 
-    --primary: 82 39% 30%;
+    --primary: 210 51% 25%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 210 51% 30%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
-    --muted: 210 51% 35%;
-    --muted-foreground: 210 20% 70%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
     --accent: 82 39% 30%;
     --accent-foreground: 0 0% 98%;
@@ -31,11 +31,11 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 210 30% 40%;
-    --input: 210 30% 40%;
-    --ring: 82 39% 30%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 210 51% 25%;
 
-    /* New brand colors */
+    /* Brand colors */
     --brand-blue: 210 51% 25%;
     --brand-olive: 82 39% 30%;
     --brand-blue-light: 210 51% 35%;
@@ -47,9 +47,9 @@
     --gradient-warm: linear-gradient(135deg, hsl(210 51% 25%), hsl(82 39% 30%));
     
     /* Shadows */
-    --shadow-warm: 0 10px 30px -10px hsl(82 39% 30% / 0.3);
+    --shadow-warm: 0 10px 30px -10px hsl(210 51% 25% / 0.3);
     --shadow-elegant: 0 0 40px hsl(82 39% 30% / 0.1);
-    --shadow-card: 0 4px 24px -4px hsl(82 39% 30% / 0.15);
+    --shadow-card: 0 4px 24px -4px hsl(210 51% 25% / 0.15);
 
     --radius: 0.5rem;
 
