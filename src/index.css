@@ -7,49 +7,49 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --background: 210 51% 25%;
+    --foreground: 0 0% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card: 210 51% 25%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover: 210 51% 25%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 160 84% 39%;
+    --primary: 82 39% 30%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 210 51% 30%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 210 51% 35%;
+    --muted-foreground: 210 20% 70%;
 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 82 39% 30%;
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 160 84% 39%;
+    --border: 210 30% 40%;
+    --input: 210 30% 40%;
+    --ring: 82 39% 30%;
 
-    /* Modern restaurant theme colors */
-    --emerald-fresh: 160 84% 39%;
-    --teal-accent: 173 58% 39%;
-    --sage-light: 156 39% 85%;
-    --forest-deep: 160 100% 25%;
+    /* New brand colors */
+    --brand-blue: 210 51% 25%;
+    --brand-olive: 82 39% 30%;
+    --brand-blue-light: 210 51% 35%;
+    --brand-olive-light: 82 39% 40%;
     
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(160 84% 39%), hsl(160 84% 45%));
-    --gradient-secondary: linear-gradient(135deg, hsl(173 58% 39%), hsl(160 84% 39%));
-    --gradient-warm: linear-gradient(135deg, hsl(160 84% 39%), hsl(173 58% 39%));
+    --gradient-primary: linear-gradient(135deg, hsl(210 51% 25%), hsl(210 51% 30%));
+    --gradient-secondary: linear-gradient(135deg, hsl(82 39% 30%), hsl(82 39% 35%));
+    --gradient-warm: linear-gradient(135deg, hsl(210 51% 25%), hsl(82 39% 30%));
     
     /* Shadows */
-    --shadow-warm: 0 10px 30px -10px hsl(160 84% 39% / 0.3);
-    --shadow-elegant: 0 0 40px hsl(160 84% 39% / 0.1);
-    --shadow-card: 0 4px 24px -4px hsl(160 84% 39% / 0.15);
+    --shadow-warm: 0 10px 30px -10px hsl(82 39% 30% / 0.3);
+    --shadow-elegant: 0 0 40px hsl(82 39% 30% / 0.1);
+    --shadow-card: 0 4px 24px -4px hsl(82 39% 30% / 0.15);
 
     --radius: 0.5rem;
 
@@ -71,33 +71,33 @@
   }
 
   .dark {
-    --background: 240 10% 3.9%;
+    --background: 210 51% 15%;
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 3.9%;
+    --card: 210 51% 15%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 3.9%;
+    --popover: 210 51% 15%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 160 84% 39%;
-    --primary-foreground: 240 5.9% 10%;
+    --primary: 82 39% 40%;
+    --primary-foreground: 210 51% 15%;
 
-    --secondary: 240 3.7% 15.9%;
+    --secondary: 210 51% 20%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 210 51% 20%;
+    --muted-foreground: 210 20% 70%;
 
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 82 39% 40%;
+    --accent-foreground: 210 51% 15%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 160 84% 39%;
+    --border: 210 30% 25%;
+    --input: 210 30% 25%;
+    --ring: 82 39% 40%;
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
