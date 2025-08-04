@@ -326,6 +326,22 @@ const translations = {
     'qrForm.tip1': 'Placez le QR code sur vos tables',
     'qrForm.tip2': 'Ajoutez-le à vos menus',
     'qrForm.tip3': 'Affichez-le à l\'entrée de votre restaurant',
+    
+    // QR Generator
+    'qrGenerator.loadError': 'Impossible de charger le code QR',
+    'qrGenerator.shareDescription': 'Partagez ce code QR pour que les clients laissent leurs données',
+    'qrGenerator.directLink': 'Lien direct:',
+    'qrGenerator.downloadQr': 'Télécharger QR',
+    'qrGenerator.share': 'Partager',
+    'qrGenerator.howToUse': 'Comment utiliser:',
+    'qrGenerator.instruction1': '1. Imprimez ou montrez le code QR aux clients',
+    'qrGenerator.instruction2': '2. Les clients scannent avec l\'appareil photo de leur téléphone',
+    'qrGenerator.instruction3': '3. Ils remplissent le formulaire',
+    'qrGenerator.instruction4': '4. Les données apparaissent automatiquement dans vos contacts',
+    'qrGenerator.linkCopied': 'Lien copié!',
+    'qrGenerator.linkCopiedDesc': 'Le lien du formulaire a été copié dans le presse-papiers.',
+    'qrGenerator.loading': 'Chargement du code QR...',
+    'qrGenerator.cannotGenerate': 'Impossible de générer le code QR.',
 
     // NotFound
     'notFound.title': 'Page non trouvée',
@@ -647,6 +663,22 @@ const translations = {
     'qrForm.tip1': 'Place the QR code on your tables',
     'qrForm.tip2': 'Add it to your menus',
     'qrForm.tip3': 'Display it at your restaurant entrance',
+    
+    // QR Generator
+    'qrGenerator.loadError': 'Could not load QR code',
+    'qrGenerator.shareDescription': 'Share this QR code so customers can leave their data',
+    'qrGenerator.directLink': 'Direct link:',
+    'qrGenerator.downloadQr': 'Download QR',
+    'qrGenerator.share': 'Share',
+    'qrGenerator.howToUse': 'How to use:',
+    'qrGenerator.instruction1': '1. Print or show the QR code to customers',
+    'qrGenerator.instruction2': '2. Customers scan with their phone camera',
+    'qrGenerator.instruction3': '3. They fill out the form',
+    'qrGenerator.instruction4': '4. Data automatically appears in your contacts',
+    'qrGenerator.linkCopied': 'Link copied!',
+    'qrGenerator.linkCopiedDesc': 'The form link has been copied to clipboard.',
+    'qrGenerator.loading': 'Loading QR code...',
+    'qrGenerator.cannotGenerate': 'Could not generate QR code.',
 
     // NotFound
     'notFound.title': 'Page not found',
@@ -968,6 +1000,22 @@ const translations = {
     'qrForm.tip1': 'Posiziona il codice QR sui tuoi tavoli',
     'qrForm.tip2': 'Aggiungilo ai tuoi menu',
     'qrForm.tip3': 'Mostralo all\'ingresso del tuo ristorante',
+    
+    // QR Generator
+    'qrGenerator.loadError': 'Impossibile caricare il codice QR',
+    'qrGenerator.shareDescription': 'Condividi questo codice QR perché i clienti possano lasciare i loro dati',
+    'qrGenerator.directLink': 'Link diretto:',
+    'qrGenerator.downloadQr': 'Scarica QR',
+    'qrGenerator.share': 'Condividi',
+    'qrGenerator.howToUse': 'Come usare:',
+    'qrGenerator.instruction1': '1. Stampa o mostra il codice QR ai clienti',
+    'qrGenerator.instruction2': '2. I clienti scansionano con la fotocamera del telefono',
+    'qrGenerator.instruction3': '3. Compilano il modulo',
+    'qrGenerator.instruction4': '4. I dati appaiono automaticamente nei tuoi contatti',
+    'qrGenerator.linkCopied': 'Link copiato!',
+    'qrGenerator.linkCopiedDesc': 'Il link del modulo è stato copiato negli appunti.',
+    'qrGenerator.loading': 'Caricamento codice QR...',
+    'qrGenerator.cannotGenerate': 'Impossibile generare il codice QR.',
 
     // NotFound
     'notFound.title': 'Pagina non trovata',
@@ -1289,6 +1337,22 @@ const translations = {
     'qrForm.tip1': 'Platzieren Sie den QR-Code auf Ihren Tischen',
     'qrForm.tip2': 'Fügen Sie ihn zu Ihren Menüs hinzu',
     'qrForm.tip3': 'Zeigen Sie ihn am Eingang Ihres Restaurants',
+    
+    // QR Generator
+    'qrGenerator.loadError': 'QR-Code konnte nicht geladen werden',
+    'qrGenerator.shareDescription': 'Teilen Sie diesen QR-Code, damit Kunden ihre Daten hinterlassen können',
+    'qrGenerator.directLink': 'Direkter Link:',
+    'qrGenerator.downloadQr': 'QR herunterladen',
+    'qrGenerator.share': 'Teilen',
+    'qrGenerator.howToUse': 'Verwendung:',
+    'qrGenerator.instruction1': '1. Drucken oder zeigen Sie den QR-Code den Kunden',
+    'qrGenerator.instruction2': '2. Kunden scannen mit ihrer Handy-Kamera',
+    'qrGenerator.instruction3': '3. Sie füllen das Formular aus',
+    'qrGenerator.instruction4': '4. Daten erscheinen automatisch in Ihren Kontakten',
+    'qrGenerator.linkCopied': 'Link kopiert!',
+    'qrGenerator.linkCopiedDesc': 'Der Formular-Link wurde in die Zwischenablage kopiert.',
+    'qrGenerator.loading': 'QR-Code wird geladen...',
+    'qrGenerator.cannotGenerate': 'QR-Code konnte nicht generiert werden.',
 
     // NotFound
     'notFound.title': 'Seite nicht gefunden',

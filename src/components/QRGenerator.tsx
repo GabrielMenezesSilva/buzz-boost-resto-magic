@@ -79,8 +79,8 @@ export default function QRGenerator({ className }: QRGeneratorProps) {
     const url = `${window.location.origin}/form/${qrCode}`;
     navigator.clipboard.writeText(url);
     toast({
-      title: "Link copiado!",
-      description: "O link do formulário foi copiado para a área de transferência.",
+      title: t('qrGenerator.linkCopied'),
+      description: t('qrGenerator.linkCopiedDesc'),
     });
   };
 
@@ -117,7 +117,7 @@ export default function QRGenerator({ className }: QRGeneratorProps) {
         <CardContent className="flex items-center justify-center py-8">
           <div className="flex items-center gap-2">
             <Loader2 className="h-6 w-6 animate-spin" />
-            <span>Carregando QR Code...</span>
+            <span>{t('qrGenerator.loading')}</span>
           </div>
         </CardContent>
       </Card>
@@ -128,7 +128,7 @@ export default function QRGenerator({ className }: QRGeneratorProps) {
     return (
       <Card className={className}>
         <CardContent className="text-center py-8">
-          <p className="text-muted-foreground">Não foi possível gerar o QR Code.</p>
+          <p className="text-muted-foreground">{t('qrGenerator.cannotGenerate')}</p>
         </CardContent>
       </Card>
     );
@@ -162,7 +162,7 @@ export default function QRGenerator({ className }: QRGeneratorProps) {
 
         {/* URL Display */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">Link direto:</label>
+          <label className="text-sm font-medium">{t('qrGenerator.directLink')}</label>
           <div className="flex gap-2">
             <div className="flex-1 p-2 bg-muted rounded text-sm font-mono break-all">
               {formUrl}
@@ -186,7 +186,7 @@ export default function QRGenerator({ className }: QRGeneratorProps) {
             className="flex-1"
           >
             <Download className="h-4 w-4 mr-2" />
-            Baixar QR
+            {t('qrGenerator.downloadQr')}
           </Button>
           
           <Button 
@@ -194,18 +194,18 @@ export default function QRGenerator({ className }: QRGeneratorProps) {
             className="flex-1"
           >
             <Share className="h-4 w-4 mr-2" />
-            Compartilhar
+            {t('qrGenerator.share')}
           </Button>
         </div>
 
         {/* Instructions */}
         <div className="bg-primary/5 p-4 rounded-lg">
-          <h4 className="font-medium mb-2">Como usar:</h4>
+          <h4 className="font-medium mb-2">{t('qrGenerator.howToUse')}</h4>
           <ol className="text-sm text-muted-foreground space-y-1">
-            <li>1. Imprima ou mostre o QR code aos clientes</li>
-            <li>2. Clientes escaneiam com a câmera do celular</li>
-            <li>3. Eles preenchem o formulário</li>
-            <li>4. Os dados aparecem automaticamente nos seus contatos</li>
+            <li>{t('qrGenerator.instruction1')}</li>
+            <li>{t('qrGenerator.instruction2')}</li>
+            <li>{t('qrGenerator.instruction3')}</li>
+            <li>{t('qrGenerator.instruction4')}</li>
           </ol>
         </div>
       </CardContent>
