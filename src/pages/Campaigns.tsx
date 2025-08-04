@@ -66,8 +66,8 @@ export default function Campaigns() {
     
     if (!formData.name || !finalMessage) {
       toast({
-        title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires",
+        title: t('campaigns.error'),
+        description: t('campaigns.fillRequiredFields'),
         variant: "destructive",
       });
       return;
@@ -82,13 +82,13 @@ export default function Campaigns() {
       setShowCreateForm(false);
       resetForm();
       toast({
-        title: "Succès",
-        description: "Campagne créée avec succès",
+        title: t('campaigns.success'),
+        description: t('campaigns.campaignCreated'),
       });
     } catch (error) {
       toast({
-        title: "Erreur",
-        description: "Impossible de créer la campagne",
+        title: t('campaigns.error'),
+        description: t('campaigns.cannotCreate'),
         variant: "destructive",
       });
     }
@@ -148,14 +148,14 @@ export default function Campaigns() {
     try {
       await sendCampaign(campaignId);
       toast({
-        title: "Succès",
-        description: "Campagne envoyée avec succès",
+        title: t('campaigns.success'),
+        description: t('campaigns.campaignSent'),
       });
     } catch (error) {
       console.error('Error sending campaign:', error);
       toast({
-        title: "Erreur",
-        description: error instanceof Error ? error.message : "Impossible d'envoyer la campagne",
+        title: t('campaigns.error'),
+        description: error instanceof Error ? error.message : t('campaigns.cannotSend'),
         variant: "destructive",
       });
     }
@@ -165,13 +165,13 @@ export default function Campaigns() {
     try {
       await deleteCampaign(campaignId);
       toast({
-        title: "Succès",
-        description: "Campagne supprimée avec succès",
+        title: t('campaigns.success'),
+        description: t('campaigns.campaignDeleted'),
       });
     } catch (error) {
       toast({
-        title: "Erreur",
-        description: "Impossible de supprimer la campagne",
+        title: t('campaigns.error'),
+        description: t('campaigns.cannotDelete'),
         variant: "destructive",
       });
     }
@@ -227,16 +227,16 @@ export default function Campaigns() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Template Selection */}
               <div className="space-y-2">
-                <Label htmlFor="templateSelect">Utiliser un template (optionnel)</Label>
+                <Label htmlFor="templateSelect">{t('campaigns.useTemplate')}</Label>
                 <Select 
                   value={selectedTemplate} 
                   onValueChange={handleTemplateSelect}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Choisir un template existant" />
+                    <SelectValue placeholder={t('campaigns.chooseTemplate')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">Créer depuis zéro</SelectItem>
+                    <SelectItem value="none">{t('campaigns.createFromScratch')}</SelectItem>
                     {templates.map(template => (
                       <SelectItem key={template.id} value={template.id}>
                         {template.name} ({template.category})
@@ -246,29 +246,29 @@ export default function Campaigns() {
                 </Select>
                 {selectedTemplate && (
                   <p className="text-sm text-muted-foreground">
-                    Template sélectionné. Vous pouvez modifier le message ci-dessous.
+                    {t('campaigns.templateSelected')}
                   </p>
                 )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="campaignName">Nom de la campagne</Label>
+                  <Label htmlFor="campaignName">{t('campaigns.campaignName')}</Label>
                   <Input
                     id="campaignName"
-                    placeholder="Ex: Lundi Boost"
+                    placeholder={t('campaigns.campaignNamePlaceholder')}
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="campaignType">Type de campagne</Label>
+                  <Label htmlFor="campaignType">{t('campaigns.campaignType')}</Label>
                   <Select 
                     value={formData.campaign_type} 
                     onValueChange={(value) => setFormData({...formData, campaign_type: value})}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner un type" />
+                      <SelectValue placeholder={t('campaigns.selectType')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="sms">SMS</SelectItem>
@@ -282,7 +282,7 @@ export default function Campaigns() {
               {/* Template Variables */}
               {selectedTemplate && Object.keys(templateVariables).length > 0 && (
                 <div className="space-y-4 p-4 border rounded-lg bg-muted/50">
-                  <Label className="text-sm font-medium">Variables du template</Label>
+                  <Label className="text-sm font-medium">{t('campaigns.templateVariables')}</Label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {Object.entries(templateVariables).map(([variable, value]) => (
                       <div key={variable} className="space-y-2">
@@ -291,7 +291,7 @@ export default function Campaigns() {
                         </Label>
                         <Input
                           id={`var-${variable}`}
-                          placeholder={`Valeur pour ${variable}`}
+                          placeholder={`${t('campaigns.variableValue')} ${variable}`}
                           value={value}
                           onChange={(e) => handleVariableChange(variable, e.target.value)}
                         />
@@ -299,31 +299,31 @@ export default function Campaigns() {
                     ))}
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Ces variables seront remplacées dans le message final.
+                    {t('campaigns.variablesReplaced')}
                   </p>
                 </div>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="message">Message promotionnel</Label>
+                <Label htmlFor="message">{t('campaigns.promoMessage')}</Label>
                 <Textarea
                   id="message"
-                  placeholder="Rédigez votre message promotionnel..."
+                  placeholder={t('campaigns.promoPlaceholder')}
                   rows={4}
                   value={formData.message}
                   onChange={(e) => setFormData({...formData, message: e.target.value})}
                 />
                 <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>{formData.message.length}/160 caractères pour SMS</span>
+                  <span>{formData.message.length}/160 {t('campaigns.charactersForSms')}</span>
                   {selectedTemplate && Object.keys(templateVariables).length > 0 && (
-                    <span className="text-primary">Aperçu avec variables appliquées ci-dessous</span>
+                    <span className="text-primary">{t('campaigns.previewWithVariables')}</span>
                   )}
                 </div>
                 
                 {/* Message Preview */}
                 {selectedTemplate && Object.keys(templateVariables).length > 0 && (
                   <div className="p-3 bg-muted rounded-md border">
-                    <Label className="text-xs text-muted-foreground">Aperçu du message final:</Label>
+                    <Label className="text-xs text-muted-foreground">{t('campaigns.finalMessagePreview')}</Label>
                     <p className="text-sm mt-1">
                       {replaceVariables(formData.message, templateVariables)}
                     </p>
@@ -332,7 +332,7 @@ export default function Campaigns() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="scheduledAt">Date et heure d'envoi (optionnel)</Label>
+                <Label htmlFor="scheduledAt">{t('campaigns.sendDateTime')}</Label>
                 <Input
                   id="scheduledAt"
                   type="datetime-local"
@@ -340,7 +340,7 @@ export default function Campaigns() {
                   onChange={(e) => setFormData({...formData, scheduled_at: e.target.value})}
                 />
                 <p className="text-sm text-muted-foreground">
-                  Laissez vide pour envoyer immédiatement
+                  {t('campaigns.leaveEmptyImmediate')}
                 </p>
               </div>
 
@@ -349,12 +349,12 @@ export default function Campaigns() {
                 <div className="space-y-2 p-4 border rounded-lg bg-blue-50 dark:bg-blue-950/20">
                   <div className="flex items-center space-x-2">
                     <div className="text-lg">📱</div>
-                    <Label className="font-medium">Envio via Twilio</Label>
+                    <Label className="font-medium">{t('campaigns.sendingViaTwilio')}</Label>
                   </div>
                   <div className="text-sm text-muted-foreground space-y-1">
-                    <p>✅ Configuração do Twilio já configurada</p>
-                    <p>📧 Mensagens {formData.campaign_type === 'sms' ? 'SMS' : 'WhatsApp'} serão enviadas diretamente</p>
-                    <p className="text-primary font-medium">🔧 API Twilio configurada nos secrets</p>
+                    <p>✅ {t('campaigns.twilioConfigured')}</p>
+                    <p>📧 {t('campaigns.messagesWillBeSent')} {formData.campaign_type === 'sms' ? 'SMS' : 'WhatsApp'} {t('campaigns.sentDirectly')}</p>
+                    <p className="text-primary font-medium">🔧 {t('campaigns.twilioApiConfigured')}</p>
                   </div>
                 </div>
               )}
@@ -368,12 +368,12 @@ export default function Campaigns() {
                   {isLoading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Création...
+                      {t('campaigns.creating')}
                     </>
                   ) : (
                     <>
                       <Plus className="w-4 h-4 mr-2" />
-                      Créer la campagne
+                      {t('campaigns.createCampaign')}
                     </>
                   )}
                 </Button>
@@ -385,7 +385,7 @@ export default function Campaigns() {
                     resetForm();
                   }}
                 >
-                  Annuler
+                  {t('campaigns.cancel')}
                 </Button>
               </div>
             </form>
@@ -396,9 +396,9 @@ export default function Campaigns() {
       {/* Campaigns List */}
       <Card>
         <CardHeader>
-          <CardTitle>Mes campagnes</CardTitle>
+          <CardTitle>{t('campaigns.myCampaigns')}</CardTitle>
           <CardDescription>
-            Gérez et suivez vos campagnes marketing
+            {t('campaigns.manageAndTrack')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -409,16 +409,16 @@ export default function Campaigns() {
           ) : campaigns.length === 0 ? (
             <div className="text-center py-8">
               <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">Aucune campagne</h3>
+              <h3 className="text-lg font-medium mb-2">{t('campaigns.noCampaigns')}</h3>
               <p className="text-muted-foreground mb-4">
-                Créez votre première campagne pour commencer à engager vos clients.
+                {t('campaigns.createFirstCampaign')}
               </p>
               <Button 
                 onClick={() => setShowCreateForm(true)}
                 className="bg-gradient-primary shadow-warm"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Créer une campagne
+                {t('campaigns.createACampaign')}
               </Button>
             </div>
           ) : (
@@ -434,9 +434,9 @@ export default function Campaigns() {
                             campaign.status === 'active' || campaign.status === 'sent' ? 'default' : 'outline'
                           }
                         >
-                          {campaign.status === 'active' ? 'Actif' : 
-                           campaign.status === 'sent' ? 'Envoyé' : 
-                           campaign.status === 'scheduled' ? 'Programmé' : 'Brouillon'}
+                          {campaign.status === 'active' ? t('campaigns.status.active') : 
+                           campaign.status === 'sent' ? t('campaigns.status.sent') : 
+                           campaign.status === 'scheduled' ? t('campaigns.status.scheduled') : t('campaigns.status.draft')}
                         </Badge>
                         <Badge variant="secondary" className="text-xs">
                           {campaign.campaign_type.toUpperCase()}
@@ -446,7 +446,7 @@ export default function Campaigns() {
                       {campaign.scheduled_at && (
                         <div className="flex items-center text-sm text-muted-foreground">
                           <Clock className="w-4 h-4 mr-1" />
-                          Programmé pour {new Date(campaign.scheduled_at).toLocaleString('fr-FR')}
+                          {t('campaigns.scheduledFor')} {new Date(campaign.scheduled_at).toLocaleString('pt-BR')}
                         </div>
                       )}
                     </div>
@@ -459,7 +459,7 @@ export default function Campaigns() {
                           className="bg-gradient-primary shadow-warm"
                         >
                           <Send className="w-4 h-4 mr-1" />
-                          Envoyer
+                          {t('campaigns.send')}
                         </Button>
                       )}
                       <Button variant="outline" size="sm">
@@ -480,30 +480,30 @@ export default function Campaigns() {
                       <Send className="w-4 h-4 text-muted-foreground" />
                       <div>
                         <p className="text-sm font-medium">{campaign.total_recipients || 0}</p>
-                        <p className="text-xs text-muted-foreground">Total envoyés</p>
+                        <p className="text-xs text-muted-foreground">{t('campaigns.totalSent')}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Users className="w-4 h-4 text-muted-foreground" />
                       <div>
                         <p className="text-sm font-medium">{campaign.successful_sends || 0}</p>
-                        <p className="text-xs text-muted-foreground">Succès</p>
+                        <p className="text-xs text-muted-foreground">{t('campaigns.success')}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
                       <BarChart3 className="w-4 h-4 text-muted-foreground" />
                       <div>
                         <p className="text-sm font-medium">{campaign.failed_sends || 0}</p>
-                        <p className="text-xs text-muted-foreground">Échecs</p>
+                        <p className="text-xs text-muted-foreground">{t('campaigns.failures')}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Calendar className="w-4 h-4 text-muted-foreground" />
                       <div>
                         <p className="text-sm font-medium">
-                          {campaign.sent_at ? new Date(campaign.sent_at).toLocaleDateString('fr-FR') : '-'}
+                          {campaign.sent_at ? new Date(campaign.sent_at).toLocaleDateString('pt-BR') : '-'}
                         </p>
-                        <p className="text-xs text-muted-foreground">Envoyé le</p>
+                        <p className="text-xs text-muted-foreground">{t('campaigns.sentOn')}</p>
                       </div>
                     </div>
                   </div>
