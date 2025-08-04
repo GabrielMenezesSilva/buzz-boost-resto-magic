@@ -44,6 +44,7 @@ const translations: Record<Language, Record<string, string>> = {
     'dashboard.noContactsYet': 'Nenhum contato ainda',
     'dashboard.recentCampaigns': 'Campanhas Recentes',
     'dashboard.noCampaignsYet': 'Nenhuma campanha ainda',
+    'dashboard.overview': 'Visão Geral',
 
     // Campaign Status
     'campaign.status.draft': 'Rascunho',
