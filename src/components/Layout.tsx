@@ -10,6 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { 
   ChefHat, 
@@ -22,7 +23,10 @@ import {
   Menu,
   X,
   ChevronDown,
-  User
+  User,
+  UserCircle,
+  Crown,
+  HelpCircle
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -125,10 +129,53 @@ export default function Layout({ children }: LayoutProps) {
                       <ChevronDown className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48 bg-background border border-border shadow-lg">
+                  <DropdownMenuContent align="end" className="w-56 bg-background border border-border shadow-lg">
+                    {/* User Information Section */}
+                    <div className="px-3 py-2">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <UserCircle className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm font-medium">{getDisplayName()}</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {profile?.restaurant_name || user?.email}
+                      </div>
+                    </div>
+                    
+                    <DropdownMenuSeparator />
+                    
+                    {/* Settings Section */}
+                    <DropdownMenuItem asChild>
+                      <Link to="/dashboard" className="flex items-center space-x-2 cursor-pointer">
+                        <UserCircle className="w-4 h-4" />
+                        <span>Meu Perfil</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuItem asChild>
+                      <Link to="/dashboard" className="flex items-center space-x-2 cursor-pointer">
+                        <Settings className="w-4 h-4" />
+                        <span>Configurações</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuItem asChild>
+                      <Link to="/plans" className="flex items-center space-x-2 cursor-pointer">
+                        <Crown className="w-4 h-4" />
+                        <span>Plano Atual</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuSeparator />
+                    
+                    {/* Actions Section */}
+                    <DropdownMenuItem className="flex items-center space-x-2 cursor-pointer">
+                      <HelpCircle className="w-4 h-4" />
+                      <span>Ajuda & Suporte</span>
+                    </DropdownMenuItem>
+                    
                     <DropdownMenuItem 
                       onClick={signOut}
-                      className="flex items-center space-x-2 cursor-pointer hover:bg-muted/50"
+                      className="flex items-center space-x-2 cursor-pointer hover:bg-destructive/10 hover:text-destructive"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>{t('nav.logout')}</span>
