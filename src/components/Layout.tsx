@@ -120,16 +120,16 @@ export default function Layout({ children }: LayoutProps) {
                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant="ghost" 
-                      className="flex items-center space-x-2 px-3 py-2 transition-colors duration-200 hover:bg-muted/70 data-[state=open]:bg-muted/70"
+                      className="flex items-center space-x-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
                     >
                       <User className="w-4 h-4" />
-                      <span className="text-sm">
+                      <span>
                         {t('auth.hello')}, {getDisplayName()}
                       </span>
                       <ChevronDown className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 bg-background border border-border shadow-lg">
+                  <DropdownMenuContent align="end" className="w-56 z-50" sideOffset={5}>
                     {/* User Information Section */}
                     <div className="px-3 py-2">
                       <div className="flex items-center space-x-2 mb-1">
@@ -175,7 +175,7 @@ export default function Layout({ children }: LayoutProps) {
                     
                     <DropdownMenuItem 
                       onClick={signOut}
-                      className="flex items-center space-x-2 cursor-pointer hover:bg-destructive/10 hover:text-destructive"
+                      className="flex items-center space-x-2 cursor-pointer text-destructive focus:text-destructive"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>{t('nav.logout')}</span>
