@@ -5,6 +5,12 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import LanguageSelector from '@/components/LanguageSelector';
 import dopplerDineLogo from '@/assets/dopplerDine-logo.png';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { 
   ChefHat, 
   QrCode, 
@@ -14,7 +20,9 @@ import {
   MessageSquare,
   LogOut,
   Menu,
-  X
+  X,
+  ChevronDown,
+  User
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -104,20 +112,29 @@ export default function Layout({ children }: LayoutProps) {
             <div className="hidden md:flex items-center space-x-6 ml-8">
               <LanguageSelector />
               {user ? (
-                <div className="flex items-center space-x-4">
-                  <span className="text-sm text-muted-foreground">
-                    {t('auth.hello')}, {getDisplayName()}
-                  </span>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={signOut}
-                    className="flex items-center space-x-2"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>{t('nav.logout')}</span>
-                  </Button>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      className="flex items-center space-x-2 px-3 py-2 hover:bg-muted/50"
+                    >
+                      <User className="w-4 h-4" />
+                      <span className="text-sm">
+                        {t('auth.hello')}, {getDisplayName()}
+                      </span>
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48 bg-background border border-border shadow-lg">
+                    <DropdownMenuItem 
+                      onClick={signOut}
+                      className="flex items-center space-x-2 cursor-pointer hover:bg-muted/50"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>{t('nav.logout')}</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               ) : (
                 <Link to="/auth">
                   <Button variant="default" size="sm" className="bg-gradient-primary shadow-warm">
