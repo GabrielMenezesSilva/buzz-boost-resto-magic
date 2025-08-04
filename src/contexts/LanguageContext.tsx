@@ -145,6 +145,15 @@ const translations = {
     'dashboard.newCampaignDesc': 'Créer une campagne marketing',
     'dashboard.manageContacts': 'Gérer Contacts',
     'dashboard.manageContactsDesc': 'Voir et modifier vos contacts',
+    
+    // Campaign Status
+    'campaign.status.draft': 'Brouillon',
+    'campaign.status.scheduled': 'Programmé',
+    'campaign.status.sending': 'Envoi en cours',
+    'campaign.status.sent': 'Envoyé',
+    'campaign.status.completed': 'Terminé',
+    'campaign.status.failed': 'Échec',
+    'campaign.status.active': 'Actif',
 
     // Analytics
     'analytics.title': 'Analytics',
@@ -482,6 +491,15 @@ const translations = {
     'dashboard.newCampaignDesc': 'Create a marketing campaign',
     'dashboard.manageContacts': 'Manage Contacts',
     'dashboard.manageContactsDesc': 'View and edit your contacts',
+    
+    // Campaign Status
+    'campaign.status.draft': 'Draft',
+    'campaign.status.scheduled': 'Scheduled',
+    'campaign.status.sending': 'Sending',
+    'campaign.status.sent': 'Sent',
+    'campaign.status.completed': 'Completed',
+    'campaign.status.failed': 'Failed',
+    'campaign.status.active': 'Active',
 
     // Analytics
     'analytics.title': 'Analytics',
@@ -819,6 +837,15 @@ const translations = {
     'dashboard.newCampaignDesc': 'Crea una campagna marketing',
     'dashboard.manageContacts': 'Gestisci Contatti',
     'dashboard.manageContactsDesc': 'Visualizza e modifica i tuoi contatti',
+    
+    // Campaign Status
+    'campaign.status.draft': 'Bozza',
+    'campaign.status.scheduled': 'Programmato',
+    'campaign.status.sending': 'Invio in corso',
+    'campaign.status.sent': 'Inviato',
+    'campaign.status.completed': 'Completato',
+    'campaign.status.failed': 'Fallito',
+    'campaign.status.active': 'Attivo',
 
     // Analytics
     'analytics.title': 'Analytics',
@@ -1156,6 +1183,15 @@ const translations = {
     'dashboard.newCampaignDesc': 'Marketing-Kampagne erstellen',
     'dashboard.manageContacts': 'Kontakte Verwalten',
     'dashboard.manageContactsDesc': 'Kontakte anzeigen und bearbeiten',
+    
+    // Campaign Status
+    'campaign.status.draft': 'Entwurf',
+    'campaign.status.scheduled': 'Geplant',
+    'campaign.status.sending': 'Wird gesendet',
+    'campaign.status.sent': 'Gesendet',
+    'campaign.status.completed': 'Abgeschlossen',
+    'campaign.status.failed': 'Fehlgeschlagen',
+    'campaign.status.active': 'Aktiv',
 
     // Analytics
     'analytics.title': 'Analytics',

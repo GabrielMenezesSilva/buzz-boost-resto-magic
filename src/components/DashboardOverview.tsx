@@ -156,7 +156,7 @@ export default function DashboardOverview() {
                       {campaign.status === 'failed' && (
                         <AlertCircle className="h-4 w-4 text-red-600" />
                       )}
-                      <span className="text-xs capitalize">{campaign.status}</span>
+                      <span className="text-xs capitalize">{t(`campaign.status.${campaign.status}`)}</span>
                     </div>
                   </div>
                 ))}
