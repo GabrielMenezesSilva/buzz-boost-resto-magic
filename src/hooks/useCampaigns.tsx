@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { MessageSquare, Send, Target, BarChart3 } from 'lucide-react';
 import { useAuth } from './useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Campaign {
   id: string;
@@ -36,6 +37,7 @@ export function useCampaigns() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   // Fetch campaigns
   const fetchCampaigns = async () => {
@@ -134,17 +136,17 @@ export function useCampaigns() {
   // Calculate stats
   const stats: CampaignStats[] = [
     {
-      title: 'Campagnes actives',
+      title: t('campaigns.stats.activeCampaigns'),
       value: campaigns.filter(c => c.status === 'active' || c.status === 'sending').length.toString(),
       icon: MessageSquare
     },
     {
-      title: 'Messages envoyés',
+      title: t('campaigns.stats.messagesSent'),
       value: campaigns.reduce((sum, c) => sum + (c.total_recipients || 0), 0).toString(),
       icon: Send
     },
     {
-      title: 'Taux de succès',
+      title: t('campaigns.stats.successRate'),
       value: campaigns.length > 0 
         ? `${Math.round(
             (campaigns.reduce((sum, c) => sum + (c.successful_sends || 0), 0) / 
@@ -154,7 +156,7 @@ export function useCampaigns() {
       icon: Target
     },
     {
-      title: 'Campagnes totales',
+      title: t('campaigns.stats.totalCampaigns'),
       value: campaigns.length.toString(),
       icon: BarChart3
     }
