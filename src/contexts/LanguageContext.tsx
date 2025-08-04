@@ -228,6 +228,11 @@ const translations: Record<Language, Record<string, string>> = {
     'contacts.scanQr': 'Escanear QR',
     'contacts.newContact': 'Novo Contato',
 
+    // QR Form Errors
+    'qrForm.errorTitle': 'Erro',
+
+    // QR Form
+
     // QR Form
     'qrForm.title': 'Escaneamento QR',
     'qrForm.subtitle': 'Escaneie QR codes e adicione contatos automaticamente',
@@ -267,6 +272,24 @@ const translations: Record<Language, Record<string, string>> = {
     'qrForm.maintain10to30cm': 'Mantenha 10-30cm de distância',
     'qrForm.cleanQR': 'QR Code Limpo',
     'qrForm.ensureReadable': 'Certifique-se que esteja legível',
+
+    // QR Generator  
+    'qrGenerator.loading': 'Carregando...',
+    'qrGenerator.loadError': 'Erro ao carregar dados do perfil',
+    'qrGenerator.cannotGenerate': 'Não foi possível gerar o QR Code',
+    'qrGenerator.shareDescription': 'Compartilhe este QR Code para coletar contatos',
+    'qrGenerator.directLink': 'Link Direto',
+    'qrGenerator.downloadQr': 'Baixar QR',
+    'qrGenerator.share': 'Compartilhar',
+    'qrGenerator.linkCopied': 'Link copiado!',
+    'qrGenerator.linkCopiedDesc': 'O link foi copiado para a área de transferência',
+    'qrGenerator.howToUse': 'Como usar:',
+    'qrGenerator.instruction1': '1. Imprima ou exiba este QR Code em seu estabelecimento',
+    'qrGenerator.instruction2': '2. Clientes escaneiam o código com a câmera do celular',
+    'qrGenerator.instruction3': '3. Eles preenchem o formulário de contato',
+    'qrGenerator.instruction4': '4. Você recebe os dados automaticamente no sistema',
+
+    // QR Generator
 
     // QR Generator
 
@@ -490,6 +513,11 @@ const translations: Record<Language, Record<string, string>> = {
     'contacts.scanQr': 'Scanner QR',
     'contacts.newContact': 'Nouveau Contact',
 
+    // QR Form Errors
+    'qrForm.errorTitle': 'Erreur',
+
+    // QR Form
+
     // QR Form
     'qrForm.title': 'Scanner QR',
     'qrForm.subtitle': 'Scannez des QR codes et ajoutez des contacts automatiquement',
@@ -529,6 +557,24 @@ const translations: Record<Language, Record<string, string>> = {
     'qrForm.maintain10to30cm': 'Maintenez 10-30cm de distance',
     'qrForm.cleanQR': 'QR Code Propre',
     'qrForm.ensureReadable': 'Assurez-vous qu\'il soit lisible',
+
+    // QR Generator  
+    'qrGenerator.loading': 'Chargement...',
+    'qrGenerator.loadError': 'Erreur lors du chargement des données du profil',
+    'qrGenerator.cannotGenerate': 'Impossible de générer le QR Code',
+    'qrGenerator.shareDescription': 'Partagez ce QR Code pour collecter des contacts',
+    'qrGenerator.directLink': 'Lien Direct',
+    'qrGenerator.downloadQr': 'Télécharger QR',
+    'qrGenerator.share': 'Partager',
+    'qrGenerator.linkCopied': 'Lien copié!',
+    'qrGenerator.linkCopiedDesc': 'Le lien a été copié dans le presse-papiers',
+    'qrGenerator.howToUse': 'Comment utiliser:',
+    'qrGenerator.instruction1': '1. Imprimez ou affichez ce QR Code dans votre établissement',
+    'qrGenerator.instruction2': '2. Les clients scannent le code avec l\'appareil photo de leur téléphone',
+    'qrGenerator.instruction3': '3. Ils remplissent le formulaire de contact',
+    'qrGenerator.instruction4': '4. Vous recevez les données automatiquement dans le système',
+
+    // QR Generator
 
     // QR Generator
   },
@@ -750,6 +796,11 @@ const translations: Record<Language, Record<string, string>> = {
     'contacts.scanQr': 'Scan QR',
     'contacts.newContact': 'New Contact',
 
+    // QR Form Errors
+    'qrForm.errorTitle': 'Error',
+
+    // QR Form
+
     // QR Form
     'qrForm.title': 'QR Scanning',
     'qrForm.subtitle': 'Scan QR codes and add contacts automatically',
@@ -789,6 +840,24 @@ const translations: Record<Language, Record<string, string>> = {
     'qrForm.maintain10to30cm': 'Maintain 10-30cm distance',
     'qrForm.cleanQR': 'Clean QR Code',
     'qrForm.ensureReadable': 'Make sure it\'s readable',
+
+    // QR Generator  
+    'qrGenerator.loading': 'Loading...',
+    'qrGenerator.loadError': 'Error loading profile data',
+    'qrGenerator.cannotGenerate': 'Could not generate QR Code',
+    'qrGenerator.shareDescription': 'Share this QR Code to collect contacts',
+    'qrGenerator.directLink': 'Direct Link',
+    'qrGenerator.downloadQr': 'Download QR',
+    'qrGenerator.share': 'Share',
+    'qrGenerator.linkCopied': 'Link copied!',
+    'qrGenerator.linkCopiedDesc': 'The link has been copied to clipboard',
+    'qrGenerator.howToUse': 'How to use:',
+    'qrGenerator.instruction1': '1. Print or display this QR Code in your establishment',
+    'qrGenerator.instruction2': '2. Customers scan the code with their phone camera',
+    'qrGenerator.instruction3': '3. They fill out the contact form',
+    'qrGenerator.instruction4': '4. You receive the data automatically in the system',
+
+    // QR Generator
 
     // QR Generator
   },
@@ -1010,6 +1079,11 @@ const translations: Record<Language, Record<string, string>> = {
     'contacts.scanQr': 'Scansiona QR',
     'contacts.newContact': 'Nuovo Contatto',
 
+    // QR Form Errors
+    'qrForm.errorTitle': 'Errore',
+
+    // QR Form
+
     // QR Form
     'qrForm.title': 'Scansione QR',
     'qrForm.subtitle': 'Scansiona QR code e aggiungi contatti automaticamente',
@@ -1049,6 +1123,24 @@ const translations: Record<Language, Record<string, string>> = {
     'qrForm.maintain10to30cm': 'Mantieni 10-30cm di distanza',
     'qrForm.cleanQR': 'QR Code Pulito',
     'qrForm.ensureReadable': 'Assicurati che sia leggibile',
+
+    // QR Generator  
+    'qrGenerator.loading': 'Caricamento...',
+    'qrGenerator.loadError': 'Errore nel caricamento dei dati del profilo',
+    'qrGenerator.cannotGenerate': 'Impossibile generare il QR Code',
+    'qrGenerator.shareDescription': 'Condividi questo QR Code per raccogliere contatti',
+    'qrGenerator.directLink': 'Link Diretto',
+    'qrGenerator.downloadQr': 'Scarica QR',
+    'qrGenerator.share': 'Condividi',
+    'qrGenerator.linkCopied': 'Link copiato!',
+    'qrGenerator.linkCopiedDesc': 'Il link è stato copiato negli appunti',
+    'qrGenerator.howToUse': 'Come usare:',
+    'qrGenerator.instruction1': '1. Stampa o mostra questo QR Code nel tuo locale',
+    'qrGenerator.instruction2': '2. I clienti scansionano il codice con la fotocamera del telefono',
+    'qrGenerator.instruction3': '3. Compilano il modulo di contatto',
+    'qrGenerator.instruction4': '4. Ricevi i dati automaticamente nel sistema',
+
+    // QR Generator
 
     // QR Generator
   },
@@ -1270,6 +1362,11 @@ const translations: Record<Language, Record<string, string>> = {
     'contacts.scanQr': 'QR Scannen',
     'contacts.newContact': 'Neuer Kontakt',
 
+    // QR Form Errors
+    'qrForm.errorTitle': 'Fehler',
+
+    // QR Form
+
     // QR Form
     'qrForm.title': 'QR-Scan',
     'qrForm.subtitle': 'QR-Codes scannen und Kontakte automatisch hinzufügen',
@@ -1309,6 +1406,24 @@ const translations: Record<Language, Record<string, string>> = {
     'qrForm.maintain10to30cm': '10-30cm Abstand halten',
     'qrForm.cleanQR': 'Sauberer QR-Code',
     'qrForm.ensureReadable': 'Stellen Sie sicher, dass er lesbar ist',
+
+    // QR Generator  
+    'qrGenerator.loading': 'Laden...',
+    'qrGenerator.loadError': 'Fehler beim Laden der Profildaten',
+    'qrGenerator.cannotGenerate': 'QR-Code konnte nicht generiert werden',
+    'qrGenerator.shareDescription': 'Teilen Sie diesen QR-Code um Kontakte zu sammeln',
+    'qrGenerator.directLink': 'Direkter Link',
+    'qrGenerator.downloadQr': 'QR Herunterladen',
+    'qrGenerator.share': 'Teilen',
+    'qrGenerator.linkCopied': 'Link kopiert!',
+    'qrGenerator.linkCopiedDesc': 'Der Link wurde in die Zwischenablage kopiert',
+    'qrGenerator.howToUse': 'So verwenden:',
+    'qrGenerator.instruction1': '1. Drucken oder zeigen Sie diesen QR-Code in Ihrem Betrieb',
+    'qrGenerator.instruction2': '2. Kunden scannen den Code mit ihrer Telefonkamera',
+    'qrGenerator.instruction3': '3. Sie füllen das Kontaktformular aus',
+    'qrGenerator.instruction4': '4. Sie erhalten die Daten automatisch im System',
+
+    // QR Generator
 
     // QR Generator
   },
