@@ -82,8 +82,8 @@ const QRForm = () => {
     setShowForm(true);
     
     toast({
-      title: "QR Code escaneado!",
-      description: "Preencha os dados do contato abaixo.",
+      title: t('qrForm.qrScanned'),
+      description: t('qrForm.fillDataBelow'),
       variant: "default"
     });
   };
@@ -133,8 +133,8 @@ const QRForm = () => {
 
     if (result.success) {
       toast({
-        title: "Contato adicionado!",
-        description: `${contactForm.name} foi adicionado aos seus contatos.`,
+        title: t('qrForm.contactAdded'),
+        description: `${contactForm.name} ${t('qrForm.contactAddedToList')}`,
         variant: "default"
       });
       
@@ -180,9 +180,9 @@ const QRForm = () => {
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <div>
-              <h1 className="text-3xl font-bold text-foreground">QR Scanner</h1>
+              <h1 className="text-3xl font-bold text-foreground">{t('qrForm.title')}</h1>
               <p className="text-muted-foreground">
-                Escaneie QR codes para adicionar novos contatos
+                {t('qrForm.subtitle')}
               </p>
             </div>
           </div>
@@ -194,7 +194,7 @@ const QRForm = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <QrCode className="w-5 h-5" />
-                Câmera Scanner
+                {t('qrForm.cameraScanner')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -213,8 +213,8 @@ const QRForm = () => {
                       <Camera className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
                       <p className="text-muted-foreground">
                         {hasPermission === false 
-                          ? 'Permissão de câmera negada' 
-                          : 'Clique em "Iniciar Scanner" para começar'
+                          ? t('qrForm.permissionDenied')
+                          : t('qrForm.clickToStart')
                         }
                       </p>
                     </div>
@@ -225,7 +225,7 @@ const QRForm = () => {
                 {isScanning && (
                   <div className="absolute inset-4 border-2 border-primary border-dashed rounded-lg flex items-center justify-center">
                     <div className="text-center text-white bg-black/50 p-2 rounded">
-                      <p className="text-sm">Aponte para um QR code</p>
+                      <p className="text-sm">{t('qrForm.pointToQR')}</p>
                     </div>
                   </div>
                 )}
@@ -241,19 +241,19 @@ const QRForm = () => {
                   {isScanning ? (
                     <>
                       <CameraOff className="w-4 h-4" />
-                      Parar Scanner
+                      {t('qrForm.stopScanner')}
                     </>
                   ) : (
                     <>
                       <Camera className="w-4 h-4" />
-                      Iniciar Scanner
+                      {t('qrForm.startScanner')}
                     </>
                   )}
                 </Button>
                 
                 {(scannedData || showForm) && (
                   <Button variant="outline" onClick={resetScanner}>
-                    Resetar
+                    {t('qrForm.reset')}
                   </Button>
                 )}
               </div>
@@ -264,7 +264,7 @@ const QRForm = () => {
                   <div className="flex items-start gap-2">
                     <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
                     <div>
-                      <p className="font-medium text-sm">QR Code detectado:</p>
+                      <p className="font-medium text-sm">{t('qrForm.qrDetected')}</p>
                       <p className="text-sm text-muted-foreground break-all">
                         {scannedData}
                       </p>
@@ -277,10 +277,10 @@ const QRForm = () => {
               <div className="text-sm text-muted-foreground space-y-2">
                 <p className="flex items-center gap-2">
                   <AlertCircle className="w-4 h-4" />
-                  Posicione o QR code no centro da câmera
+                  {t('qrForm.positionQR')}
                 </p>
-                <p>• QR codes com dados de contato serão preenchidos automaticamente</p>
-                <p>• Outros QR codes serão salvos nas observações</p>
+                <p>• {t('qrForm.contactDataFilled')}</p>
+                <p>• {t('qrForm.otherQRSaved')}</p>
               </div>
             </CardContent>
           </Card>
@@ -290,19 +290,19 @@ const QRForm = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="w-5 h-5" />
-                Dados do Contato
+                {t('qrForm.contactData')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               {showForm ? (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Nome *</Label>
+                    <Label htmlFor="name">{t('qrForm.nameRequired')}</Label>
                     <Input
                       id="name"
                       value={contactForm.name}
                       onChange={(e) => setContactForm(prev => ({ ...prev, name: e.target.value }))}
-                      placeholder="Nome do cliente"
+                      placeholder={t('qrForm.customerName')}
                       required
                     />
                   </div>
@@ -315,13 +315,13 @@ const QRForm = () => {
                       phone: value,
                       country_code: country.code
                     }))}
-                    label="Telefone"
+                    label={t('qrForm.phone')}
                     defaultCountry={contactForm.country_code}
                     required
                   />
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t('qrForm.email')}</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
@@ -336,12 +336,12 @@ const QRForm = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Tags</Label>
+                    <Label>{t('qrForm.tags')}</Label>
                     <div className="flex gap-2 mb-2">
                       <Input
                         value={newTag}
                         onChange={(e) => setNewTag(e.target.value)}
-                        placeholder="Adicionar tag"
+                        placeholder={t('qrForm.addTag')}
                         onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
                       />
                       <Button type="button" onClick={addTag} size="sm">
@@ -367,23 +367,23 @@ const QRForm = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="notes">Observações</Label>
+                    <Label htmlFor="notes">{t('qrForm.notes')}</Label>
                     <Textarea
                       id="notes"
                       value={contactForm.notes}
                       onChange={(e) => setContactForm(prev => ({ ...prev, notes: e.target.value }))}
-                      placeholder="Observações sobre o cliente..."
+                      placeholder={t('qrForm.customerNotes')}
                       rows={3}
                     />
                   </div>
 
                   <Button type="submit" className="w-full" disabled={isSubmitting}>
                     {isSubmitting ? (
-                      "Salvando..."
+                      t('qrForm.saving')
                     ) : (
                       <>
                         <Save className="w-4 h-4 mr-2" />
-                        Salvar Contato
+                        {t('qrForm.saveContact')}
                       </>
                     )}
                   </Button>
@@ -391,7 +391,7 @@ const QRForm = () => {
               ) : (
                 <div className="text-center py-12 text-muted-foreground">
                   <QrCode className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                  <p>Escaneie um QR code para preencher os dados</p>
+                  <p>{t('qrForm.scanToFill')}</p>
                 </div>
               )}
             </CardContent>
@@ -401,29 +401,29 @@ const QRForm = () => {
         {/* Tips */}
         <Card>
           <CardHeader>
-            <CardTitle>Dicas para melhor escaneamento</CardTitle>
+            <CardTitle>{t('qrForm.scanningTips')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               <div className="flex items-start gap-2">
                 <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
                 <div>
-                  <p className="font-medium">Boa iluminação</p>
-                  <p className="text-muted-foreground">Use em ambientes bem iluminados</p>
+                  <p className="font-medium">{t('qrForm.goodLighting')}</p>
+                  <p className="text-muted-foreground">{t('qrForm.useWellLit')}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
                 <div>
-                  <p className="font-medium">Distância adequada</p>
-                  <p className="text-muted-foreground">Mantenha 10-30cm de distância</p>
+                  <p className="font-medium">{t('qrForm.adequateDistance')}</p>
+                  <p className="text-muted-foreground">{t('qrForm.maintain10to30cm')}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
                 <div>
-                  <p className="font-medium">QR code limpo</p>
-                  <p className="text-muted-foreground">Certifique-se que esteja legível</p>
+                  <p className="font-medium">{t('qrForm.cleanQR')}</p>
+                  <p className="text-muted-foreground">{t('qrForm.ensureReadable')}</p>
                 </div>
               </div>
             </div>

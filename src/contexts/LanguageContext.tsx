@@ -16,7 +16,7 @@ const translations = {
     // Navigation
     'nav.home': 'Accueil',
     'nav.plans': 'Tarifs',
-    'nav.generateQr': 'Générer QR',
+    'nav.generateQr': 'Scanner QR',
     'nav.dashboard': 'Tableau de bord',
     'nav.contacts': 'Contacts',
     'nav.campaigns': 'Campagnes',
@@ -378,7 +378,7 @@ const translations = {
     // Navigation
     'nav.home': 'Home',
     'nav.plans': 'Pricing',
-    'nav.generateQr': 'Generate QR',
+    'nav.generateQr': 'Scan QR',
     'nav.dashboard': 'Dashboard',
     'nav.contacts': 'Contacts',
     'nav.campaigns': 'Campaigns',
@@ -736,7 +736,7 @@ const translations = {
     // Navigation
     'nav.home': 'Home',
     'nav.plans': 'Prezzi',
-    'nav.generateQr': 'Genera QR',
+    'nav.generateQr': 'Scansiona QR',
     'nav.dashboard': 'Dashboard',
     'nav.contacts': 'Contatti',
     'nav.campaigns': 'Campagne',
@@ -1098,7 +1098,7 @@ const translations = {
     // Navigation
     'nav.home': 'Startseite',
     'nav.plans': 'Preise',
-    'nav.generateQr': 'QR Generieren',
+    'nav.generateQr': 'QR Scannen',
     'nav.dashboard': 'Dashboard',
     'nav.contacts': 'Kontakte',
     'nav.campaigns': 'Kampagnen',
