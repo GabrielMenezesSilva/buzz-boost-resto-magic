@@ -307,6 +307,12 @@ const translations: Record<Language, Record<string, string>> = {
     'campaigns.cannotSend': 'Não foi possível enviar a campanha',
     'campaigns.campaignDeleted': 'Campanha deletada com sucesso',
     'campaigns.cannotDelete': 'Não foi possível deletar a campanha',
+    
+    // Campaign Stats
+    'campaigns.stats.activeCampaigns': 'Campanhas Ativas',
+    'campaigns.stats.messagesSent': 'Mensagens Enviadas',
+    'campaigns.stats.successRate': 'Taxa de Sucesso',
+    'campaigns.stats.totalCampaigns': 'Total de Campanhas',
 
     // QR Form Errors
 
@@ -677,6 +683,12 @@ const translations: Record<Language, Record<string, string>> = {
     'campaigns.cannotSend': 'Impossible d\'envoyer la campagne',
     'campaigns.campaignDeleted': 'Campagne supprimée avec succès',
     'campaigns.cannotDelete': 'Impossible de supprimer la campagne',
+    
+    // Campaign Stats
+    'campaigns.stats.activeCampaigns': 'Campagnes Actives',
+    'campaigns.stats.messagesSent': 'Messages Envoyés',
+    'campaigns.stats.successRate': 'Taux de Succès',
+    'campaigns.stats.totalCampaigns': 'Total des Campagnes',
 
     // QR Form Errors
 
@@ -1045,6 +1057,12 @@ const translations: Record<Language, Record<string, string>> = {
     'campaigns.cannotSend': 'Unable to send campaign',
     'campaigns.campaignDeleted': 'Campaign deleted successfully',
     'campaigns.cannotDelete': 'Unable to delete campaign',
+    
+    // Campaign Stats
+    'campaigns.stats.activeCampaigns': 'Active Campaigns',
+    'campaigns.stats.messagesSent': 'Messages Sent',
+    'campaigns.stats.successRate': 'Success Rate',
+    'campaigns.stats.totalCampaigns': 'Total Campaigns',
 
     // QR Form Errors
 
@@ -1413,6 +1431,12 @@ const translations: Record<Language, Record<string, string>> = {
     'campaigns.cannotSend': 'Impossibile inviare la campagna',
     'campaigns.campaignDeleted': 'Campagna eliminata con successo',
     'campaigns.cannotDelete': 'Impossibile eliminare la campagna',
+    
+    // Campaign Stats
+    'campaigns.stats.activeCampaigns': 'Campagne Attive',
+    'campaigns.stats.messagesSent': 'Messaggi Inviati',
+    'campaigns.stats.successRate': 'Tasso di Successo',
+    'campaigns.stats.totalCampaigns': 'Totale Campagne',
 
     // QR Form Errors
 
@@ -1781,6 +1805,12 @@ const translations: Record<Language, Record<string, string>> = {
     'campaigns.cannotSend': 'Kampagne kann nicht gesendet werden',
     'campaigns.campaignDeleted': 'Kampagne erfolgreich gelöscht',
     'campaigns.cannotDelete': 'Kampagne kann nicht gelöscht werden',
+    
+    // Campaign Stats
+    'campaigns.stats.activeCampaigns': 'Aktive Kampagnen',
+    'campaigns.stats.messagesSent': 'Gesendete Nachrichten',
+    'campaigns.stats.successRate': 'Erfolgsrate',
+    'campaigns.stats.totalCampaigns': 'Gesamte Kampagnen',
 
     // QR Form Errors
 
