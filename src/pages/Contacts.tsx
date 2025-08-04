@@ -106,7 +106,7 @@ const Contacts = () => {
             <Link to="/qr">
               <Button variant="outline" className="flex items-center gap-2">
                 <QrCode className="w-4 h-4" />
-                Escanear QR
+                {t('contacts.scanQr')}
               </Button>
             </Link>
             <ContactDialog
@@ -114,7 +114,7 @@ const Contacts = () => {
               trigger={
                 <Button className="flex items-center gap-2">
                   <Plus className="w-4 h-4" />
-                  Novo Contato
+                  {t('contacts.newContact')}
                 </Button>
               }
             />

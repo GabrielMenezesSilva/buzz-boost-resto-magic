@@ -28,7 +28,7 @@ export default function Dashboard() {
             </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center space-x-2">
               <TrendingUp className="w-4 h-4" />
-              <span>Analytics</span>
+              <span>{t('dashboard.analytics')}</span>
             </TabsTrigger>
           </TabsList>
 

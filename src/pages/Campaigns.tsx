@@ -195,7 +195,7 @@ export default function Campaigns() {
                   className="bg-gradient-primary shadow-warm"
                 >
           <Plus className="w-4 h-4 mr-2" />
-          Nouvelle campagne
+          {t('campaigns.newCampaign')}
         </Button>
       </div>
 
@@ -218,9 +218,9 @@ export default function Campaigns() {
       {showCreateForm && (
         <Card>
           <CardHeader>
-            <CardTitle>Créer une nouvelle campagne</CardTitle>
+            <CardTitle>{t('campaigns.createNew')}</CardTitle>
             <CardDescription>
-              Configurez votre campagne de promotion automatisée
+              {t('campaigns.configurePromo')}
             </CardDescription>
           </CardHeader>
           <CardContent>
