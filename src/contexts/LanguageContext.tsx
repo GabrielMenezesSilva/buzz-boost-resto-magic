@@ -45,6 +45,23 @@ const translations: Record<Language, Record<string, string>> = {
     'dashboard.recentCampaigns': 'Campanhas Recentes',
     'dashboard.noCampaignsYet': 'Nenhuma campanha ainda',
     'dashboard.overview': 'Visão Geral',
+    'dashboard.overviewTitle': 'Visão Geral',
+    'dashboard.overviewSubtitle': 'Acompanhe o desempenho do seu negócio',
+    'dashboard.scanQr': 'Escanear QR',
+    'dashboard.thisWeek': 'esta semana',
+    'dashboard.total': 'total',
+    'dashboard.conversionRate': 'Taxa de Conversão',
+    'dashboard.last30Days': 'Últimos 30 dias',
+    'dashboard.uniqueQr': 'QR Único',
+    'dashboard.yourAccessCode': 'Seu código de acesso',
+    'dashboard.recentCampaignsDesc': 'Suas campanhas mais recentes',
+    'dashboard.recentContactsDesc': 'Contatos adicionados recentemente',
+    'dashboard.quickActionsDesc': 'Ações rápidas para gerenciar seu negócio',
+    'dashboard.captureContact': 'Capturar Contato',
+    'dashboard.captureContactDesc': 'Escaneie QR codes para adicionar contatos',
+    'dashboard.newCampaignAction': 'Nova Campanha',
+
+    // Campaign Status
 
     // Campaign Status
     'campaign.status.draft': 'Rascunho',
@@ -381,6 +398,23 @@ const translations: Record<Language, Record<string, string>> = {
     'analytics.detailedMetrics': 'Métriques détaillées',
     'dashboard.analytics': 'Analytics',
     'dashboard.overview': 'Vue d\'ensemble',
+    'dashboard.overviewTitle': 'Vue d\'ensemble',
+    'dashboard.overviewSubtitle': 'Suivez les performances de votre entreprise',
+    'dashboard.scanQr': 'Scanner QR',
+    'dashboard.thisWeek': 'cette semaine',
+    'dashboard.total': 'total',
+    'dashboard.conversionRate': 'Taux de Conversion',
+    'dashboard.last30Days': 'Derniers 30 jours',
+    'dashboard.uniqueQr': 'QR Unique',
+    'dashboard.yourAccessCode': 'Votre code d\'accès',
+    'dashboard.recentCampaignsDesc': 'Vos campagnes les plus récentes',
+    'dashboard.recentContactsDesc': 'Contacts ajoutés récemment',
+    'dashboard.quickActionsDesc': 'Actions rapides pour gérer votre entreprise',
+    'dashboard.captureContact': 'Capturer Contact',
+    'dashboard.captureContactDesc': 'Scannez des QR codes pour ajouter des contacts',
+    'dashboard.newCampaignAction': 'Nouvelle Campagne',
+
+    // Campaign Status
 
     // QR Generator
     'qr.title': 'Générer un QR Code',
@@ -624,6 +658,23 @@ const translations: Record<Language, Record<string, string>> = {
     'analytics.detailedMetrics': 'Detailed metrics',
     'dashboard.analytics': 'Analytics',
     'dashboard.overview': 'Overview',
+    'dashboard.overviewTitle': 'Overview',
+    'dashboard.overviewSubtitle': 'Track your business performance',
+    'dashboard.scanQr': 'Scan QR',
+    'dashboard.thisWeek': 'this week',
+    'dashboard.total': 'total',
+    'dashboard.conversionRate': 'Conversion Rate',
+    'dashboard.last30Days': 'Last 30 days',
+    'dashboard.uniqueQr': 'Unique QR',
+    'dashboard.yourAccessCode': 'Your access code',
+    'dashboard.recentCampaignsDesc': 'Your most recent campaigns',
+    'dashboard.recentContactsDesc': 'Recently added contacts',
+    'dashboard.quickActionsDesc': 'Quick actions to manage your business',
+    'dashboard.captureContact': 'Capture Contact',
+    'dashboard.captureContactDesc': 'Scan QR codes to add contacts',
+    'dashboard.newCampaignAction': 'New Campaign',
+
+    // Campaign Status
 
     // QR Generator
     'qr.title': 'Generate QR Code',
@@ -867,6 +918,23 @@ const translations: Record<Language, Record<string, string>> = {
     'analytics.detailedMetrics': 'Metriche dettagliate',
     'dashboard.analytics': 'Analytics',
     'dashboard.overview': 'Panoramica',
+    'dashboard.overviewTitle': 'Panoramica',
+    'dashboard.overviewSubtitle': 'Monitora le prestazioni della tua attività',
+    'dashboard.scanQr': 'Scansiona QR',
+    'dashboard.thisWeek': 'questa settimana',
+    'dashboard.total': 'totale',
+    'dashboard.conversionRate': 'Tasso di Conversione',
+    'dashboard.last30Days': 'Ultimi 30 giorni',
+    'dashboard.uniqueQr': 'QR Unico',
+    'dashboard.yourAccessCode': 'Il tuo codice di accesso',
+    'dashboard.recentCampaignsDesc': 'Le tue campagne più recenti',
+    'dashboard.recentContactsDesc': 'Contatti aggiunti di recente',
+    'dashboard.quickActionsDesc': 'Azioni rapide per gestire la tua attività',
+    'dashboard.captureContact': 'Cattura Contatto',
+    'dashboard.captureContactDesc': 'Scansiona QR code per aggiungere contatti',
+    'dashboard.newCampaignAction': 'Nuova Campagna',
+
+    // Campaign Status
 
     // QR Generator
     'qr.title': 'Genera QR Code',
@@ -1110,6 +1178,23 @@ const translations: Record<Language, Record<string, string>> = {
     'analytics.detailedMetrics': 'Detaillierte Metriken',
     'dashboard.analytics': 'Analytics',
     'dashboard.overview': 'Übersicht',
+    'dashboard.overviewTitle': 'Übersicht',
+    'dashboard.overviewSubtitle': 'Verfolgen Sie Ihre Geschäftsleistung',
+    'dashboard.scanQr': 'QR Scannen',
+    'dashboard.thisWeek': 'diese Woche',
+    'dashboard.total': 'gesamt',
+    'dashboard.conversionRate': 'Konversionsrate',
+    'dashboard.last30Days': 'Letzte 30 Tage',
+    'dashboard.uniqueQr': 'Einzigartiger QR',
+    'dashboard.yourAccessCode': 'Ihr Zugangscode',
+    'dashboard.recentCampaignsDesc': 'Ihre neuesten Kampagnen',
+    'dashboard.recentContactsDesc': 'Kürzlich hinzugefügte Kontakte',
+    'dashboard.quickActionsDesc': 'Schnelle Aktionen zur Verwaltung Ihres Geschäfts',
+    'dashboard.captureContact': 'Kontakt Erfassen',
+    'dashboard.captureContactDesc': 'QR-Codes scannen um Kontakte hinzuzufügen',
+    'dashboard.newCampaignAction': 'Neue Kampagne',
+
+    // Campaign Status
 
     // QR Generator
     'qr.title': 'QR-Code Generieren',
