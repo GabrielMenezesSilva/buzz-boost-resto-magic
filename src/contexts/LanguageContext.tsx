@@ -169,6 +169,12 @@ const translations = {
     'footer.onlineHelp': 'Aide en ligne',
     'footer.allRights': 'Tous droits réservés.',
 
+    // Contact Sources
+    'contact.source.qr': 'Code QR',
+    'contact.source.manual': 'Manuel',
+    'contact.source.import': 'Import',
+    'contact.source.api': 'API',
+
     // Analytics
     'analytics.title': 'Analytics',
     'analytics.subtitle': 'Acompanhe o desempenho das suas campanhas e contatos',
@@ -528,6 +534,12 @@ const translations = {
     'footer.faq': 'FAQ',
     'footer.onlineHelp': 'Online Help',
     'footer.allRights': 'All rights reserved.',
+
+    // Contact Sources
+    'contact.source.qr': 'QR Code',
+    'contact.source.manual': 'Manual',
+    'contact.source.import': 'Import',
+    'contact.source.api': 'API',
 
     // Analytics
     'analytics.title': 'Analytics',
@@ -889,6 +901,12 @@ const translations = {
     'footer.onlineHelp': 'Aiuto Online',
     'footer.allRights': 'Tutti i diritti riservati.',
 
+    // Contact Sources
+    'contact.source.qr': 'Codice QR',
+    'contact.source.manual': 'Manuale',
+    'contact.source.import': 'Importazione',
+    'contact.source.api': 'API',
+
     // Analytics
     'analytics.title': 'Analytics',
     'analytics.subtitle': 'Monitora le prestazioni delle tue campagne e contatti',
@@ -1248,6 +1266,12 @@ const translations = {
     'footer.faq': 'FAQ',
     'footer.onlineHelp': 'Online-Hilfe',
     'footer.allRights': 'Alle Rechte vorbehalten.',
+
+    // Contact Sources
+    'contact.source.qr': 'QR-Code',
+    'contact.source.manual': 'Manuell',
+    'contact.source.import': 'Import',
+    'contact.source.api': 'API',
 
     // Analytics
     'analytics.title': 'Analytics',

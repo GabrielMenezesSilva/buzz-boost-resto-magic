@@ -190,7 +190,7 @@ export default function DashboardOverview() {
                         {contact.source && (
                           <>
                             <span>•</span>
-                            <span>{contact.source}</span>
+                            <span>{t(`contact.source.${contact.source?.toLowerCase()}`) || contact.source}</span>
                           </>
                         )}
                       </div>
