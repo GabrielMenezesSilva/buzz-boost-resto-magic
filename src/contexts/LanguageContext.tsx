@@ -117,6 +117,34 @@ const translations = {
     'dashboard.scanQr': 'Scanner QR',
     'dashboard.newCampaign': 'Nouvelle Campagne',
     'dashboard.analytics': 'Analytics',
+    
+    // Dashboard KPIs
+    'dashboard.totalContacts': 'Total Contacts',
+    'dashboard.thisWeek': 'cette semaine',
+    'dashboard.activeCampaigns': 'Campagnes Actives',
+    'dashboard.total': 'total',
+    'dashboard.conversionRate': 'Taux de Conversion',
+    'dashboard.last30Days': 'Derniers 30 jours',
+    'dashboard.uniqueQr': 'QR Unique',
+    'dashboard.yourAccessCode': 'Votre code d\'accès',
+    
+    // Dashboard sections
+    'dashboard.recentCampaigns': 'Campagnes Récentes',
+    'dashboard.recentCampaignsDesc': 'Vos dernières campagnes marketing',
+    'dashboard.recentContacts': 'Contacts Récents',
+    'dashboard.recentContactsDesc': 'Nouveaux contacts ajoutés récemment',
+    'dashboard.noCampaignsYet': 'Aucune campagne pour le moment',
+    'dashboard.noContactsYet': 'Aucun contact pour le moment',
+    
+    // Quick Actions
+    'dashboard.quickActions': 'Actions Rapides',
+    'dashboard.quickActionsDesc': 'Raccourcis vers les fonctions principales',
+    'dashboard.captureContact': 'Capturer Contact',
+    'dashboard.captureContactDesc': 'Scanner un QR code pour ajouter un contact',
+    'dashboard.newCampaignAction': 'Nouvelle Campagne',
+    'dashboard.newCampaignDesc': 'Créer une campagne marketing',
+    'dashboard.manageContacts': 'Gérer Contacts',
+    'dashboard.manageContactsDesc': 'Voir et modifier vos contacts',
 
     // Analytics
     'analytics.title': 'Analytics',
@@ -410,6 +438,34 @@ const translations = {
     'dashboard.scanQr': 'Scan QR',
     'dashboard.newCampaign': 'New Campaign',
     'dashboard.analytics': 'Analytics',
+    
+    // Dashboard KPIs
+    'dashboard.totalContacts': 'Total Contacts',
+    'dashboard.thisWeek': 'this week',
+    'dashboard.activeCampaigns': 'Active Campaigns',
+    'dashboard.total': 'total',
+    'dashboard.conversionRate': 'Conversion Rate',
+    'dashboard.last30Days': 'Last 30 days',
+    'dashboard.uniqueQr': 'Unique QR',
+    'dashboard.yourAccessCode': 'Your access code',
+    
+    // Dashboard sections
+    'dashboard.recentCampaigns': 'Recent Campaigns',
+    'dashboard.recentCampaignsDesc': 'Your latest marketing campaigns',
+    'dashboard.recentContacts': 'Recent Contacts',
+    'dashboard.recentContactsDesc': 'Recently added new contacts',
+    'dashboard.noCampaignsYet': 'No campaigns yet',
+    'dashboard.noContactsYet': 'No contacts yet',
+    
+    // Quick Actions
+    'dashboard.quickActions': 'Quick Actions',
+    'dashboard.quickActionsDesc': 'Shortcuts to main functions',
+    'dashboard.captureContact': 'Capture Contact',
+    'dashboard.captureContactDesc': 'Scan a QR code to add a contact',
+    'dashboard.newCampaignAction': 'New Campaign',
+    'dashboard.newCampaignDesc': 'Create a marketing campaign',
+    'dashboard.manageContacts': 'Manage Contacts',
+    'dashboard.manageContactsDesc': 'View and edit your contacts',
 
     // Analytics
     'analytics.title': 'Analytics',
@@ -703,6 +759,34 @@ const translations = {
     'dashboard.scanQr': 'Scansiona QR',
     'dashboard.newCampaign': 'Nuova Campagna',
     'dashboard.analytics': 'Analytics',
+    
+    // Dashboard KPIs
+    'dashboard.totalContacts': 'Contatti Totali',
+    'dashboard.thisWeek': 'questa settimana',
+    'dashboard.activeCampaigns': 'Campagne Attive',
+    'dashboard.total': 'totale',
+    'dashboard.conversionRate': 'Tasso di Conversione',
+    'dashboard.last30Days': 'Ultimi 30 giorni',
+    'dashboard.uniqueQr': 'QR Unico',
+    'dashboard.yourAccessCode': 'Il tuo codice di accesso',
+    
+    // Dashboard sections
+    'dashboard.recentCampaigns': 'Campagne Recenti',
+    'dashboard.recentCampaignsDesc': 'Le tue ultime campagne marketing',
+    'dashboard.recentContacts': 'Contatti Recenti',
+    'dashboard.recentContactsDesc': 'Nuovi contatti aggiunti di recente',
+    'dashboard.noCampaignsYet': 'Nessuna campagna ancora',
+    'dashboard.noContactsYet': 'Nessun contatto ancora',
+    
+    // Quick Actions
+    'dashboard.quickActions': 'Azioni Rapide',
+    'dashboard.quickActionsDesc': 'Scorciatoie alle funzioni principali',
+    'dashboard.captureContact': 'Cattura Contatto',
+    'dashboard.captureContactDesc': 'Scansiona un codice QR per aggiungere un contatto',
+    'dashboard.newCampaignAction': 'Nuova Campagna',
+    'dashboard.newCampaignDesc': 'Crea una campagna marketing',
+    'dashboard.manageContacts': 'Gestisci Contatti',
+    'dashboard.manageContactsDesc': 'Visualizza e modifica i tuoi contatti',
 
     // Analytics
     'analytics.title': 'Analytics',
@@ -996,6 +1080,34 @@ const translations = {
     'dashboard.scanQr': 'QR scannen',
     'dashboard.newCampaign': 'Neue Kampagne',
     'dashboard.analytics': 'Analytics',
+    
+    // Dashboard KPIs
+    'dashboard.totalContacts': 'Kontakte Gesamt',
+    'dashboard.thisWeek': 'diese Woche',
+    'dashboard.activeCampaigns': 'Aktive Kampagnen',
+    'dashboard.total': 'gesamt',
+    'dashboard.conversionRate': 'Konversionsrate',
+    'dashboard.last30Days': 'Letzten 30 Tage',
+    'dashboard.uniqueQr': 'Einzigartiger QR',
+    'dashboard.yourAccessCode': 'Ihr Zugangscode',
+    
+    // Dashboard sections
+    'dashboard.recentCampaigns': 'Aktuelle Kampagnen',
+    'dashboard.recentCampaignsDesc': 'Ihre neuesten Marketing-Kampagnen',
+    'dashboard.recentContacts': 'Aktuelle Kontakte',
+    'dashboard.recentContactsDesc': 'Kürzlich hinzugefügte neue Kontakte',
+    'dashboard.noCampaignsYet': 'Noch keine Kampagnen',
+    'dashboard.noContactsYet': 'Noch keine Kontakte',
+    
+    // Quick Actions
+    'dashboard.quickActions': 'Schnellaktionen',
+    'dashboard.quickActionsDesc': 'Verknüpfungen zu Hauptfunktionen',
+    'dashboard.captureContact': 'Kontakt Erfassen',
+    'dashboard.captureContactDesc': 'QR-Code scannen um Kontakt hinzuzufügen',
+    'dashboard.newCampaignAction': 'Neue Kampagne',
+    'dashboard.newCampaignDesc': 'Marketing-Kampagne erstellen',
+    'dashboard.manageContacts': 'Kontakte Verwalten',
+    'dashboard.manageContactsDesc': 'Kontakte anzeigen und bearbeiten',
 
     // Analytics
     'analytics.title': 'Analytics',

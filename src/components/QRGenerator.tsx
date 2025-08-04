@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { QrCode, Download, Share, Copy, Loader2 } from 'lucide-react';
 import QRCode from 'qrcode';
 
@@ -14,6 +15,7 @@ interface QRGeneratorProps {
 export default function QRGenerator({ className }: QRGeneratorProps) {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [qrCodeImage, setQrCodeImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -33,8 +35,8 @@ export default function QRGenerator({ className }: QRGeneratorProps) {
         if (error) {
           console.error('Error fetching profile:', error);
           toast({
-            title: "Erro",
-            description: "Não foi possível carregar o QR code.",
+            title: t('qrForm.errorTitle'),
+            description: t('qrGenerator.loadError'),
             variant: "destructive"
           });
           return;
@@ -139,10 +141,10 @@ export default function QRGenerator({ className }: QRGeneratorProps) {
       <CardHeader className="text-center">
         <CardTitle className="flex items-center justify-center gap-2">
           <QrCode className="h-5 w-5" />
-          Seu QR Code
+          {t('qrForm.title')}
         </CardTitle>
         <CardDescription>
-          Compartilhe este QR code para que clientes deixem seus dados
+          {t('qrGenerator.shareDescription')}
         </CardDescription>
       </CardHeader>
       
