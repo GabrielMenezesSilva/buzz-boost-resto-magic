@@ -59,23 +59,23 @@ export default function Layout({ children }: LayoutProps) {
     <div className="min-h-screen bg-gradient-to-br from-orange-light/20 to-background">
       {/* Header */}
       <header className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link to="/" className="flex items-center space-x-2">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="flex justify-between items-center h-18">
+            <Link to="/" className="flex items-center space-x-4 mr-8">
               <img src={dopplerDineLogo} alt="DopplerDine" className="w-10 h-10" />
               <span className="text-xl font-bold text-foreground">DopplerDine</span>
             </Link>
 
-            <nav className="hidden md:flex space-x-8">
+            <nav className="hidden md:flex items-center space-x-10 flex-1 justify-center">
               {navigation.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    className={`flex items-center space-x-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                       isActive(item.href)
-                        ? 'text-primary bg-primary/10'
+                        ? 'text-primary bg-primary/10 shadow-sm'
                         : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                     }`}
                   >
@@ -101,7 +101,7 @@ export default function Layout({ children }: LayoutProps) {
               </Button>
             </div>
 
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-6 ml-8">
               <LanguageSelector />
               {user ? (
                 <div className="flex items-center space-x-4">
