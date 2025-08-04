@@ -31,33 +31,33 @@ import {
   RefreshCw
 } from 'lucide-react';
 
-const TIME_RANGES = [
-  { value: '7d', label: 'Últimos 7 dias' },
-  { value: '30d', label: 'Últimos 30 dias' },
-  { value: '90d', label: 'Últimos 90 dias' },
-  { value: '365d', label: 'Último ano' }
-];
-
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8dd1e1'];
-
-const STATUS_LABELS = {
-  draft: 'Rascunho',
-  scheduled: 'Agendada',
-  sending: 'Enviando',
-  completed: 'Concluída',
-  failed: 'Falhou'
-};
-
-const TYPE_LABELS = {
-  sms: 'SMS',
-  email: 'Email',
-  whatsapp: 'WhatsApp'
-};
 
 export default function DashboardAnalytics() {
   const [timeRange, setTimeRange] = useState('30d');
   const { data, isLoading, refreshAnalytics } = useAnalytics(timeRange);
   const { t } = useLanguage();
+
+  const TIME_RANGES = [
+    { value: '7d', label: t('analytics.timeRange.7d') },
+    { value: '30d', label: t('analytics.timeRange.30d') },
+    { value: '90d', label: t('analytics.timeRange.90d') },
+    { value: '365d', label: t('analytics.timeRange.365d') }
+  ];
+
+  const STATUS_LABELS = {
+    draft: t('analytics.status.draft'),
+    scheduled: t('analytics.status.scheduled'),
+    sending: t('analytics.status.sending'),
+    completed: t('analytics.status.completed'),
+    failed: t('analytics.status.failed')
+  };
+
+  const TYPE_LABELS = {
+    sms: t('analytics.type.sms'),
+    email: t('analytics.type.email'),
+    whatsapp: t('analytics.type.whatsapp')
+  };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -103,7 +103,7 @@ export default function DashboardAnalytics() {
             size="sm"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-            Atualizar
+            {t('analytics.refresh')}
           </Button>
         </div>
       </div>
@@ -112,52 +112,52 @@ export default function DashboardAnalytics() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Campanhas</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('analytics.campaigns')}</CardTitle>
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{data.totalCampaigns}</div>
             <p className="text-xs text-muted-foreground">
-              No período
+              {t('analytics.inPeriod')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Enviadas</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('analytics.sent')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{data.totalSent}</div>
             <p className="text-xs text-muted-foreground">
-              {formatPercentage(data.successRate)} sucesso
+              {formatPercentage(data.successRate)} {t('analytics.success')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Contatos</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('analytics.contacts')}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{data.totalContacts}</div>
             <p className="text-xs text-muted-foreground">
-              Novos contatos
+              {t('analytics.newContacts')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Custo</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('analytics.cost')}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(data.totalCost)}</div>
             <p className="text-xs text-muted-foreground">
-              Total gasto
+              {t('analytics.totalCost')}
             </p>
           </CardContent>
         </Card>
@@ -168,9 +168,9 @@ export default function DashboardAnalytics() {
         {/* Trend Chart */}
         <Card>
           <CardHeader>
-            <CardTitle>Tendência de Envios</CardTitle>
+            <CardTitle>{t('analytics.sendTrend')}</CardTitle>
             <CardDescription>
-              Últimos 7 dias
+              {t('analytics.last7Days')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -185,14 +185,14 @@ export default function DashboardAnalytics() {
                   type="monotone" 
                   dataKey="sent" 
                   stroke="#8884d8" 
-                  name="Enviadas"
+                  name={t('analytics.sent.chart')}
                   strokeWidth={2}
                 />
                 <Line 
                   type="monotone" 
                   dataKey="delivered" 
                   stroke="#82ca9d" 
-                  name="Entregues"
+                  name={t('analytics.delivered.chart')}
                   strokeWidth={2}
                 />
               </LineChart>
@@ -203,9 +203,9 @@ export default function DashboardAnalytics() {
         {/* Campaign Types Chart */}
         <Card>
           <CardHeader>
-            <CardTitle>Tipos de Campanha</CardTitle>
+            <CardTitle>{t('analytics.campaignTypes')}</CardTitle>
             <CardDescription>
-              Distribuição por tipo
+              {t('analytics.distributionByType')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -237,9 +237,9 @@ export default function DashboardAnalytics() {
       {/* Performance Metrics */}
       <Card>
         <CardHeader>
-          <CardTitle>Métricas de Performance</CardTitle>
+          <CardTitle>{t('analytics.performanceMetrics')}</CardTitle>
           <CardDescription>
-            Indicadores chave de sucesso
+            {t('analytics.keySuccessIndicators')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -248,21 +248,21 @@ export default function DashboardAnalytics() {
               <div className="text-3xl font-bold text-green-600">
                 {formatPercentage(data.successRate)}
               </div>
-              <p className="text-sm text-muted-foreground">Taxa de Entrega</p>
+              <p className="text-sm text-muted-foreground">{t('analytics.deliveryRate')}</p>
             </div>
             
             <div className="text-center">
               <div className="text-3xl font-bold text-blue-600">
                 {data.totalSent > 0 ? (data.totalCost / data.totalSent).toFixed(4) : '0.0000'}
               </div>
-              <p className="text-sm text-muted-foreground">Custo por Mensagem (R$)</p>
+              <p className="text-sm text-muted-foreground">{t('analytics.costPerMessage')}</p>
             </div>
             
             <div className="text-center">
               <div className="text-3xl font-bold text-purple-600">
                 {data.totalContacts > 0 ? (data.totalSent / data.totalContacts).toFixed(1) : '0.0'}
               </div>
-              <p className="text-sm text-muted-foreground">Mensagens por Contato</p>
+              <p className="text-sm text-muted-foreground">{t('analytics.messagesPerContact')}</p>
             </div>
           </div>
         </CardContent>
@@ -271,16 +271,16 @@ export default function DashboardAnalytics() {
       {/* Recent Activity */}
       <Card>
         <CardHeader>
-          <CardTitle>Atividade Recente</CardTitle>
+          <CardTitle>{t('analytics.recentActivity')}</CardTitle>
           <CardDescription>
-            Últimas ações realizadas
+            {t('analytics.lastActions')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {data.recentActivity.length === 0 ? (
             <div className="text-center py-6 text-muted-foreground">
               <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Nenhuma atividade recente</p>
+              <p>{t('analytics.noRecentActivity')}</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -298,7 +298,7 @@ export default function DashboardAnalytics() {
                     </div>
                   </div>
                   <Badge variant={activity.type === 'campaign' ? 'default' : 'secondary'} className="text-xs">
-                    {activity.type === 'campaign' ? 'Campanha' : 'Contato'}
+                    {activity.type === 'campaign' ? t('analytics.campaign.label') : t('analytics.contact.label')}
                   </Badge>
                 </div>
               ))}
