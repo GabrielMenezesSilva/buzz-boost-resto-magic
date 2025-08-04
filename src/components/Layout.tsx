@@ -120,7 +120,7 @@ export default function Layout({ children }: LayoutProps) {
                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant="ghost" 
-                      className="flex items-center space-x-2 px-3 py-2 hover:bg-muted/50"
+                      className="flex items-center space-x-2 px-3 py-2 transition-colors duration-200 hover:bg-muted/70 data-[state=open]:bg-muted/70"
                     >
                       <User className="w-4 h-4" />
                       <span className="text-sm">
