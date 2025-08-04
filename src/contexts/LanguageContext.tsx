@@ -99,6 +99,28 @@ const translations = {
     'home.testFree': 'Tester gratuitement',
     'home.scheduleDemo': 'Planifier une démo',
     
+    // Home features
+    'home.features.qrCodeTitle': 'QR Code Intelligent',
+    'home.features.qrCodeDesc': 'Placez simplement un QR code sur vos tables ou tickets de caisse pour commencer à collecter des contacts.',
+    'home.features.smsTitle': 'SMS/WhatsApp Automatisés',
+    'home.features.smsDesc': 'Envoyez des promotions flash les jours de faible affluence avec notre système d\'envoi automatisé.',
+    'home.features.referralTitle': 'Programme de Parrainage',
+    'home.features.referralDesc': 'Récompensez vos clients fidèles quand ils amènent de nouveaux clients dans votre restaurant.',
+    'home.features.analyticsTitle': 'Analytics Détaillés',
+    'home.features.analyticsDesc': 'Suivez vos performances, taux de conversion et ROI de vos campagnes en temps réel.',
+    'home.features.rewardsTitle': 'Récompenses Personnalisées',
+    'home.features.rewardsDesc': 'Offrez des entrées, boissons ou réductions pour inciter vos clients à revenir.',
+    'home.features.targetingTitle': 'Ciblage Intelligent',
+    'home.features.targetingDesc': 'Identifiez automatiquement vos jours de faible affluence et envoyez des promotions ciblées.',
+    
+    // Home steps
+    'home.step1.title': 'QR Code',
+    'home.step1.desc': 'Vos clients scannent le QR code sur leur table ou ticket et remplissent un formulaire rapide.',
+    'home.step2.title': 'Collecte',
+    'home.step2.desc': 'Les contacts sont automatiquement ajoutés à votre base de données avec leurs préférences.',
+    'home.step3.title': 'Promotion',
+    'home.step3.desc': 'Envoyez des promotions flash les jours calmes pour ramener vos clients automatiquement.',
+    
     // Dashboard
     'dashboard.title': 'Tableau de bord',
     'dashboard.subtitle': 'Aperçu de votre entreprise et métriques de performance',
@@ -342,6 +364,15 @@ const translations = {
     'templateCategories.event': 'Événement',
     'templateCategories.special_offer': 'Offre spéciale',
     'templateCategories.feedback': 'Avis client',
+    
+    // Not Found Page
+    'notFound.title': 'Page non trouvée',
+    'notFound.message': 'La page que vous cherchez n\'existe pas.',
+    'notFound.returnHome': 'Retourner à l\'accueil',
+    
+    // Index Page
+    'index.welcome': 'Bienvenue dans DopplerDine',
+    'index.subtitle': 'Commencez à construire votre projet de marketing restaurant!',
   },
   en: {
     // Navigation
@@ -429,6 +460,28 @@ const translations = {
     'home.ctaSubtitle': 'Join hundreds of restaurateurs who have already increased their revenue.',
     'home.testFree': 'Test for free',
     'home.scheduleDemo': 'Schedule demo',
+    
+    // Home features
+    'home.features.qrCodeTitle': 'Smart QR Code',
+    'home.features.qrCodeDesc': 'Simply place a QR code on your tables or receipts to start collecting contacts.',
+    'home.features.smsTitle': 'Automated SMS/WhatsApp',
+    'home.features.smsDesc': 'Send flash promotions on slow days with our automated sending system.',
+    'home.features.referralTitle': 'Referral Program',
+    'home.features.referralDesc': 'Reward your loyal customers when they bring new clients to your restaurant.',
+    'home.features.analyticsTitle': 'Detailed Analytics',
+    'home.features.analyticsDesc': 'Track your performance, conversion rates and campaign ROI in real time.',
+    'home.features.rewardsTitle': 'Personalized Rewards',
+    'home.features.rewardsDesc': 'Offer appetizers, drinks or discounts to entice your customers to return.',
+    'home.features.targetingTitle': 'Smart Targeting',
+    'home.features.targetingDesc': 'Automatically identify your slow days and send targeted promotions.',
+    
+    // Home steps
+    'home.step1.title': 'QR Code',
+    'home.step1.desc': 'Your customers scan the QR code on their table or receipt and fill out a quick form.',
+    'home.step2.title': 'Collection',
+    'home.step2.desc': 'Contacts are automatically added to your database with their preferences.',
+    'home.step3.title': 'Promotion',
+    'home.step3.desc': 'Send flash promotions on quiet days to bring your customers back automatically.',
     
     // Dashboard
     'dashboard.title': 'Dashboard',
@@ -766,6 +819,28 @@ const translations = {
     'home.testFree': 'Testa gratis',
     'home.scheduleDemo': 'Programma demo',
     
+    // Home features
+    'home.features.qrCodeTitle': 'QR Code Intelligente',
+    'home.features.qrCodeDesc': 'Posiziona semplicemente un QR code sui tavoli o sugli scontrini per iniziare a raccogliere contatti.',
+    'home.features.smsTitle': 'SMS/WhatsApp Automatizzati',
+    'home.features.smsDesc': 'Invia promozioni flash nei giorni tranquilli con il nostro sistema di invio automatizzato.',
+    'home.features.referralTitle': 'Programma Referral',
+    'home.features.referralDesc': 'Premia i tuoi clienti fedeli quando portano nuovi clienti nel tuo ristorante.',
+    'home.features.analyticsTitle': 'Analytics Dettagliati',
+    'home.features.analyticsDesc': 'Monitora le tue prestazioni, tassi di conversione e ROI delle campagne in tempo reale.',
+    'home.features.rewardsTitle': 'Ricompense Personalizzate',
+    'home.features.rewardsDesc': 'Offri antipasti, bevande o sconti per invogliare i tuoi clienti a tornare.',
+    'home.features.targetingTitle': 'Targeting Intelligente',
+    'home.features.targetingDesc': 'Identifica automaticamente i tuoi giorni tranquilli e invia promozioni mirate.',
+    
+    // Home steps
+    'home.step1.title': 'QR Code',
+    'home.step1.desc': 'I tuoi clienti scansionano il QR code sul tavolo o sullo scontrino e compilano un modulo veloce.',
+    'home.step2.title': 'Raccolta',
+    'home.step2.desc': 'I contatti vengono automaticamente aggiunti al tuo database con le loro preferenze.',
+    'home.step3.title': 'Promozione',
+    'home.step3.desc': 'Invia promozioni flash nei giorni tranquilli per riportare automaticamente i tuoi clienti.',
+    
     // Dashboard
     'dashboard.title': 'Dashboard',
     'dashboard.subtitle': 'Panoramica della tua attività e metriche di performance',
@@ -1009,6 +1084,15 @@ const translations = {
     'templateCategories.event': 'Evento',
     'templateCategories.special_offer': 'Offerta Speciale',
     'templateCategories.feedback': 'Feedback',
+    
+    // Not Found Page
+    'notFound.title': 'Pagina non trovata',
+    'notFound.message': 'La pagina che stai cercando non esiste.',
+    'notFound.returnHome': 'Torna alla home',
+    
+    // Index Page
+    'index.welcome': 'Benvenuto in DopplerDine',
+    'index.subtitle': 'Inizia a costruire il tuo fantastico progetto di marketing per ristoranti!',
   },
   de: {
     // Navigation
@@ -1096,6 +1180,28 @@ const translations = {
     'home.ctaSubtitle': 'Schließen Sie sich Hunderten von Gastronomen an, die bereits ihre Umsätze gesteigert haben.',
     'home.testFree': 'Kostenlos testen',
     'home.scheduleDemo': 'Demo planen',
+    
+    // Home features
+    'home.features.qrCodeTitle': 'Intelligenter QR-Code',
+    'home.features.qrCodeDesc': 'Platzieren Sie einfach einen QR-Code auf Ihren Tischen oder Belegen, um Kontakte zu sammeln.',
+    'home.features.smsTitle': 'Automatisierte SMS/WhatsApp',
+    'home.features.smsDesc': 'Senden Sie Flash-Aktionen an ruhigen Tagen mit unserem automatisierten Versandsystem.',
+    'home.features.referralTitle': 'Empfehlungsprogramm',
+    'home.features.referralDesc': 'Belohnen Sie Ihre treuen Kunden, wenn sie neue Kunden in Ihr Restaurant bringen.',
+    'home.features.analyticsTitle': 'Detaillierte Analytics',
+    'home.features.analyticsDesc': 'Verfolgen Sie Ihre Leistung, Conversion-Raten und Kampagnen-ROI in Echtzeit.',
+    'home.features.rewardsTitle': 'Personalisierte Belohnungen',
+    'home.features.rewardsDesc': 'Bieten Sie Vorspeisen, Getränke oder Rabatte, um Ihre Kunden zur Rückkehr zu bewegen.',
+    'home.features.targetingTitle': 'Intelligentes Targeting',
+    'home.features.targetingDesc': 'Identifizieren Sie automatisch Ihre ruhigen Tage und senden Sie gezielte Aktionen.',
+    
+    // Home steps
+    'home.step1.title': 'QR-Code',
+    'home.step1.desc': 'Ihre Kunden scannen den QR-Code auf ihrem Tisch oder Beleg und füllen ein schnelles Formular aus.',
+    'home.step2.title': 'Sammlung',
+    'home.step2.desc': 'Kontakte werden automatisch zu Ihrer Datenbank mit ihren Präferenzen hinzugefügt.',
+    'home.step3.title': 'Aktion',
+    'home.step3.desc': 'Senden Sie Flash-Aktionen an ruhigen Tagen, um Ihre Kunden automatisch zurückzubringen.',
     
     // Dashboard
     'dashboard.title': 'Dashboard',
@@ -1340,6 +1446,15 @@ const translations = {
     'templateCategories.event': 'Veranstaltung',
     'templateCategories.special_offer': 'Sonderangebot',
     'templateCategories.feedback': 'Feedback',
+    
+    // Not Found Page
+    'notFound.title': 'Seite nicht gefunden',
+    'notFound.message': 'Die Seite, die Sie suchen, existiert nicht.',
+    'notFound.returnHome': 'Zur Startseite zurückkehren',
+    
+    // Index Page
+    'index.welcome': 'Willkommen bei DopplerDine',
+    'index.subtitle': 'Beginnen Sie mit dem Aufbau Ihres fantastischen Restaurant-Marketing-Projekts!',
   }
 };
 

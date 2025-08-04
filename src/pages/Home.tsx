@@ -12,28 +12,28 @@ export default function Home() {
   } = useLanguage();
   const features = [{
     icon: QrCode,
-    title: "QR Code Intelligent",
-    description: "Placez simplement un QR code sur vos tables ou tickets de caisse pour commencer à collecter des contacts."
+    title: t('home.features.qrCodeTitle'),
+    description: t('home.features.qrCodeDesc')
   }, {
     icon: MessageSquare,
-    title: "SMS/WhatsApp Automatisés",
-    description: "Envoyez des promotions flash les jours de faible affluence avec notre système d'envoi automatisé."
+    title: t('home.features.smsTitle'),
+    description: t('home.features.smsDesc')
   }, {
     icon: Users,
-    title: "Programme de Parrainage",
-    description: "Récompensez vos clients fidèles quand ils amènent de nouveaux clients dans votre restaurant."
+    title: t('home.features.referralTitle'),
+    description: t('home.features.referralDesc')
   }, {
     icon: BarChart3,
-    title: "Analytics Détaillés",
-    description: "Suivez vos performances, taux de conversion et ROI de vos campagnes en temps réel."
+    title: t('home.features.analyticsTitle'),
+    description: t('home.features.analyticsDesc')
   }, {
     icon: Gift,
-    title: "Récompenses Personnalisées",
-    description: "Offrez des entrées, boissons ou réductions pour inciter vos clients à revenir."
+    title: t('home.features.rewardsTitle'),
+    description: t('home.features.rewardsDesc')
   }, {
     icon: Target,
-    title: "Ciblage Intelligent",
-    description: "Identifiez automatiquement vos jours de faible affluence et envoyez des promotions ciblées."
+    title: t('home.features.targetingTitle'),
+    description: t('home.features.targetingDesc')
   }];
   const stats = [{
     value: "95%",
@@ -153,9 +153,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto shadow-warm">
                 <span className="text-2xl font-bold text-primary-foreground">1</span>
               </div>
-              <h3 className="text-xl font-semibold">QR Code</h3>
+              <h3 className="text-xl font-semibold">{t('home.step1.title')}</h3>
               <p className="text-muted-foreground">
-                Vos clients scannent le QR code sur leur table ou ticket et remplissent un formulaire rapide.
+                {t('home.step1.desc')}
               </p>
             </div>
             
@@ -163,9 +163,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto shadow-warm">
                 <span className="text-2xl font-bold text-primary-foreground">2</span>
               </div>
-              <h3 className="text-xl font-semibold">Collecte</h3>
+              <h3 className="text-xl font-semibold">{t('home.step2.title')}</h3>
               <p className="text-muted-foreground">
-                Les contacts sont automatiquement ajoutés à votre base de données avec leurs préférences.
+                {t('home.step2.desc')}
               </p>
             </div>
             
@@ -173,9 +173,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto shadow-warm">
                 <span className="text-2xl font-bold text-primary-foreground">3</span>
               </div>
-              <h3 className="text-xl font-semibold">Promotion</h3>
+              <h3 className="text-xl font-semibold">{t('home.step3.title')}</h3>
               <p className="text-muted-foreground">
-                Envoyez des promotions flash les jours calmes pour ramener vos clients automatiquement.
+                {t('home.step3.desc')}
               </p>
             </div>
           </div>
