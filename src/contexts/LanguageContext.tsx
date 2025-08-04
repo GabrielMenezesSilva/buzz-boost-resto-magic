@@ -28,6 +28,20 @@ const translations = {
     'auth.hello': 'Bonjour',
     'auth.loggedAs': 'Connecté en tant que',
     'auth.user': 'Utilisateur',
+    'auth.loginSubtitle': 'Connectez-vous ou créez votre compte pour commencer',
+    'auth.loginTab': 'Connexion',
+    'auth.signupTab': 'Inscription',
+    'auth.email': 'Email',
+    'auth.password': 'Mot de passe',
+    'auth.ownerName': 'Nom du Propriétaire',
+    'auth.restaurantName': 'Nom du Restaurant',
+    'auth.confirmPassword': 'Confirmer le Mot de Passe',
+    'auth.emailPlaceholder': 'votre@email.com',
+    'auth.passwordPlaceholder': '••••••••',
+    'auth.namePlaceholder': 'Votre nom',
+    'auth.restaurantPlaceholder': 'Nom de votre restaurant',
+    'auth.loginButton': 'Se connecter',
+    'auth.signupButton': 'Créer un compte',
     
     // Plans page
     'plans.badge': 'Système Premium de Marketing',
@@ -130,8 +144,6 @@ const translations = {
     'dashboard.scanQr': 'Scanner QR',
     'dashboard.newCampaign': 'Nouvelle Campagne',
     
-    // Auth
-    'auth.loginSubtitle': 'Connectez-vous ou créez votre compte pour commencer',
     
     // Analytics
     'analytics.title': 'Analytics',
@@ -390,6 +402,20 @@ const translations = {
     'auth.hello': 'Hello',
     'auth.loggedAs': 'Logged in as',
     'auth.user': 'User',
+    'auth.loginSubtitle': 'Log in or create your account to get started',
+    'auth.loginTab': 'Login',
+    'auth.signupTab': 'Sign Up',
+    'auth.email': 'Email',
+    'auth.password': 'Password',
+    'auth.ownerName': 'Owner Name',
+    'auth.restaurantName': 'Restaurant Name',
+    'auth.confirmPassword': 'Confirm Password',
+    'auth.emailPlaceholder': 'your@email.com',
+    'auth.passwordPlaceholder': '••••••••',
+    'auth.namePlaceholder': 'Your name',
+    'auth.restaurantPlaceholder': 'Your restaurant name',
+    'auth.loginButton': 'Sign In',
+    'auth.signupButton': 'Create Account',
     
     // Plans page
     'plans.badge': 'Premium Marketing System',
@@ -492,8 +518,6 @@ const translations = {
     'dashboard.scanQr': 'Scan QR',
     'dashboard.newCampaign': 'New Campaign',
     
-    // Auth
-    'auth.loginSubtitle': 'Log in or create your account to get started',
     
     // Analytics
     'analytics.title': 'Analytics',
@@ -748,6 +772,20 @@ const translations = {
     'auth.hello': 'Ciao',
     'auth.loggedAs': 'Connesso come',
     'auth.user': 'Utente',
+    'auth.loginSubtitle': 'Accedi o crea il tuo account per iniziare',
+    'auth.loginTab': 'Accesso',
+    'auth.signupTab': 'Registrazione',
+    'auth.email': 'Email',
+    'auth.password': 'Password',
+    'auth.ownerName': 'Nome del Proprietario',
+    'auth.restaurantName': 'Nome del Ristorante',
+    'auth.confirmPassword': 'Conferma Password',
+    'auth.emailPlaceholder': 'tua@email.com',
+    'auth.passwordPlaceholder': '••••••••',
+    'auth.namePlaceholder': 'Il tuo nome',
+    'auth.restaurantPlaceholder': 'Nome del tuo ristorante',
+    'auth.loginButton': 'Accedi',
+    'auth.signupButton': 'Crea Account',
     
     // Plans page
     'plans.badge': 'Sistema di Marketing Premium',
@@ -850,8 +888,6 @@ const translations = {
     'dashboard.scanQr': 'Scansiona QR',
     'dashboard.newCampaign': 'Nuova Campagna',
     
-    // Auth
-    'auth.loginSubtitle': 'Accedi o crea il tuo account per iniziare',
     
     // Analytics
     'analytics.title': 'Analytics',
@@ -1110,6 +1146,20 @@ const translations = {
     'auth.hello': 'Hallo',
     'auth.loggedAs': 'Angemeldet als',
     'auth.user': 'Benutzer',
+    'auth.loginSubtitle': 'Melden Sie sich an oder erstellen Sie Ihr Konto, um zu beginnen',
+    'auth.loginTab': 'Anmelden',
+    'auth.signupTab': 'Registrieren',
+    'auth.email': 'E-Mail',
+    'auth.password': 'Passwort',
+    'auth.ownerName': 'Name des Inhabers',
+    'auth.restaurantName': 'Name des Restaurants',
+    'auth.confirmPassword': 'Passwort bestätigen',
+    'auth.emailPlaceholder': 'ihre@email.com',
+    'auth.passwordPlaceholder': '••••••••',
+    'auth.namePlaceholder': 'Ihr Name',
+    'auth.restaurantPlaceholder': 'Name Ihres Restaurants',
+    'auth.loginButton': 'Anmelden',
+    'auth.signupButton': 'Konto erstellen',
     
     // Plans page
     'plans.badge': 'Premium Marketing System',
@@ -1212,8 +1262,6 @@ const translations = {
     'dashboard.scanQr': 'QR scannen',
     'dashboard.newCampaign': 'Neue Kampagne',
     
-    // Auth
-    'auth.loginSubtitle': 'Melden Sie sich an oder erstellen Sie Ihr Konto, um zu beginnen',
     
     // Analytics
     'analytics.title': 'Analytics',
