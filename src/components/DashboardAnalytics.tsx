@@ -170,7 +170,7 @@ export default function DashboardAnalytics() {
           <CardHeader>
             <CardTitle>{t('analytics.sendTrend')}</CardTitle>
             <CardDescription>
-              {t('analytics.last7Days')}
+              {t('analytics.sentVsDelivered')}
             </CardDescription>
           </CardHeader>
           <CardContent>
