@@ -62,13 +62,14 @@ const Contacts = () => {
   };
 
   const getSourceLabel = (source: string) => {
-    switch (source) {
+    const sourceKey = source?.toLowerCase();
+    switch (sourceKey) {
       case 'qr_scan':
-        return 'QR Code';
+        return t('contacts.filter.qrCode');
       case 'manual':
-        return 'Manual';
+        return t('contacts.filter.manual');
       case 'import':
-        return 'Importação';
+        return t('contacts.filter.import');
       default:
         return source;
     }
@@ -127,7 +128,7 @@ const Contacts = () => {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Total</p>
+                  <p className="text-sm text-muted-foreground">{t('contacts.stats.total')}</p>
                   <p className="text-2xl font-bold">{contacts.length}</p>
                 </div>
                 <Users className="w-8 h-8 text-primary opacity-80" />
@@ -139,7 +140,7 @@ const Contacts = () => {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Via QR Code</p>
+                  <p className="text-sm text-muted-foreground">{t('contacts.stats.viaQr')}</p>
                   <p className="text-2xl font-bold">
                     {contacts.filter(c => c.source === 'qr_scan').length}
                   </p>
@@ -153,7 +154,7 @@ const Contacts = () => {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Com Email</p>
+                  <p className="text-sm text-muted-foreground">{t('contacts.stats.withEmail')}</p>
                   <p className="text-2xl font-bold">
                     {contacts.filter(c => c.email).length}
                   </p>
@@ -167,7 +168,7 @@ const Contacts = () => {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Esta Semana</p>
+                  <p className="text-sm text-muted-foreground">{t('contacts.stats.thisWeek')}</p>
                   <p className="text-2xl font-bold">
                     {contacts.filter(c => {
                       const weekAgo = new Date();
@@ -190,7 +191,7 @@ const Contacts = () => {
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Buscar por nome, telefone ou email..."
+                    placeholder={t('contacts.search.placeholder')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -205,18 +206,18 @@ const Contacts = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todas as origens</SelectItem>
-                    <SelectItem value="qr_scan">QR Code</SelectItem>
-                    <SelectItem value="manual">Manual</SelectItem>
-                    <SelectItem value="import">Importação</SelectItem>
+                    <SelectItem value="all">{t('contacts.filter.allSources')}</SelectItem>
+                    <SelectItem value="qr_scan">{t('contacts.filter.qrCode')}</SelectItem>
+                    <SelectItem value="manual">{t('contacts.filter.manual')}</SelectItem>
+                    <SelectItem value="import">{t('contacts.filter.import')}</SelectItem>
                   </SelectContent>
                 </Select>
 
                 {selectedContacts.length > 0 && (
-                  <Button variant="outline" size="sm">
-                    <Download className="w-4 h-4 mr-2" />
-                    Exportar ({selectedContacts.length})
-                  </Button>
+                    <Button variant="outline" size="sm">
+                      <Download className="w-4 h-4 mr-2" />
+                      {t('contacts.export')} ({selectedContacts.length})
+                    </Button>
                 )}
               </div>
             </div>
@@ -228,7 +229,7 @@ const Contacts = () => {
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle>
-                {contacts.length > 0 ? `${contacts.length} contatos` : 'Nenhum contato encontrado'}
+                {contacts.length > 0 ? `${contacts.length} ${t('contacts.contactsCount')}` : t('contacts.noContactsFound')}
               </CardTitle>
               {contacts.length > 0 && (
                 <Button
@@ -236,7 +237,7 @@ const Contacts = () => {
                   size="sm"
                   onClick={handleSelectAll}
                 >
-                  {selectedContacts.length === contacts.length ? 'Desmarcar todos' : 'Selecionar todos'}
+                  {selectedContacts.length === contacts.length ? t('contacts.unselectAll') : t('contacts.selectAll')}
                 </Button>
               )}
             </div>
@@ -295,7 +296,7 @@ const Contacts = () => {
 
                     <div className="flex items-center space-x-2">
                       <div className="text-right text-sm text-muted-foreground">
-                        <p>Adicionado em</p>
+                        <p>{t('contacts.addedOn')}</p>
                         <p>{formatDate(contact.created_at)}</p>
                       </div>
                       
@@ -318,19 +319,19 @@ const Contacts = () => {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                              <AlertDialogTitle>{t('contacts.confirmDelete')}</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Tem certeza que deseja excluir o contato "{contact.name}"? 
-                                Esta ação não pode ser desfeita.
+                                {t('contacts.deleteConfirmMessage')} "{contact.name}"? 
+                                {t('contacts.deleteWarning')}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogCancel>{t('contacts.cancel')}</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => deleteContact(contact.id)}
                                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                               >
-                                Excluir
+                                {t('contacts.delete')}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
@@ -343,27 +344,27 @@ const Contacts = () => {
             ) : (
               <div className="text-center py-12">
                 <Users className="w-16 h-16 mx-auto text-muted-foreground mb-4 opacity-50" />
-                <h3 className="text-lg font-medium mb-2">Nenhum contato encontrado</h3>
+                <h3 className="text-lg font-medium mb-2">{t('contacts.noContactsFoundMessage')}</h3>
                 <p className="text-muted-foreground mb-6">
                   {searchTerm || filterSource !== 'all' 
-                    ? 'Tente ajustar os filtros ou termos de busca'
-                    : 'Comece escaneando QR codes ou adicionando contatos manualmente'
+                    ? t('contacts.adjustFilters')
+                    : t('contacts.getStarted')
                   }
                 </p>
                 <div className="flex justify-center gap-3">
                   <Link to="/qr">
-                    <Button variant="outline">
-                      <QrCode className="w-4 h-4 mr-2" />
-                      Escanear QR Code
-                    </Button>
+                      <Button variant="outline">
+                        <QrCode className="w-4 h-4 mr-2" />
+                        {t('contacts.scanQrCode')}
+                      </Button>
                   </Link>
                   <ContactDialog
                     onSave={addContact}
                     trigger={
-                      <Button>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Adicionar Contato
-                      </Button>
+                        <Button>
+                          <Plus className="w-4 h-4 mr-2" />
+                          {t('contacts.addContact')}
+                        </Button>
                     }
                   />
                 </div>
