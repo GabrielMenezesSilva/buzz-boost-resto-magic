@@ -155,6 +155,20 @@ const translations = {
     'campaign.status.failed': 'Échec',
     'campaign.status.active': 'Actif',
 
+    // Footer
+    'footer.description': 'Plateforme complète de marketing pour restaurants avec collecte de contacts et campagnes automatisées.',
+    'footer.features': 'Fonctionnalités',
+    'footer.contactCollection': 'Collecte de contacts',
+    'footer.automatedCampaigns': 'Campagnes automatisées',
+    'footer.referralProgram': 'Programme de parrainage',
+    'footer.detailedAnalytics': 'Analyses détaillées',
+    'footer.support': 'Support',
+    'footer.documentation': 'Documentation',
+    'footer.contact': 'Contact',
+    'footer.faq': 'FAQ',
+    'footer.onlineHelp': 'Aide en ligne',
+    'footer.allRights': 'Tous droits réservés.',
+
     // Analytics
     'analytics.title': 'Analytics',
     'analytics.subtitle': 'Acompanhe o desempenho das suas campanhas e contatos',
@@ -500,6 +514,20 @@ const translations = {
     'campaign.status.completed': 'Completed',
     'campaign.status.failed': 'Failed',
     'campaign.status.active': 'Active',
+
+    // Footer
+    'footer.description': 'Complete marketing platform for restaurants with contact collection and automated campaigns.',
+    'footer.features': 'Features',
+    'footer.contactCollection': 'Contact Collection',
+    'footer.automatedCampaigns': 'Automated Campaigns',
+    'footer.referralProgram': 'Referral Program',
+    'footer.detailedAnalytics': 'Detailed Analytics',
+    'footer.support': 'Support',
+    'footer.documentation': 'Documentation',
+    'footer.contact': 'Contact',
+    'footer.faq': 'FAQ',
+    'footer.onlineHelp': 'Online Help',
+    'footer.allRights': 'All rights reserved.',
 
     // Analytics
     'analytics.title': 'Analytics',
@@ -847,6 +875,20 @@ const translations = {
     'campaign.status.failed': 'Fallito',
     'campaign.status.active': 'Attivo',
 
+    // Footer
+    'footer.description': 'Piattaforma completa di marketing per ristoranti con raccolta contatti e campagne automatizzate.',
+    'footer.features': 'Funzionalità',
+    'footer.contactCollection': 'Raccolta Contatti',
+    'footer.automatedCampaigns': 'Campagne Automatizzate',
+    'footer.referralProgram': 'Programma Referral',
+    'footer.detailedAnalytics': 'Analisi Dettagliate',
+    'footer.support': 'Supporto',
+    'footer.documentation': 'Documentazione',
+    'footer.contact': 'Contatto',
+    'footer.faq': 'FAQ',
+    'footer.onlineHelp': 'Aiuto Online',
+    'footer.allRights': 'Tutti i diritti riservati.',
+
     // Analytics
     'analytics.title': 'Analytics',
     'analytics.subtitle': 'Monitora le prestazioni delle tue campagne e contatti',
@@ -1192,6 +1234,20 @@ const translations = {
     'campaign.status.completed': 'Abgeschlossen',
     'campaign.status.failed': 'Fehlgeschlagen',
     'campaign.status.active': 'Aktiv',
+
+    // Footer
+    'footer.description': 'Vollständige Marketing-Plattform für Restaurants mit Kontaktsammlung und automatisierten Kampagnen.',
+    'footer.features': 'Funktionen',
+    'footer.contactCollection': 'Kontaktsammlung',
+    'footer.automatedCampaigns': 'Automatisierte Kampagnen',
+    'footer.referralProgram': 'Empfehlungsprogramm',
+    'footer.detailedAnalytics': 'Detaillierte Analysen',
+    'footer.support': 'Support',
+    'footer.documentation': 'Dokumentation',
+    'footer.contact': 'Kontakt',
+    'footer.faq': 'FAQ',
+    'footer.onlineHelp': 'Online-Hilfe',
+    'footer.allRights': 'Alle Rechte vorbehalten.',
 
     // Analytics
     'analytics.title': 'Analytics',
