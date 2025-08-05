@@ -401,15 +401,11 @@ const translations: Record<Language, Record<string, string>> = {
     // Common
     'common.save': 'Salvar',
     'common.edit': 'Editar',
+    
+    // QR Generator Instructions
     'qrGenerator.instruction2': '2. Clientes escaneiam o código com a câmera do celular',
     'qrGenerator.instruction3': '3. Eles preenchem o formulário de contato',
     'qrGenerator.instruction4': '4. Você recebe os dados automaticamente no sistema',
-
-    // QR Generator
-
-    // QR Generator
-
-    // QR Generator
   },
 
   fr: {
@@ -781,9 +777,31 @@ const translations: Record<Language, Record<string, string>> = {
     'qrGenerator.instruction3': '3. Ils remplissent le formulaire de contact',
     'qrGenerator.instruction4': '4. Vous recevez les données automatiquement dans le système',
 
-    // QR Generator
+    // Profile
+    'profile.title': 'Mon Profil',
+    'profile.subtitle': 'Gérez vos informations personnelles et du restaurant',
+    'profile.saved': 'Profil mis à jour',
+    'profile.savedDescription': 'Vos informations ont été sauvegardées avec succès.',
+    'profile.nameNotProvided': 'Nom non fourni',
+    'profile.personalInfo': 'Informations Personnelles',
+    'profile.personalInfoDescription': 'Mettez à jour vos informations pour une expérience personnalisée',
+    'profile.ownerName': 'Nom du Propriétaire',
+    'profile.ownerNamePlaceholder': 'Votre nom complet',
+    'profile.restaurantName': 'Nom du Restaurant',
+    'profile.restaurantNamePlaceholder': 'Nom de votre restaurant',
+    'profile.phone': 'Téléphone',
+    'profile.address': 'Adresse',
+    'profile.addressPlaceholder': 'Adresse du restaurant',
+    'profile.restaurantDescription': 'Description du Restaurant',
+    'profile.restaurantDescriptionPlaceholder': 'Parlez un peu de votre restaurant, spécialités, histoire...',
+    'profile.editModeActive': 'Mode édition actif',
+    'profile.contactsCollected': 'Contacts Collectés',
+    'profile.engagementRate': 'Taux d\'Engagement',
+    'profile.activeCampaigns': 'Campagnes Actives',
 
-    // QR Generator
+    // Common
+    'common.save': 'Sauvegarder',
+    'common.edit': 'Modifier',
   },
 
   en: {
@@ -1155,9 +1173,31 @@ const translations: Record<Language, Record<string, string>> = {
     'qrGenerator.instruction3': '3. They fill out the contact form',
     'qrGenerator.instruction4': '4. You receive the data automatically in the system',
 
-    // QR Generator
+    // Profile
+    'profile.title': 'My Profile',
+    'profile.subtitle': 'Manage your personal and restaurant information',
+    'profile.saved': 'Profile updated',
+    'profile.savedDescription': 'Your information has been saved successfully.',
+    'profile.nameNotProvided': 'Name not provided',
+    'profile.personalInfo': 'Personal Information',
+    'profile.personalInfoDescription': 'Update your information for a personalized experience',
+    'profile.ownerName': 'Owner Name',
+    'profile.ownerNamePlaceholder': 'Your full name',
+    'profile.restaurantName': 'Restaurant Name',
+    'profile.restaurantNamePlaceholder': 'Your restaurant name',
+    'profile.phone': 'Phone',
+    'profile.address': 'Address',
+    'profile.addressPlaceholder': 'Restaurant address',
+    'profile.restaurantDescription': 'Restaurant Description',
+    'profile.restaurantDescriptionPlaceholder': 'Tell us about your restaurant, specialties, history...',
+    'profile.editModeActive': 'Edit mode active',
+    'profile.contactsCollected': 'Contacts Collected',
+    'profile.engagementRate': 'Engagement Rate',
+    'profile.activeCampaigns': 'Active Campaigns',
 
-    // QR Generator
+    // Common
+    'common.save': 'Save',
+    'common.edit': 'Edit',
   },
 
   it: {
@@ -1529,9 +1569,31 @@ const translations: Record<Language, Record<string, string>> = {
     'qrGenerator.instruction3': '3. Compilano il modulo di contatto',
     'qrGenerator.instruction4': '4. Ricevi i dati automaticamente nel sistema',
 
-    // QR Generator
+    // Profile
+    'profile.title': 'Il Mio Profilo',
+    'profile.subtitle': 'Gestisci le tue informazioni personali e del ristorante',
+    'profile.saved': 'Profilo aggiornato',
+    'profile.savedDescription': 'Le tue informazioni sono state salvate con successo.',
+    'profile.nameNotProvided': 'Nome non fornito',
+    'profile.personalInfo': 'Informazioni Personali',
+    'profile.personalInfoDescription': 'Aggiorna le tue informazioni per un\'esperienza personalizzata',
+    'profile.ownerName': 'Nome del Proprietario',
+    'profile.ownerNamePlaceholder': 'Il tuo nome completo',
+    'profile.restaurantName': 'Nome del Ristorante',
+    'profile.restaurantNamePlaceholder': 'Nome del tuo ristorante',
+    'profile.phone': 'Telefono',
+    'profile.address': 'Indirizzo',
+    'profile.addressPlaceholder': 'Indirizzo del ristorante',
+    'profile.restaurantDescription': 'Descrizione del Ristorante',
+    'profile.restaurantDescriptionPlaceholder': 'Racconta del tuo ristorante, specialità, storia...',
+    'profile.editModeActive': 'Modalità modifica attiva',
+    'profile.contactsCollected': 'Contatti Raccolti',
+    'profile.engagementRate': 'Tasso di Coinvolgimento',
+    'profile.activeCampaigns': 'Campagne Attive',
 
-    // QR Generator
+    // Common
+    'common.save': 'Salva',
+    'common.edit': 'Modifica',
   },
 
   de: {
@@ -1903,9 +1965,31 @@ const translations: Record<Language, Record<string, string>> = {
     'qrGenerator.instruction3': '3. Sie füllen das Kontaktformular aus',
     'qrGenerator.instruction4': '4. Sie erhalten die Daten automatisch im System',
 
-    // QR Generator
+    // Profile
+    'profile.title': 'Mein Profil',
+    'profile.subtitle': 'Verwalten Sie Ihre persönlichen und Restaurant-Informationen',
+    'profile.saved': 'Profil aktualisiert',
+    'profile.savedDescription': 'Ihre Informationen wurden erfolgreich gespeichert.',
+    'profile.nameNotProvided': 'Name nicht angegeben',
+    'profile.personalInfo': 'Persönliche Informationen',
+    'profile.personalInfoDescription': 'Aktualisieren Sie Ihre Informationen für eine personalisierte Erfahrung',
+    'profile.ownerName': 'Name des Besitzers',
+    'profile.ownerNamePlaceholder': 'Ihr vollständiger Name',
+    'profile.restaurantName': 'Restaurant Name',
+    'profile.restaurantNamePlaceholder': 'Name Ihres Restaurants',
+    'profile.phone': 'Telefon',
+    'profile.address': 'Adresse',
+    'profile.addressPlaceholder': 'Restaurant-Adresse',
+    'profile.restaurantDescription': 'Restaurant-Beschreibung',
+    'profile.restaurantDescriptionPlaceholder': 'Erzählen Sie von Ihrem Restaurant, Spezialitäten, Geschichte...',
+    'profile.editModeActive': 'Bearbeitungsmodus aktiv',
+    'profile.contactsCollected': 'Kontakte Gesammelt',
+    'profile.engagementRate': 'Engagement-Rate',
+    'profile.activeCampaigns': 'Aktive Kampagnen',
 
-    // QR Generator
+    // Common
+    'common.save': 'Speichern',
+    'common.edit': 'Bearbeiten',
   },
 };
 
