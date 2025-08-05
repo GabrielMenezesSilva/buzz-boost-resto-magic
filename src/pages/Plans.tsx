@@ -171,11 +171,11 @@ const Plans = () => {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {plans.map((plan, index) => (
               <Card 
                 key={plan.id} 
-                className={`relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 ${
+                className={`relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 min-h-[700px] ${
                   plan.popular 
                     ? 'border-2 border-primary shadow-xl scale-105 lg:scale-110' 
                     : 'border shadow-lg hover:border-primary/50'
@@ -183,7 +183,7 @@ const Plans = () => {
               >
                 {/* Badge de destaque */}
                 {plan.badge && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
                     <Badge className={`px-4 py-2 text-sm font-semibold ${
                       plan.popular 
                         ? 'bg-gradient-to-r from-primary to-primary/80 text-primary-foreground' 
@@ -195,33 +195,34 @@ const Plans = () => {
                   </div>
                 )}
                 
-                <CardHeader className={`text-center ${plan.popular ? 'pt-8' : 'pt-6'}`}>
-                  <CardTitle className="text-2xl md:text-3xl font-bold mb-2">{plan.name}</CardTitle>
-                  <CardDescription className="text-base md:text-lg mb-4">
+                <CardHeader className={`text-center pb-4 ${plan.popular ? 'pt-8' : 'pt-6'}`}>
+                  <CardTitle className="text-2xl md:text-3xl font-bold mb-3">{plan.name}</CardTitle>
+                  <CardDescription className="text-base md:text-lg mb-4 min-h-[50px] flex items-center justify-center">
                     {plan.subtitle}
                   </CardDescription>
-                  <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-                    {plan.description}
-                  </p>
                   
                   <div className="mb-6">
                     <span className="text-4xl md:text-5xl font-bold">{plan.price}</span>
                     <span className="text-lg text-muted-foreground ml-1">{plan.period}</span>
                   </div>
+                  
+                  <p className="text-sm text-muted-foreground leading-relaxed min-h-[60px] flex items-center justify-center px-2">
+                    {plan.description}
+                  </p>
                 </CardHeader>
 
-                <CardContent className="px-6">
-                  <ul className="space-y-4">
+                <CardContent className="px-6 flex-1">
+                  <ul className="space-y-3">
                     {plan.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-muted-foreground leading-relaxed">{feature}</span>
+                        <span className="text-sm text-muted-foreground leading-relaxed">{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </CardContent>
 
-                <CardFooter className="px-6 pb-8">
+                <CardFooter className="px-6 pb-8 mt-auto">
                   <Button 
                     size="lg" 
                     variant={plan.ctaVariant}
