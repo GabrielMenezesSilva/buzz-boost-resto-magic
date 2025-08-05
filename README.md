@@ -1,73 +1,154 @@
-# Welcome to your Lovable project
+# DopplerDine
 
-## Project info
+Sistema completo de marketing para restaurantes com QR Code, SMS e campanhas automatizadas.
 
-**URL**: https://lovable.dev/projects/6cb74f9d-7924-40f4-9c2e-ab580d82540c
+## 🚀 Tecnologias
 
-## How can I edit this code?
+### Frontend
+- **React** + **TypeScript**
+- **Vite** + **Tailwind CSS**
+- **shadcn/ui** components
+- **React Router** + **React Query**
+- **Supabase** integration
 
-There are several ways of editing your application.
+### Backend
+- **Node.js** + **Express.js**
+- **Prisma ORM** + **SQLite**
+- **JWT** + **bcrypt**
+- **Twilio SMS** + **Resend Email**
+- **QR Code** generation
 
-**Use Lovable**
+## 📦 Instalação
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/6cb74f9d-7924-40f4-9c2e-ab580d82540c) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+### 1. Clone o repositório
+```bash
 git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### 2. Configure o Backend
+```bash
+cd backend
+npm install
+cp .env.example .env
+# Configure as variáveis no .env
+npm run db:generate
+npm run db:push
+npm run db:seed
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### 3. Configure o Frontend
+```bash
+# Em outro terminal, volte para a raiz
+cd ..
+npm install
+npm run dev
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## ⚙️ Configuração
 
-**Use GitHub Codespaces**
+### Backend (.env)
+```env
+DATABASE_URL="file:./dev.db"
+JWT_SECRET="your-super-secret-jwt-key"
+TWILIO_ACCOUNT_SID="your-twilio-sid"
+TWILIO_AUTH_TOKEN="your-twilio-token"
+TWILIO_PHONE_NUMBER="your-twilio-phone"
+RESEND_API_KEY="your-resend-key"
+PORT=3001
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Frontend
+O frontend está configurado para se conectar ao backend em `http://localhost:3001`
 
-## What technologies are used for this project?
+## 🔧 Usuário de Teste
 
-This project is built with:
+Após executar o seed do backend:
+- **Email:** admin@dopplerdine.com
+- **Senha:** 123456
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 📊 Funcionalidades
 
-## How can I deploy this project?
+- ✅ **Autenticação JWT**
+- ✅ **Gestão de Perfil do Restaurante**
+- ✅ **Captação de Contatos via QR Code**
+- ✅ **Criação e Envio de Campanhas SMS**
+- ✅ **Templates de Mensagens**
+- ✅ **Analytics e Dashboard**
+- ✅ **Integração Twilio SMS**
+- ✅ **Geração de QR Codes**
 
-Simply open [Lovable](https://lovable.dev/projects/6cb74f9d-7924-40f4-9c2e-ab580d82540c) and click on Share -> Publish.
+## 🔗 API Endpoints
 
-## Can I connect a custom domain to my Lovable project?
+### Auth
+- `POST /api/auth/register` - Registro
+- `POST /api/auth/login` - Login
+- `GET /api/auth/me` - Dados do usuário
 
-Yes, you can!
+### Contatos
+- `GET /api/contacts` - Listar contatos
+- `POST /api/contacts` - Criar contato
+- `POST /api/contacts/qr/:qrCode` - Criar via QR
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Campanhas
+- `GET /api/campaigns` - Listar campanhas
+- `POST /api/campaigns` - Criar campanha
+- `POST /api/campaigns/:id/send` - Enviar campanha
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### QR Code
+- `GET /api/qr/generate` - Gerar QR code
+- `GET /api/qr/verify/:qrCode` - Verificar QR
+
+## 🏃‍♂️ Scripts Disponíveis
+
+### Frontend
+```bash
+npm run dev          # Desenvolvimento
+npm run build        # Build para produção
+npm run preview      # Preview do build
+```
+
+### Backend
+```bash
+npm run dev          # Desenvolvimento
+npm start            # Produção
+npm run db:generate  # Gerar cliente Prisma
+npm run db:push      # Aplicar schema
+npm run db:studio    # Prisma Studio
+npm run db:seed      # Seed inicial
+```
+
+## 📁 Estrutura do Projeto
+
+```
+├── src/                 # Frontend React
+│   ├── components/      # Componentes UI
+│   ├── pages/          # Páginas da aplicação
+│   ├── hooks/          # Custom hooks
+│   └── integrations/   # Supabase integration
+├── backend/            # Backend Node.js
+│   ├── src/
+│   │   ├── routes/     # Rotas da API
+│   │   ├── middleware/ # Middlewares
+│   │   ├── services/   # Serviços (SMS, Email)
+│   │   └── utils/      # Utilitários
+│   └── prisma/         # Schema do banco
+└── supabase/          # Configurações Supabase
+```
+
+## 🚀 Deploy
+
+### Frontend
+Deploy automaticamente via [Lovable](https://lovable.dev)
+
+### Backend
+Pode ser deployado em qualquer plataforma Node.js:
+- Railway
+- Render
+- Heroku
+- VPS próprio
+
+## 📝 Licença
+
+MIT License
