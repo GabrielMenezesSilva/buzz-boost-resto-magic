@@ -14,7 +14,7 @@ const translations: Record<Language, Record<string, string>> = {
   pt: {
     // Navigation
     'nav.home': 'Início',
-    'nav.generateQr': 'Gerar QR',
+    'nav.generateQr': 'Scanner QR',
     'nav.dashboard': 'Dashboard',
     'nav.contacts': 'Contatos', 
     'nav.campaigns': 'Campanhas',
@@ -504,7 +504,7 @@ const translations: Record<Language, Record<string, string>> = {
   fr: {
     // Navigation
     'nav.home': 'Accueil',
-    'nav.generateQr': 'Générer QR',
+    'nav.generateQr': 'Scanner QR',
     'nav.dashboard': 'Tableau de bord',
     'nav.contacts': 'Contacts',
     'nav.campaigns': 'Campagnes',
@@ -971,7 +971,7 @@ const translations: Record<Language, Record<string, string>> = {
   en: {
     // Navigation
     'nav.home': 'Home',
-    'nav.generateQr': 'Generate QR',
+    'nav.generateQr': 'Scan QR',
     'nav.dashboard': 'Dashboard',
     'nav.contacts': 'Contacts',
     'nav.campaigns': 'Campaigns',
@@ -1438,7 +1438,7 @@ const translations: Record<Language, Record<string, string>> = {
   it: {
     // Navigation
     'nav.home': 'Home',
-    'nav.generateQr': 'Genera QR',
+    'nav.generateQr': 'Scansiona QR',
     'nav.dashboard': 'Dashboard',
     'nav.contacts': 'Contatti',
     'nav.campaigns': 'Campagne',
@@ -1905,7 +1905,7 @@ const translations: Record<Language, Record<string, string>> = {
   de: {
     // Navigation
     'nav.home': 'Startseite',
-    'nav.generateQr': 'QR Generieren',
+    'nav.generateQr': 'QR Scannen',
     'nav.dashboard': 'Dashboard',
     'nav.contacts': 'Kontakte',
     'nav.campaigns': 'Kampagnen',
