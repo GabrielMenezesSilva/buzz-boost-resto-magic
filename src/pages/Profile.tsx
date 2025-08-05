@@ -27,8 +27,8 @@ export default function Profile() {
   const handleSave = async () => {
     // Simulação de salvamento - aqui você implementaria a lógica real
     toast({
-      title: "Perfil atualizado",
-      description: "Suas informações foram salvas com sucesso.",
+      title: t('profile.saved'),
+      description: t('profile.savedDescription'),
     });
     setIsEditing(false);
   };
@@ -44,8 +44,8 @@ export default function Profile() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header com princípio de hierarquia visual */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-2">Meu Perfil</h1>
-            <p className="text-muted-foreground">Gerencie suas informações pessoais e do restaurante</p>
+            <h1 className="text-3xl font-bold text-foreground mb-2">{t('profile.title')}</h1>
+            <p className="text-muted-foreground">{t('profile.subtitle')}</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -69,7 +69,7 @@ export default function Profile() {
                     </Button>
                   </div>
                 </div>
-                <CardTitle className="text-xl">{formData.owner_name || 'Nome não informado'}</CardTitle>
+                <CardTitle className="text-xl">{formData.owner_name || t('profile.nameNotProvided')}</CardTitle>
                 <CardDescription className="flex items-center justify-center gap-2">
                   <Mail className="w-4 h-4" />
                   {user?.email}
@@ -83,10 +83,10 @@ export default function Profile() {
                 <div>
                   <CardTitle className="flex items-center gap-2">
                     <UserCircle className="w-5 h-5" />
-                    Informações Pessoais
+                    {t('profile.personalInfo')}
                   </CardTitle>
                   <CardDescription>
-                    Atualize suas informações para uma experiência personalizada
+                    {t('profile.personalInfoDescription')}
                   </CardDescription>
                 </div>
                 <Button
@@ -96,7 +96,7 @@ export default function Profile() {
                   className="flex items-center gap-2"
                 >
                   <Save className="w-4 h-4" />
-                  {isEditing ? 'Salvar' : 'Editar'}
+                  {isEditing ? t('common.save') : t('common.edit')}
                 </Button>
               </CardHeader>
               
@@ -106,14 +106,14 @@ export default function Profile() {
                   <div className="space-y-2">
                     <Label htmlFor="owner_name" className="flex items-center gap-2">
                       <User className="w-4 h-4" />
-                      Nome do Proprietário
+                      {t('profile.ownerName')}
                     </Label>
                     <Input
                       id="owner_name"
                       value={formData.owner_name}
                       onChange={(e) => setFormData(prev => ({ ...prev, owner_name: e.target.value }))}
                       disabled={!isEditing}
-                      placeholder="Seu nome completo"
+                      placeholder={t('profile.ownerNamePlaceholder')}
                       className={isEditing ? "border-primary/50 focus:border-primary" : ""}
                     />
                   </div>
@@ -121,14 +121,14 @@ export default function Profile() {
                   <div className="space-y-2">
                     <Label htmlFor="restaurant_name" className="flex items-center gap-2">
                       <Building className="w-4 h-4" />
-                      Nome do Restaurante
+                      {t('profile.restaurantName')}
                     </Label>
                     <Input
                       id="restaurant_name"
                       value={formData.restaurant_name}
                       onChange={(e) => setFormData(prev => ({ ...prev, restaurant_name: e.target.value }))}
                       disabled={!isEditing}
-                      placeholder="Nome do seu restaurante"
+                      placeholder={t('profile.restaurantNamePlaceholder')}
                       className={isEditing ? "border-primary/50 focus:border-primary" : ""}
                     />
                   </div>
@@ -136,7 +136,7 @@ export default function Profile() {
                   <div className="space-y-2">
                     <Label htmlFor="phone" className="flex items-center gap-2">
                       <Mail className="w-4 h-4" />
-                      Telefone
+                      {t('profile.phone')}
                     </Label>
                     <Input
                       id="phone"
@@ -151,27 +151,27 @@ export default function Profile() {
                   <div className="space-y-2">
                     <Label htmlFor="address" className="flex items-center gap-2">
                       <MapPin className="w-4 h-4" />
-                      Endereço
+                      {t('profile.address')}
                     </Label>
                     <Input
                       id="address"
                       value={formData.address}
                       onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
                       disabled={!isEditing}
-                      placeholder="Endereço do restaurante"
+                      placeholder={t('profile.addressPlaceholder')}
                       className={isEditing ? "border-primary/50 focus:border-primary" : ""}
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">Descrição do Restaurante</Label>
+                  <Label htmlFor="description">{t('profile.restaurantDescription')}</Label>
                   <Textarea
                     id="description"
                     value={formData.description}
                     onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                     disabled={!isEditing}
-                    placeholder="Conte um pouco sobre seu restaurante, especialidades, história..."
+                    placeholder={t('profile.restaurantDescriptionPlaceholder')}
                     rows={4}
                     className={isEditing ? "border-primary/50 focus:border-primary" : ""}
                   />
@@ -181,7 +181,7 @@ export default function Profile() {
                 {isEditing && (
                   <div className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg border border-primary/20">
                     <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                    <span className="text-sm text-primary font-medium">Modo de edição ativo</span>
+                    <span className="text-sm text-primary font-medium">{t('profile.editModeActive')}</span>
                   </div>
                 )}
               </CardContent>
@@ -192,15 +192,15 @@ export default function Profile() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
             <Card className="text-center p-6">
               <div className="text-2xl font-bold text-primary mb-2">156</div>
-              <div className="text-sm text-muted-foreground">Contatos Coletados</div>
+              <div className="text-sm text-muted-foreground">{t('profile.contactsCollected')}</div>
             </Card>
             <Card className="text-center p-6">
               <div className="text-2xl font-bold text-green-600 mb-2">89%</div>
-              <div className="text-sm text-muted-foreground">Taxa de Engajamento</div>
+              <div className="text-sm text-muted-foreground">{t('profile.engagementRate')}</div>
             </Card>
             <Card className="text-center p-6">
               <div className="text-2xl font-bold text-blue-600 mb-2">12</div>
-              <div className="text-sm text-muted-foreground">Campanhas Ativas</div>
+              <div className="text-sm text-muted-foreground">{t('profile.activeCampaigns')}</div>
             </Card>
           </div>
         </div>
