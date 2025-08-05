@@ -40,6 +40,9 @@ export default function Layout({ children }: LayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isActive = (path: string) => location.pathname === path;
 
+  // Debug: Check if Layout is rendering multiple times
+  console.log('Layout rendering - current path:', location.pathname);
+
   // Get display name - prefer owner_name, fallback to email
   const getDisplayName = () => {
     if (profile?.owner_name) {
