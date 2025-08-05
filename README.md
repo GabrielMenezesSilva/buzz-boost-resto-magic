@@ -1,15 +1,24 @@
-# DopplerDine
+# DopplerDine - Sistema de Marketing para Restaurantes
 
-Sistema completo de marketing para restaurantes com QR Code, SMS e campanhas automatizadas.
+Sistema completo de marketing digital para restaurantes com geração de QR codes, coleta de contatos via formulários públicos, gestão de campanhas SMS e templates personalizáveis.
+
+## 🏗️ Arquitetura
+
+**Frontend:** React + TypeScript + Vite + Tailwind CSS  
+**Backend:** Node.js + Express + Prisma + SQLite  
+**Autenticação:** JWT (JSON Web Tokens)  
+**SMS:** Integração com provedores SMS  
+**QR Codes:** Geração automática para coleta de contatos
 
 ## 🚀 Tecnologias
 
 ### Frontend
-- **React** + **TypeScript**
-- **Vite** + **Tailwind CSS**
-- **shadcn/ui** components
-- **React Router** + **React Query**
-- **Supabase** integration
+- **React 18** com TypeScript
+- **Vite** para build rápido e desenvolvimento
+- **Tailwind CSS** para estilização
+- **shadcn/ui** componentes acessíveis
+- **React Router** para navegação
+- **Axios** para requisições HTTP
 
 ### Backend
 - **Node.js** + **Express.js**
@@ -43,6 +52,11 @@ npm run dev
 # Em outro terminal, volte para a raiz
 cd ..
 npm install
+
+# Configure variáveis de ambiente
+cp .env.example .env
+# Edite o .env com: VITE_API_URL=http://localhost:3001/api
+
 npm run dev
 ```
 
@@ -59,8 +73,10 @@ RESEND_API_KEY="your-resend-key"
 PORT=3001
 ```
 
-### Frontend
-O frontend está configurado para se conectar ao backend em `http://localhost:3001`
+### Frontend (.env)
+```env
+VITE_API_URL=http://localhost:3001/api
+```
 
 ## 🔧 Usuário de Teste
 
@@ -126,7 +142,7 @@ npm run db:seed      # Seed inicial
 │   ├── components/      # Componentes UI
 │   ├── pages/          # Páginas da aplicação
 │   ├── hooks/          # Custom hooks
-│   └── integrations/   # Supabase integration
+│   └── services/       # API services (axios)
 ├── backend/            # Backend Node.js
 │   ├── src/
 │   │   ├── routes/     # Rotas da API
@@ -134,7 +150,6 @@ npm run db:seed      # Seed inicial
 │   │   ├── services/   # Serviços (SMS, Email)
 │   │   └── utils/      # Utilitários
 │   └── prisma/         # Schema do banco
-└── supabase/          # Configurações Supabase
 ```
 
 ## 🚀 Deploy
