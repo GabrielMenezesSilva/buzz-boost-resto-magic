@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { apiService } from '@/services/api';
 import { useAuth } from '@/hooks/useAuth';
 
 interface DashboardStats {
@@ -50,23 +50,11 @@ export const useDashboardData = () => {
     try {
       setLoading(true);
 
-      // Fetch contacts stats
-      const { data: contacts, error: contactsError } = await supabase
-        .from('contacts')
-        .select('*')
-        .eq('user_id', user!.id)
-        .order('created_at', { ascending: false });
-
-      if (contactsError) throw contactsError;
-
-      // Fetch campaigns stats
-      const { data: campaigns, error: campaignsError } = await supabase
-        .from('campaigns')
-        .select('*')
-        .eq('user_id', user!.id)
-        .order('created_at', { ascending: false });
-
-      if (campaignsError) throw campaignsError;
+      // Fetch contacts and campaigns in parallel
+      const [contacts, campaigns] = await Promise.all([
+        apiService.getContacts(),
+        apiService.getCampaigns()
+      ]);
 
       // Calculate recent contacts (last 7 days)
       const sevenDaysAgo = new Date();

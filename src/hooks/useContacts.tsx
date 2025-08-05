@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { apiService } from '@/services/api';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -34,19 +34,13 @@ export const useContacts = () => {
   const fetchContacts = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('contacts')
-        .select('*')
-        .eq('user_id', user!.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
+      const data = await apiService.getContacts();
       setContacts(data || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching contacts:', error);
       toast({
         title: "Erro ao carregar contatos",
-        description: "Não foi possível carregar os contatos.",
+        description: error.response?.data?.error || "Não foi possível carregar os contatos.",
         variant: "destructive"
       });
     } finally {
@@ -56,17 +50,7 @@ export const useContacts = () => {
 
   const addContact = async (contactData: Omit<Contact, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      const { data, error } = await supabase
-        .from('contacts')
-        .insert([{
-          ...contactData,
-          user_id: user!.id
-        }])
-        .select()
-        .single();
-
-      if (error) throw error;
-
+      const data = await apiService.createContact(contactData);
       setContacts(prev => [data, ...prev]);
       toast({
         title: "Contato adicionado",
@@ -77,7 +61,7 @@ export const useContacts = () => {
     } catch (error: any) {
       toast({
         title: "Erro ao adicionar contato",
-        description: error.message || "Não foi possível adicionar o contato.",
+        description: error.response?.data?.error || "Não foi possível adicionar o contato.",
         variant: "destructive"
       });
       return { success: false, error };
@@ -86,16 +70,7 @@ export const useContacts = () => {
 
   const updateContact = async (contactId: string, updates: Partial<Contact>) => {
     try {
-      const { data, error } = await supabase
-        .from('contacts')
-        .update(updates)
-        .eq('id', contactId)
-        .eq('user_id', user!.id)
-        .select()
-        .single();
-
-      if (error) throw error;
-
+      const data = await apiService.updateContact(contactId, updates);
       setContacts(prev => prev.map(contact => 
         contact.id === contactId ? data : contact
       ));
@@ -109,7 +84,7 @@ export const useContacts = () => {
     } catch (error: any) {
       toast({
         title: "Erro ao atualizar contato",
-        description: error.message || "Não foi possível atualizar o contato.",
+        description: error.response?.data?.error || "Não foi possível atualizar o contato.",
         variant: "destructive"
       });
       return { success: false, error };
@@ -118,14 +93,7 @@ export const useContacts = () => {
 
   const deleteContact = async (contactId: string) => {
     try {
-      const { error } = await supabase
-        .from('contacts')
-        .delete()
-        .eq('id', contactId)
-        .eq('user_id', user!.id);
-
-      if (error) throw error;
-
+      await apiService.deleteContact(contactId);
       setContacts(prev => prev.filter(contact => contact.id !== contactId));
       toast({
         title: "Contato removido",
@@ -136,7 +104,7 @@ export const useContacts = () => {
     } catch (error: any) {
       toast({
         title: "Erro ao remover contato",
-        description: error.message || "Não foi possível remover o contato.",
+        description: error.response?.data?.error || "Não foi possível remover o contato.",
         variant: "destructive"
       });
       return { success: false, error };

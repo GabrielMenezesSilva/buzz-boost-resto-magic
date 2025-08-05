@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { supabase } from '@/integrations/supabase/client';
+import { apiService } from '@/services/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -60,39 +60,21 @@ export default function PublicForm() {
 
       setIsLoading(true);
       try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('restaurant_name, owner_name')
-          .eq('qr_code', qrCode.trim())
-          .maybeSingle();
-
-        if (error) {
-          console.error('Error fetching restaurant:', error);
-        toast({
-          title: t('publicForm.error'),
-          description: t('publicForm.couldNotLoad'),
-          variant: "destructive"
-        });
-          navigate('/');
-          return;
+        // Fetch restaurant info from backend
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/public/qr/${qrCode.trim()}`);
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to fetch restaurant info');
         }
-
-        if (!data) {
-        toast({
-          title: t('publicForm.invalidQR'),
-          description: t('publicForm.invalidOrExpired'),
-          variant: "destructive"
-        });
-          navigate('/');
-          return;
-        }
-
+        
+        const data = await response.json();
         setRestaurantInfo(data);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error:', error);
         toast({
           title: t('publicForm.error'),
-          description: t('publicForm.unexpectedError'),
+          description: error.message || t('publicForm.unexpectedError'),
           variant: "destructive"
         });
         navigate('/');
@@ -109,33 +91,15 @@ export default function PublicForm() {
 
     setIsSubmitting(true);
     try {
-      // Get user_id from profiles table using qr_code
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('user_id')
-        .eq('qr_code', qrCode.trim())
-        .single();
-
-      if (profileError || !profileData) {
-        throw new Error(t('publicForm.restaurantNotFound'));
-      }
-
-      // Insert contact
-      const { error: insertError } = await supabase
-        .from('contacts')
-        .insert({
-          user_id: profileData.user_id,
-          name: data.name,
-          phone: data.phone,
-          email: data.email || null,
-          notes: data.notes || null,
-          source: 'qr_scan',
-          last_contact_date: new Date().toISOString(),
-        });
-
-      if (insertError) {
-        throw insertError;
-      }
+      // Submit form to backend API
+      await apiService.submitPublicForm(qrCode.trim(), {
+        name: data.name,
+        phone: data.phone,
+        email: data.email || null,
+        notes: data.notes || null,
+        source: 'qr_scan',
+        last_contact_date: new Date().toISOString(),
+      });
 
       toast({
         title: t('publicForm.success'),
@@ -151,7 +115,7 @@ export default function PublicForm() {
       console.error('Error submitting form:', error);
       toast({
         title: t('publicForm.error'),
-        description: error.message || t('publicForm.cannotSave'),
+        description: error.response?.data?.error || error.message || t('publicForm.cannotSave'),
         variant: "destructive"
       });
     } finally {

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -23,41 +22,25 @@ export default function QRGenerator({ className }: QRGeneratorProps) {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!user) return;
+      if (!user || !user.profile) return;
 
       try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('qr_code, restaurant_name')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-        if (error) {
-          console.error('Error fetching profile:', error);
-          toast({
-            title: t('qrForm.errorTitle'),
-            description: t('qrGenerator.loadError'),
-            variant: "destructive"
-          });
-          return;
-        }
-
-        if (data) {
-          setQrCode(data.qr_code);
-          setRestaurantName(data.restaurant_name || 'Meu Restaurante');
-          
-          // Generate QR code image
-          const url = `${window.location.origin}/form/${data.qr_code}`;
-          const qrImageUrl = await QRCode.toDataURL(url, {
-            width: 300,
-            margin: 2,
-            color: {
-              dark: '#000000',
-              light: '#FFFFFF'
-            }
-          });
-          setQrCodeImage(qrImageUrl);
-        }
+        // Get profile data from auth context (already loaded)
+        const profileData = user.profile;
+        setQrCode(profileData.qr_code);
+        setRestaurantName(profileData.restaurant_name || 'Meu Restaurante');
+        
+        // Generate QR code image
+        const url = `${window.location.origin}/form/${profileData.qr_code}`;
+        const qrImageUrl = await QRCode.toDataURL(url, {
+          width: 300,
+          margin: 2,
+          color: {
+            dark: '#000000',
+            light: '#FFFFFF'
+          }
+        });
+        setQrCodeImage(qrImageUrl);
       } catch (error) {
         console.error('Error:', error);
         toast({
