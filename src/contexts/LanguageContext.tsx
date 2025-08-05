@@ -398,6 +398,85 @@ const translations: Record<Language, Record<string, string>> = {
     'profile.engagementRate': 'Taxa de Engajamento',
     'profile.activeCampaigns': 'Campanhas Ativas',
 
+    // Plans Page - Estratégia de Marketing Otimizada
+    'plans.badge': 'Oferta Especial',
+    'plans.title': 'Aumente sua Receita em até 300%',
+    'plans.subtitle': 'Escolha o plano ideal para fazer seu restaurante crescer. Mais de 2.500 restaurantes já aumentaram suas vendas conosco.',
+    'plans.whyChoose': 'Por que Restaurantes Escolhem DopplerDine?',
+    
+    // Benefícios Estratégicos
+    'plans.captureMore': 'Capture +500% Mais Contatos',
+    'plans.captureDesc': 'QR codes inteligentes transformam cada mesa em uma oportunidade de captação',
+    'plans.directComm': 'Comunicação Direta via SMS',
+    'plans.directCommDesc': 'Alcance 98% dos seus clientes instantaneamente com campanhas personalizadas',
+    'plans.measurableResults': 'Resultados Mensuráveis',
+    'plans.measurableDesc': 'Analytics detalhado mostra exatamente como cada campanha impacta suas vendas',
+    
+    // Labels dos planos
+    'plans.mostPopular': 'Mais Escolhido',
+    'plans.bestValue': 'Melhor Custo-Benefício',
+    'plans.recommended': 'Recomendado',
+    
+    // Plano Starter (Freemium Strategy)
+    'plans.starter': 'Starter',
+    'plans.starterSubtitle': 'Teste grátis por 14 dias',
+    'plans.starterDesc': 'Perfeito para testar o poder do DopplerDine',
+    
+    // Plano Professional (Sweet Spot)
+    'plans.professional': 'Professional',
+    'plans.professionalSubtitle': 'O mais escolhido pelos restaurantes',
+    'plans.professionalDesc': 'Tudo que você precisa para aumentar vendas significativamente',
+    
+    // Plano Premium (Alto Valor)
+    'plans.premium': 'Premium',
+    'plans.premiumSubtitle': 'Para restaurantes ambiciosos',
+    'plans.premiumDesc': 'Recursos avançados para máximo crescimento',
+    
+    // Preços
+    'plans.price.free': 'Grátis',
+    'plans.price.professional': 'CHF 197',
+    'plans.price.premium': 'CHF 397',
+    'plans.perMonth': '/mês',
+    'plans.first14Days': 'primeiros 14 dias',
+    
+    // Features com foco em valor
+    'plans.qrCodes': 'QR Codes Ilimitados',
+    'plans.contactCapture': 'Captura Automática de Contatos',
+    'plans.basicAnalytics': 'Relatórios Básicos',
+    'plans.emailSupport': 'Suporte via Email',
+    'plans.smsCredits100': '100 créditos SMS/mês',
+    'plans.smsCredits500': '500 créditos SMS/mês',
+    'plans.smsCredits1000': '1.000 créditos SMS/mês',
+    'plans.campaignTemplates': 'Templates de Campanha',
+    'plans.advancedSegmentation': 'Segmentação Avançada',
+    'plans.automatedCampaigns': 'Campanhas Automatizadas',
+    'plans.abTesting': 'Testes A/B de Campanhas',
+    'plans.advancedAnalytics': 'Analytics Avançado + ROI',
+    'plans.prioritySupport': 'Suporte Prioritário',
+    'plans.customIntegrations': 'Integrações Personalizadas',
+    'plans.whiteLabel': 'Marca Personalizada',
+    
+    // CTAs orientados a resultado
+    'plans.startFree': 'Começar Teste Grátis',
+    'plans.upgradeNow': 'Aumentar Vendas Agora',
+    'plans.choosePlan': 'Escolher Plano',
+    
+    // Social Proof
+    'plans.joinRestaurants': 'Junte-se a +2.500 Restaurantes que Aumentaram Receita',
+    'plans.contactIncrease': 'Aumento Médio de Contatos',
+    'plans.revenueIncrease': 'Aumento Médio de Vendas',
+    'plans.customerReturn': 'Mais Clientes Fidelizados',
+    
+    // Garantias
+    'plans.moneyBack': 'Garantia de 30 dias',
+    'plans.noContract': 'Sem contrato de fidelidade',
+    'plans.easySetup': 'Configuração em 5 minutos',
+    
+    // CTA Final
+    'plans.readyTransform': 'Pronto para Transformar seu Restaurante?',
+    'plans.seeResults': 'Veja resultados reais em 30 dias. Sem compromisso, sem risco.',
+    'plans.startTransformation': 'Iniciar Transformação Agora',
+
     // Common
     'common.save': 'Salvar',
     'common.edit': 'Editar',
