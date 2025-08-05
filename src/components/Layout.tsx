@@ -145,14 +145,14 @@ export default function Layout({ children }: LayoutProps) {
                     
                     {/* Settings Section */}
                     <DropdownMenuItem asChild>
-                      <Link to="/dashboard" className="flex items-center space-x-2 cursor-pointer">
+                      <Link to="/profile" className="flex items-center space-x-2 cursor-pointer">
                         <UserCircle className="w-4 h-4" />
                         <span>Meu Perfil</span>
                       </Link>
                     </DropdownMenuItem>
                     
                     <DropdownMenuItem asChild>
-                      <Link to="/dashboard" className="flex items-center space-x-2 cursor-pointer">
+                      <Link to="/settings" className="flex items-center space-x-2 cursor-pointer">
                         <Settings className="w-4 h-4" />
                         <span>Configurações</span>
                       </Link>
@@ -168,9 +168,11 @@ export default function Layout({ children }: LayoutProps) {
                     <DropdownMenuSeparator />
                     
                     {/* Actions Section */}
-                    <DropdownMenuItem className="flex items-center space-x-2 cursor-pointer">
-                      <HelpCircle className="w-4 h-4" />
-                      <span>Ajuda & Suporte</span>
+                    <DropdownMenuItem asChild>
+                      <Link to="/support" className="flex items-center space-x-2 cursor-pointer">
+                        <HelpCircle className="w-4 h-4" />
+                        <span>Ajuda & Suporte</span>
+                      </Link>
                     </DropdownMenuItem>
                     
                     <DropdownMenuItem 
