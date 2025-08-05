@@ -171,62 +171,62 @@ const Plans = () => {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {plans.map((plan, index) => (
               <Card 
                 key={plan.id} 
-                className={`relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 min-h-[650px] ${
+                className={`relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 min-h-[780px] ${
                   plan.popular 
-                    ? 'border-2 border-primary shadow-xl scale-105 lg:scale-105' 
+                    ? 'border-2 border-primary shadow-xl scale-105 lg:scale-108' 
                     : 'border shadow-lg hover:border-primary/50'
                 }`}
               >
                 {/* Badge de destaque */}
                 {plan.badge && (
                   <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 z-10">
-                    <Badge className={`px-3 py-1 text-xs font-semibold ${
+                    <Badge className={`px-4 py-2 text-sm font-semibold ${
                       plan.popular 
                         ? 'bg-gradient-to-r from-primary to-primary/80 text-primary-foreground' 
                         : 'bg-gradient-to-r from-secondary to-secondary/80'
                     }`}>
-                      <Star className="h-3 w-3 mr-1" />
+                      <Star className="h-4 w-4 mr-1" />
                       {plan.badge}
                     </Badge>
                   </div>
                 )}
                 
-                <CardHeader className={`text-center pb-3 px-4 ${plan.popular ? 'pt-6' : 'pt-4'}`}>
-                  <CardTitle className="text-xl md:text-2xl font-bold mb-2">{plan.name}</CardTitle>
-                  <CardDescription className="text-sm md:text-base mb-3 min-h-[40px] flex items-center justify-center">
+                <CardHeader className={`text-center pb-6 px-6 ${plan.popular ? 'pt-8' : 'pt-6'}`}>
+                  <CardTitle className="text-2xl md:text-3xl font-bold mb-4">{plan.name}</CardTitle>
+                  <CardDescription className="text-base md:text-lg mb-6 min-h-[50px] flex items-center justify-center">
                     {plan.subtitle}
                   </CardDescription>
                   
-                  <div className="mb-4">
-                    <span className="text-3xl md:text-4xl font-bold">{plan.price}</span>
-                    <span className="text-base text-muted-foreground ml-1">{plan.period}</span>
+                  <div className="mb-6">
+                    <span className="text-4xl md:text-5xl font-bold">{plan.price}</span>
+                    <span className="text-lg text-muted-foreground ml-1">{plan.period}</span>
                   </div>
                   
-                  <p className="text-xs text-muted-foreground leading-relaxed min-h-[45px] flex items-center justify-center px-1">
+                  <p className="text-sm text-muted-foreground leading-relaxed min-h-[50px] flex items-center justify-center px-2">
                     {plan.description}
                   </p>
                 </CardHeader>
 
-                <CardContent className="px-4 flex-1">
-                  <ul className="space-y-2">
+                <CardContent className="px-6 flex-1 py-4">
+                  <ul className="space-y-4">
                     {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-xs text-muted-foreground leading-relaxed">{feature}</span>
+                      <li key={featureIndex} className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground leading-relaxed">{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </CardContent>
 
-                <CardFooter className="px-4 pb-6 mt-auto">
+                <CardFooter className="px-6 pb-8 mt-auto">
                   <Button 
                     size="lg" 
                     variant={plan.ctaVariant}
-                    className={`w-full text-sm py-4 transition-all duration-300 ${
+                    className={`w-full text-lg py-6 transition-all duration-300 ${
                       plan.popular 
                         ? 'bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl' 
                         : ''
