@@ -24,6 +24,14 @@ const COUNTRY_CODES = {
   'GY': '592',
   'SR': '597',
   'GF': '594',
+  'CH': '41', // Suíça
+  'DE': '49', // Alemanha
+  'FR': '33', // França
+  'IT': '39', // Itália
+  'ES': '34', // Espanha
+  'PT': '351', // Portugal
+  'GB': '44', // Reino Unido
+  'AU': '61', // Austrália
   // Adicione mais países conforme necessário
 } as const;
 
@@ -40,10 +48,10 @@ function formatPhoneNumber(phone: string, countryCode: string = 'BR'): string {
   // Pega o código do país do mapeamento
   const countryDialCode = COUNTRY_CODES[countryCode as keyof typeof COUNTRY_CODES];
   
-  // Se não encontrar o código do país, log error e tenta usar o Brasil como fallback
+  // Se não encontrar o código do país, log error e retorna null
   if (!countryDialCode) {
-    console.error(`Country code ${countryCode} not found in mapping, using BR as fallback`);
-    return `+55${cleanPhone}`;
+    console.error(`Country code ${countryCode} not found in mapping`);
+    return null;
   }
   
   // Formatação específica por país
@@ -76,6 +84,32 @@ function formatPhoneNumber(phone: string, countryCode: string = 'BR'): string {
         return null;
       }
       break;
+    
+    case 'CH':
+      // Suíça deve ter 9 dígitos (sem o 0 inicial)
+      if (cleanPhone.startsWith('0')) {
+        cleanPhone = cleanPhone.substring(1);
+      }
+      if (cleanPhone.length !== 9) {
+        console.error(`Invalid CH phone number length: ${cleanPhone}`);
+        return null;
+      }
+      break;
+    
+    case 'DE':
+    case 'FR':
+    case 'IT':
+    case 'ES':
+    case 'GB':
+      // Países europeus - remove 0 inicial se existir e aceita 9-11 dígitos
+      if (cleanPhone.startsWith('0')) {
+        cleanPhone = cleanPhone.substring(1);
+      }
+      if (cleanPhone.length < 9 || cleanPhone.length > 11) {
+        console.error(`Invalid ${countryCode} phone number length: ${cleanPhone}`);
+        return null;
+      }
+      break;
       
     default:
       // Para outros países, aceita números entre 8-15 dígitos
@@ -99,10 +133,8 @@ async function sendSMS(to: string, message: string, countryCode: string = 'BR') 
     throw new Error('Twilio credentials not configured');
   }
 
-  // Formatar número para padrão internacional E.164
-  const formattedPhone = formatPhoneNumber(to, countryCode);
-  
-  console.log(`Formatted phone: ${to} (${countryCode}) -> ${formattedPhone}`);
+  // O número já deve vir formatado da função chamadora
+  console.log(`Sending SMS to: ${to}`);
 
   const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
     method: 'POST',
@@ -111,7 +143,7 @@ async function sendSMS(to: string, message: string, countryCode: string = 'BR') 
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: new URLSearchParams({
-      To: formattedPhone,
+      To: to,
       From: fromNumber,
       Body: message,
     }),
@@ -192,11 +224,16 @@ serve(async (req) => {
     for (const contact of contacts) {
       try {
         if (contact.phone) {
+          console.log(`Processing contact: ${contact.name}, phone: ${contact.phone}, country: ${contact.country_code}`);
+          
+          // Usar o código do país salvo no contato
+          const contactCountryCode = contact.country_code || 'BR';
+          
           // Validar se o número pode ser formatado antes de tentar enviar
-          const formattedPhone = formatPhoneNumber(contact.phone, contact.country_code || 'BR');
+          const formattedPhone = formatPhoneNumber(contact.phone, contactCountryCode);
           
           if (!formattedPhone) {
-            console.error(`Invalid phone number for contact ${contact.name}: ${contact.phone} (${contact.country_code})`);
+            console.error(`Invalid phone number for contact ${contact.name}: ${contact.phone} (${contactCountryCode})`);
             failedSends++;
             continue;
           }
@@ -206,9 +243,9 @@ serve(async (req) => {
           personalizedMessage = personalizedMessage.replace(/\{nome\}/g, contact.name || 'Cliente');
           personalizedMessage = personalizedMessage.replace(/\{restaurante\}/g, profile?.restaurant_name || 'Nosso Restaurante');
 
-          console.log(`Sending SMS to ${contact.phone} (${contact.country_code || 'BR'}) -> ${formattedPhone}: ${personalizedMessage.substring(0, 50)}...`);
+          console.log(`Sending SMS to ${contact.phone} (${contactCountryCode}) -> ${formattedPhone}: ${personalizedMessage.substring(0, 50)}...`);
           
-          await sendSMS(contact.phone, personalizedMessage, contact.country_code || 'BR');
+          await sendSMS(formattedPhone, personalizedMessage, contactCountryCode);
           successfulSends++;
           console.log(`SMS sent successfully to ${contact.phone}`);
         } else {
