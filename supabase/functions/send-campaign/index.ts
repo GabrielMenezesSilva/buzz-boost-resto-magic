@@ -6,8 +6,51 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Mapeamento de códigos de país
+const COUNTRY_CODES = {
+  'BR': '55',
+  'US': '1',
+  'CA': '1',
+  'MX': '52',
+  'AR': '54',
+  'CL': '56',
+  'PE': '51',
+  'CO': '57',
+  'VE': '58',
+  'UY': '598',
+  'PY': '595',
+  'BO': '591',
+  'EC': '593',
+  'GY': '592',
+  'SR': '597',
+  'GF': '594',
+  // Adicione mais países conforme necessário
+} as const;
+
+// Função para formatar número de telefone
+function formatPhoneNumber(phone: string, countryCode: string = 'BR'): string {
+  // Remove todos os caracteres não numéricos
+  let cleanPhone = phone.replace(/\D/g, '');
+  
+  // Se já tem código do país, retorna como está (com +)
+  if (phone.startsWith('+')) {
+    return phone;
+  }
+  
+  // Pega o código do país do mapeamento
+  const countryDialCode = COUNTRY_CODES[countryCode as keyof typeof COUNTRY_CODES] || '55';
+  
+  // Para Brasil (55), remove o 0 inicial se existir
+  if (countryCode === 'BR' && cleanPhone.startsWith('0')) {
+    cleanPhone = cleanPhone.substring(1);
+  }
+  
+  // Formata no padrão E.164
+  return `+${countryDialCode}${cleanPhone}`;
+}
+
 // Função para enviar SMS via Twilio
-async function sendSMS(to: string, message: string) {
+async function sendSMS(to: string, message: string, countryCode: string = 'BR') {
   const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID');
   const authToken = Deno.env.get('TWILIO_AUTH_TOKEN');
   const fromNumber = Deno.env.get('TWILIO_PHONE_NUMBER');
@@ -16,16 +59,10 @@ async function sendSMS(to: string, message: string) {
     throw new Error('Twilio credentials not configured');
   }
 
-  // Formatar número para padrão internacional
-  let formattedPhone = to;
-  if (!formattedPhone.startsWith('+')) {
-    // Assumir Brasil se não houver código do país
-    if (formattedPhone.length <= 11) {
-      formattedPhone = `+55${formattedPhone}`;
-    } else {
-      formattedPhone = `+${formattedPhone}`;
-    }
-  }
+  // Formatar número para padrão internacional E.164
+  const formattedPhone = formatPhoneNumber(to, countryCode);
+  
+  console.log(`Formatted phone: ${to} (${countryCode}) -> ${formattedPhone}`);
 
   const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
     method: 'POST',
@@ -83,8 +120,9 @@ serve(async (req) => {
 
     const { data: contacts, error: contactsError } = await supabase
       .from('contacts')
-      .select('*')
-      .eq('user_id', user.id);
+      .select('id, name, phone, email, country_code')
+      .eq('user_id', user.id)
+      .not('phone', 'is', null);
     
     if (contactsError || !contacts?.length) throw new Error('No contacts found');
 
@@ -103,6 +141,13 @@ serve(async (req) => {
     let successfulSends = 0;
     let failedSends = 0;
 
+    // Buscar dados do perfil do usuário para personalização
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('restaurant_name, owner_name')
+      .eq('user_id', user.id)
+      .single();
+
     // Send to each contact
     for (const contact of contacts) {
       try {
@@ -110,11 +155,11 @@ serve(async (req) => {
           // Personalizar mensagem com variáveis
           let personalizedMessage = campaign.message;
           personalizedMessage = personalizedMessage.replace(/\{nome\}/g, contact.name || 'Cliente');
-          personalizedMessage = personalizedMessage.replace(/\{restaurante\}/g, contact.restaurant_name || 'Nosso Restaurante');
+          personalizedMessage = personalizedMessage.replace(/\{restaurante\}/g, profile?.restaurant_name || 'Nosso Restaurante');
 
-          console.log(`Sending SMS to ${contact.phone}: ${personalizedMessage.substring(0, 50)}...`);
+          console.log(`Sending SMS to ${contact.phone} (${contact.country_code || 'BR'}): ${personalizedMessage.substring(0, 50)}...`);
           
-          await sendSMS(contact.phone, personalizedMessage);
+          await sendSMS(contact.phone, personalizedMessage, contact.country_code || 'BR');
           successfulSends++;
           console.log(`SMS sent successfully to ${contact.phone}`);
         } else {
