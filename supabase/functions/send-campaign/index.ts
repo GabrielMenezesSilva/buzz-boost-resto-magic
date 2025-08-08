@@ -38,11 +38,51 @@ function formatPhoneNumber(phone: string, countryCode: string = 'BR'): string {
   }
   
   // Pega o código do país do mapeamento
-  const countryDialCode = COUNTRY_CODES[countryCode as keyof typeof COUNTRY_CODES] || '55';
+  const countryDialCode = COUNTRY_CODES[countryCode as keyof typeof COUNTRY_CODES];
   
-  // Para Brasil (55), remove o 0 inicial se existir
-  if (countryCode === 'BR' && cleanPhone.startsWith('0')) {
-    cleanPhone = cleanPhone.substring(1);
+  // Se não encontrar o código do país, log error e tenta usar o Brasil como fallback
+  if (!countryDialCode) {
+    console.error(`Country code ${countryCode} not found in mapping, using BR as fallback`);
+    return `+55${cleanPhone}`;
+  }
+  
+  // Formatação específica por país
+  switch (countryCode) {
+    case 'BR':
+      // Para Brasil, remove o 0 inicial se existir e valida tamanho
+      if (cleanPhone.startsWith('0')) {
+        cleanPhone = cleanPhone.substring(1);
+      }
+      // Brasil deve ter 10 ou 11 dígitos (celular/fixo)
+      if (cleanPhone.length < 10 || cleanPhone.length > 11) {
+        console.error(`Invalid BR phone number length: ${cleanPhone}`);
+        return null;
+      }
+      break;
+    
+    case 'US':
+    case 'CA':
+      // EUA e Canadá devem ter 10 dígitos
+      if (cleanPhone.length !== 10) {
+        console.error(`Invalid ${countryCode} phone number length: ${cleanPhone}`);
+        return null;
+      }
+      break;
+    
+    case 'AR':
+      // Argentina pode ter 10-11 dígitos
+      if (cleanPhone.length < 10 || cleanPhone.length > 11) {
+        console.error(`Invalid AR phone number length: ${cleanPhone}`);
+        return null;
+      }
+      break;
+      
+    default:
+      // Para outros países, aceita números entre 8-15 dígitos
+      if (cleanPhone.length < 8 || cleanPhone.length > 15) {
+        console.error(`Invalid ${countryCode} phone number length: ${cleanPhone}`);
+        return null;
+      }
   }
   
   // Formata no padrão E.164
@@ -152,12 +192,21 @@ serve(async (req) => {
     for (const contact of contacts) {
       try {
         if (contact.phone) {
+          // Validar se o número pode ser formatado antes de tentar enviar
+          const formattedPhone = formatPhoneNumber(contact.phone, contact.country_code || 'BR');
+          
+          if (!formattedPhone) {
+            console.error(`Invalid phone number for contact ${contact.name}: ${contact.phone} (${contact.country_code})`);
+            failedSends++;
+            continue;
+          }
+
           // Personalizar mensagem com variáveis
           let personalizedMessage = campaign.message;
           personalizedMessage = personalizedMessage.replace(/\{nome\}/g, contact.name || 'Cliente');
           personalizedMessage = personalizedMessage.replace(/\{restaurante\}/g, profile?.restaurant_name || 'Nosso Restaurante');
 
-          console.log(`Sending SMS to ${contact.phone} (${contact.country_code || 'BR'}): ${personalizedMessage.substring(0, 50)}...`);
+          console.log(`Sending SMS to ${contact.phone} (${contact.country_code || 'BR'}) -> ${formattedPhone}: ${personalizedMessage.substring(0, 50)}...`);
           
           await sendSMS(contact.phone, personalizedMessage, contact.country_code || 'BR');
           successfulSends++;
