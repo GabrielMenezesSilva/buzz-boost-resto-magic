@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { apiService } from '@/services/api';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -28,6 +28,7 @@ type FormData = z.infer<typeof formSchema>;
 interface RestaurantInfo {
   restaurant_name: string;
   owner_name: string;
+  user_id: string;
 }
 
 export default function PublicForm() {
@@ -55,20 +56,20 @@ export default function PublicForm() {
       }
 
       console.log('QR Code recebido:', qrCode);
-      console.log('QR Code length:', qrCode.length);
-      console.log('QR Code trimmed:', qrCode.trim());
 
       setIsLoading(true);
       try {
-        // Fetch restaurant info from backend
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/public/qr/${qrCode.trim()}`);
+        // Fetch restaurant info from Supabase using the QR code
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('restaurant_name, owner_name, user_id')
+          .eq('qr_code', qrCode.trim())
+          .single();
         
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.error || 'Failed to fetch restaurant info');
+        if (error) {
+          throw new Error('QR Code não encontrado');
         }
         
-        const data = await response.json();
         setRestaurantInfo(data);
       } catch (error: any) {
         console.error('Error:', error);
@@ -84,22 +85,27 @@ export default function PublicForm() {
     };
 
     fetchRestaurantInfo();
-  }, [qrCode, navigate, toast]);
+  }, [qrCode, navigate, toast, t]);
 
   const onSubmit = async (data: FormData) => {
     if (!qrCode || !restaurantInfo) return;
 
     setIsSubmitting(true);
     try {
-      // Submit form to backend API
-      await apiService.submitPublicForm(qrCode.trim(), {
-        name: data.name,
-        phone: data.phone,
-        email: data.email || null,
-        notes: data.notes || null,
-        source: 'qr_scan',
-        last_contact_date: new Date().toISOString(),
-      });
+      // Submit form directly to Supabase
+      const { error } = await supabase
+        .from('contacts')
+        .insert([{
+          user_id: restaurantInfo.user_id,
+          name: data.name,
+          phone: data.phone,
+          email: data.email || null,
+          notes: data.notes || null,
+          source: 'qr_scan',
+          last_contact_date: new Date().toISOString(),
+        }]);
+
+      if (error) throw error;
 
       toast({
         title: t('publicForm.success'),
@@ -115,7 +121,7 @@ export default function PublicForm() {
       console.error('Error submitting form:', error);
       toast({
         title: t('publicForm.error'),
-        description: error.response?.data?.error || error.message || t('publicForm.cannotSave'),
+        description: error.message || t('publicForm.cannotSave'),
         variant: "destructive"
       });
     } finally {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { apiService } from '@/services/api';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
 interface DashboardStats {
@@ -47,36 +47,49 @@ export const useDashboardData = () => {
   }, [user]);
 
   const fetchDashboardData = async () => {
+    if (!user) return;
+    
     try {
       setLoading(true);
 
       // Fetch contacts and campaigns in parallel
-      const [contacts, campaigns] = await Promise.all([
-        apiService.getContacts(),
-        apiService.getCampaigns()
+      const [contactsResult, campaignsResult] = await Promise.all([
+        supabase
+          .from('contacts')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('campaigns')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
       ]);
+
+      const contacts = contactsResult.data || [];
+      const campaigns = campaignsResult.data || [];
 
       // Calculate recent contacts (last 7 days)
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      const recentContactsCount = contacts?.filter(
+      const recentContactsCount = contacts.filter(
         contact => new Date(contact.created_at) > sevenDaysAgo
-      ).length || 0;
+      ).length;
 
       // Calculate active campaigns
-      const activeCampaignsCount = campaigns?.filter(
+      const activeCampaignsCount = campaigns.filter(
         campaign => ['scheduled', 'sending', 'sent'].includes(campaign.status)
-      ).length || 0;
+      ).length;
 
       setStats({
-        totalContacts: contacts?.length || 0,
-        totalCampaigns: campaigns?.length || 0,
+        totalContacts: contacts.length,
+        totalCampaigns: campaigns.length,
         activeCampaigns: activeCampaignsCount,
         recentContacts: recentContactsCount
       });
 
-      setRecentContacts(contacts?.slice(0, 5) || []);
-      setRecentCampaigns(campaigns?.slice(0, 3) || []);
+      setRecentContacts(contacts.slice(0, 5));
+      setRecentCampaigns(campaigns.slice(0, 3));
 
     } catch (error) {
       console.error('Error fetching dashboard data:', error);

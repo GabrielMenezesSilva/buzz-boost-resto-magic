@@ -12,7 +12,7 @@ interface QRGeneratorProps {
 }
 
 export default function QRGenerator({ className }: QRGeneratorProps) {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
   const { t } = useLanguage();
   const [qrCode, setQrCode] = useState<string | null>(null);
@@ -22,16 +22,15 @@ export default function QRGenerator({ className }: QRGeneratorProps) {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!user || !user.profile) return;
+      if (!user || !profile) return;
 
       try {
         // Get profile data from auth context (already loaded)
-        const profileData = user.profile;
-        setQrCode(profileData.qr_code);
-        setRestaurantName(profileData.restaurant_name || 'Meu Restaurante');
+        setQrCode(profile.qr_code);
+        setRestaurantName(profile.restaurant_name || 'Meu Restaurante');
         
         // Generate QR code image
-        const url = `${window.location.origin}/form/${profileData.qr_code}`;
+        const url = `${window.location.origin}/form/${profile.qr_code}`;
         const qrImageUrl = await QRCode.toDataURL(url, {
           width: 300,
           margin: 2,
@@ -54,7 +53,7 @@ export default function QRGenerator({ className }: QRGeneratorProps) {
     };
 
     fetchProfile();
-  }, [user, toast]);
+  }, [user, profile, toast]);
 
   const copyLink = () => {
     if (!qrCode) return;

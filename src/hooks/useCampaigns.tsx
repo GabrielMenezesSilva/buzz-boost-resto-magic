@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { apiService } from '@/services/api';
+import { supabase } from '@/integrations/supabase/client';
 import { MessageSquare, Send, Target, BarChart3 } from 'lucide-react';
 import { useAuth } from './useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -45,7 +45,13 @@ export function useCampaigns() {
     
     setIsLoading(true);
     try {
-      const data = await apiService.getCampaigns();
+      const { data, error } = await supabase
+        .from('campaigns')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
       setCampaigns(data || []);
     } catch (error) {
       console.error('Error fetching campaigns:', error);
@@ -59,14 +65,21 @@ export function useCampaigns() {
   const createCampaign = async (campaignData: CreateCampaignData) => {
     if (!user) throw new Error('User not authenticated');
 
-    const data = await apiService.createCampaign({
-      name: campaignData.name,
-      message: campaignData.message,
-      campaign_type: campaignData.campaign_type,
-      scheduled_at: campaignData.scheduled_at || null,
-      filters: campaignData.filters || {},
-      status: 'draft'
-    });
+    const { data, error } = await supabase
+      .from('campaigns')
+      .insert([{
+        name: campaignData.name,
+        message: campaignData.message,
+        campaign_type: campaignData.campaign_type,
+        scheduled_at: campaignData.scheduled_at || null,
+        filters: campaignData.filters || {},
+        status: 'draft',
+        user_id: user.id
+      }])
+      .select()
+      .single();
+
+    if (error) throw error;
     
     // Refresh campaigns list
     await fetchCampaigns();
@@ -77,7 +90,13 @@ export function useCampaigns() {
   const updateCampaign = async (campaignId: string, updates: Partial<Campaign>) => {
     if (!user) throw new Error('User not authenticated');
 
-    await apiService.updateCampaign(campaignId, updates);
+    const { error } = await supabase
+      .from('campaigns')
+      .update(updates)
+      .eq('id', campaignId)
+      .eq('user_id', user.id);
+
+    if (error) throw error;
     
     // Refresh campaigns list
     await fetchCampaigns();
@@ -87,7 +106,13 @@ export function useCampaigns() {
   const deleteCampaign = async (campaignId: string) => {
     if (!user) throw new Error('User not authenticated');
 
-    await apiService.deleteCampaign(campaignId);
+    const { error } = await supabase
+      .from('campaigns')
+      .delete()
+      .eq('id', campaignId)
+      .eq('user_id', user.id);
+
+    if (error) throw error;
     
     // Refresh campaigns list
     await fetchCampaigns();
@@ -97,7 +122,11 @@ export function useCampaigns() {
   const sendCampaign = async (campaignId: string) => {
     if (!user) throw new Error('User not authenticated');
 
-    const data = await apiService.sendCampaign(campaignId);
+    const { data, error } = await supabase.functions.invoke('send-campaign', {
+      body: { campaignId }
+    });
+
+    if (error) throw error;
     
     // Refresh campaigns list to get updated status
     await fetchCampaigns();

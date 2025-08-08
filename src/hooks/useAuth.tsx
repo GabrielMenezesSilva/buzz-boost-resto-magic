@@ -1,13 +1,7 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import { apiService } from '@/services/api';
-import { tokenStorage, getTokenPayload } from '@/utils/auth';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-
-interface User {
-  id: string;
-  email: string;
-  profile?: UserProfile;
-}
+import type { User, Session } from '@supabase/supabase-js';
 
 interface UserProfile {
   id: string;
@@ -20,6 +14,7 @@ interface UserProfile {
 interface AuthContextType {
   user: User | null;
   profile: UserProfile | null;
+  session: Session | null;
   loading: boolean;
   signUp: (email: string, password: string, restaurantName: string, ownerName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
@@ -31,46 +26,93 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  // Function to fetch current user and profile
-  const fetchCurrentUser = async () => {
+  // Function to fetch user profile
+  const fetchUserProfile = async (userId: string) => {
     try {
-      const token = tokenStorage.get();
-      if (!token) {
-        setUser(null);
-        setProfile(null);
-        setLoading(false);
-        return;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+      
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching profile:', error);
+        return null;
       }
-
-      const userData = await apiService.getCurrentUser();
-      setUser(userData.user);
-      setProfile(userData.user.profile || null);
-      setLoading(false);
+      
+      return data;
     } catch (error) {
-      console.error('Error fetching current user:', error);
-      tokenStorage.remove();
-      setUser(null);
-      setProfile(null);
-      setLoading(false);
+      console.error('Error fetching profile:', error);
+      return null;
     }
   };
 
   useEffect(() => {
-    // Check for existing token and fetch user
-    fetchCurrentUser();
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          // Fetch user profile
+          setTimeout(async () => {
+            const userProfile = await fetchUserProfile(session.user.id);
+            setProfile(userProfile);
+            setLoading(false);
+          }, 0);
+        } else {
+          setProfile(null);
+          setLoading(false);
+        }
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        fetchUserProfile(session.user.id).then((userProfile) => {
+          setProfile(userProfile);
+          setLoading(false);
+        });
+      } else {
+        setLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const signUp = async (email: string, password: string, restaurantName: string, ownerName: string) => {
     try {
-      const response = await apiService.register(email, password, restaurantName, ownerName);
+      const redirectUrl = `${window.location.origin}/`;
       
-      if (response.token) {
-        tokenStorage.set(response.token);
-        setUser(response.user);
-        setProfile(response.user.profile || null);
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            restaurant_name: restaurantName,
+            owner_name: ownerName
+          }
+        }
+      });
+
+      if (error) {
+        toast({
+          title: "Erro no cadastro",
+          description: error.message,
+          variant: "destructive"
+        });
+        return { error };
       }
 
       toast({
@@ -80,7 +122,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       return { error: null };
     } catch (error: any) {
-      const errorMessage = error.response?.data?.error || error.message || "Erro no cadastro";
+      const errorMessage = error.message || "Erro no cadastro";
       toast({
         title: "Erro no cadastro",
         description: errorMessage,
@@ -92,17 +134,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const response = await apiService.login(email, password);
-      
-      if (response.token) {
-        tokenStorage.set(response.token);
-        setUser(response.user);
-        setProfile(response.user.profile || null);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        toast({
+          title: "Erro no login",
+          description: error.message,
+          variant: "destructive"
+        });
+        return { error };
       }
 
       return { error: null };
     } catch (error: any) {
-      const errorMessage = error.response?.data?.error || error.message || "Erro no login";
+      const errorMessage = error.message || "Erro no login";
       toast({
         title: "Erro no login",
         description: errorMessage,
@@ -114,25 +162,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     try {
-      await apiService.logout();
+      await supabase.auth.signOut();
+      
+      toast({
+        title: "Logout realizado",
+        description: "Você foi desconectado com sucesso."
+      });
     } catch (error) {
       console.error('Logout error:', error);
     }
-    
-    tokenStorage.remove();
-    setUser(null);
-    setProfile(null);
-    
-    toast({
-      title: "Logout realizado",
-      description: "Você foi desconectado com sucesso."
-    });
   };
 
   return (
     <AuthContext.Provider value={{
       user,
       profile,
+      session,
       loading,
       signUp,
       signIn,

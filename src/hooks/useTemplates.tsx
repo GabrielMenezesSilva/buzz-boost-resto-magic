@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { apiService } from '@/services/api';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
 interface Template {
@@ -31,7 +31,14 @@ export function useTemplates() {
     
     setIsLoading(true);
     try {
-      const data = await apiService.getTemplates();
+      const { data, error } = await supabase
+        .from('campaign_templates')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      
       setTemplates((data || []).map(item => ({
         ...item,
         variables: Array.isArray(item.variables) ? item.variables.map(v => String(v)) : []
@@ -48,12 +55,19 @@ export function useTemplates() {
   const createTemplate = async (templateData: CreateTemplateData) => {
     if (!user) throw new Error('User not authenticated');
 
-    const data = await apiService.createTemplate({
-      name: templateData.name,
-      message: templateData.message,
-      category: templateData.category,
-      variables: templateData.variables
-    });
+    const { data, error } = await supabase
+      .from('campaign_templates')
+      .insert([{
+        name: templateData.name,
+        message: templateData.message,
+        category: templateData.category,
+        variables: templateData.variables,
+        user_id: user.id
+      }])
+      .select()
+      .single();
+
+    if (error) throw error;
     
     await fetchTemplates();
     return data;
@@ -63,7 +77,13 @@ export function useTemplates() {
   const updateTemplate = async (templateId: string, updates: Partial<CreateTemplateData>) => {
     if (!user) throw new Error('User not authenticated');
 
-    await apiService.updateTemplate(templateId, updates);
+    const { error } = await supabase
+      .from('campaign_templates')
+      .update(updates)
+      .eq('id', templateId)
+      .eq('user_id', user.id);
+
+    if (error) throw error;
     
     await fetchTemplates();
   };
@@ -72,7 +92,13 @@ export function useTemplates() {
   const deleteTemplate = async (templateId: string) => {
     if (!user) throw new Error('User not authenticated');
 
-    await apiService.deleteTemplate(templateId);
+    const { error } = await supabase
+      .from('campaign_templates')
+      .delete()
+      .eq('id', templateId)
+      .eq('user_id', user.id);
+
+    if (error) throw error;
     
     await fetchTemplates();
   };
