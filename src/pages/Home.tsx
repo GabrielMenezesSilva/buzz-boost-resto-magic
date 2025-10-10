@@ -197,7 +197,7 @@ export default function Home() {
                     <span>{t('home.testFree')}</span>
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="px-8 border-primary-foreground/20 hover:bg-primary-foreground text-lg text-gray-950">
+                <Button size="lg" variant="outline" className="px-8 border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 hover:border-primary-foreground text-lg">
                   {t('home.scheduleDemo')}
                 </Button>
               </div>
