@@ -33,7 +33,11 @@ import {
   Truck,
   Archive,
   LayoutDashboard,
-  Shield
+  Shield,
+  Wallet,
+  DollarSign,
+  TrendingUp,
+  PieChart
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -100,16 +104,16 @@ export default function Layout({ children }: LayoutProps) {
         { name: t('nav.tables'), href: '/tables', icon: Store },
         { name: t('nav.employees'), href: '/employees', icon: Users },
       ]
+    },
+    {
+      name: t('nav.financeGroup') || 'Financeiro',
+      icon: Wallet,
+      items: [
+        { name: t('nav.cashflow'), href: '/cashflow', icon: DollarSign },
+        { name: t('nav.reports'), href: '/reports', icon: TrendingUp },
+      ]
     }
   ];
-
-  if (profile?.role === 'super_admin') {
-    authenticatedNavigation.push({
-      name: t('nav.adminPanel'),
-      href: '/admin',
-      icon: Shield
-    });
-  }
 
   // Choose navigation based on auth status
   const navigation = user ? authenticatedNavigation : publicNavigation;
@@ -120,12 +124,12 @@ export default function Layout({ children }: LayoutProps) {
       <header className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
         <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-18">
-            <Link to="/" className="flex flex-shrink-0 items-center space-x-3 xl:space-x-4 lg:mr-4 xl:mr-8">
-              <img src={dopplerDineLogo} alt="DopplerDine" className="w-10 h-10" />
-              <span className="text-xl font-bold text-foreground hidden sm:block">DopplerDine</span>
+            <Link to="/" className="flex flex-shrink-0 items-center space-x-2 xl:space-x-3 mr-2 xl:mr-4">
+              <img src={dopplerDineLogo} alt="DopplerDine" className="w-8 h-8 xl:w-10 xl:h-10" />
+              <span className="text-lg xl:text-xl font-bold text-foreground hidden sm:block">DopplerDine</span>
             </Link>
 
-            <nav className="hidden xl:flex items-center space-x-1 xl:space-x-4 flex-1 justify-center px-2">
+            <nav className="hidden xl:flex items-center space-x-0.5 lg:space-x-1.5 flex-1 justify-center px-0 min-w-0">
               {navigation.map((item) => {
                 const Icon = item.icon;
 
@@ -137,14 +141,14 @@ export default function Layout({ children }: LayoutProps) {
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="ghost"
-                          className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isAnyActive
+                          className={`flex items-center space-x-1.5 px-2 py-2 rounded-md text-[13px] 2xl:text-sm font-medium transition-all duration-200 ${isAnyActive
                             ? 'text-primary bg-primary/10 shadow-sm'
                             : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                             }`}
                         >
                           <Icon className="w-4 h-4" />
-                          <span>{item.name}</span>
-                          <ChevronDown className="w-3 h-3 ml-1 opacity-50" />
+                          <span className="whitespace-nowrap">{item.name}</span>
+                          <ChevronDown className="w-3 h-3 ml-1 opacity-50 flex-shrink-0" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="start" className="w-48 z-50">
@@ -173,13 +177,13 @@ export default function Layout({ children }: LayoutProps) {
                   <Link
                     key={item.name || item.href}
                     to={item.href}
-                    className={`flex items-center space-x-2 px-3 py-2 lg:px-4 lg:py-3 rounded-lg text-sm font-medium transition-all duration-200 ${isActive(item.href)
+                    className={`flex items-center space-x-1.5 px-2 py-2 rounded-md text-[13px] 2xl:text-sm font-medium transition-all duration-200 ${isActive(item.href)
                       ? 'text-primary bg-primary/10 shadow-sm'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                       }`}
                   >
                     <Icon className="w-4 h-4" />
-                    <span>{item.name}</span>
+                    <span className="whitespace-nowrap">{item.name}</span>
                   </Link>
                 );
               })}
@@ -200,7 +204,7 @@ export default function Layout({ children }: LayoutProps) {
               </Button>
             </div>
 
-            <div className="hidden xl:flex flex-shrink-0 items-center space-x-4 ml-4">
+            <div className="hidden xl:flex flex-shrink-0 items-center space-x-2 pl-2 border-l border-border/50 ml-0 lg:ml-2">
               <LanguageSelector />
               {user ? (
                 <DropdownMenu>
@@ -210,7 +214,7 @@ export default function Layout({ children }: LayoutProps) {
                       className="flex items-center space-x-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
                     >
                       <User className="w-4 h-4" />
-                      <span>
+                      <span className="truncate max-w-[100px] xl:max-w-[150px]">
                         {t('auth.hello')}, {getDisplayName()}
                       </span>
                       <ChevronDown className="w-4 h-4" />
@@ -229,6 +233,16 @@ export default function Layout({ children }: LayoutProps) {
                     </div>
 
                     <DropdownMenuSeparator />
+
+                    {/* Admin Section */}
+                    {profile?.role === 'super_admin' && (
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin" className="flex items-center space-x-2 cursor-pointer text-primary">
+                          <Shield className="w-4 h-4" />
+                          <span>{t('nav.adminPanel')}</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
 
                     {/* Settings Section */}
                     <DropdownMenuItem asChild>
@@ -343,11 +357,38 @@ export default function Layout({ children }: LayoutProps) {
                 </div>
                 {user ? (
                   <div className="space-y-3">
-                    <div className="px-3 py-2">
-                      <p className="text-sm text-muted-foreground">
-                        {t('auth.loggedAs')}: {getDisplayName()}
+                    <div className="px-3 py-2 border-b border-border/50 pb-3 mb-2">
+                      <p className="text-sm font-medium text-foreground">
+                        {getDisplayName()}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {profile?.restaurant_name || user?.email}
                       </p>
                     </div>
+
+                    {profile?.role === 'super_admin' && (
+                      <Link to="/admin" onClick={() => setMobileMenuOpen(false)}>
+                        <Button variant="ghost" size="sm" className="w-full justify-start space-x-2 text-primary">
+                          <Shield className="w-4 h-4" />
+                          <span>{t('nav.adminPanel')}</span>
+                        </Button>
+                      </Link>
+                    )}
+
+                    <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
+                      <Button variant="ghost" size="sm" className="w-full justify-start space-x-2">
+                        <UserCircle className="w-4 h-4" />
+                        <span>{t('nav.profile')}</span>
+                      </Button>
+                    </Link>
+
+                    <Link to="/settings" onClick={() => setMobileMenuOpen(false)}>
+                      <Button variant="ghost" size="sm" className="w-full justify-start space-x-2">
+                        <Settings className="w-4 h-4" />
+                        <span>{t('nav.settings')}</span>
+                      </Button>
+                    </Link>
+
                     <Button
                       variant="ghost"
                       size="sm"

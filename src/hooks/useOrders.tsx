@@ -148,6 +148,52 @@ export const useOrders = (sessionId?: string) => {
                 }
             }
 
+            // 4. Integração Financeira: Obtenha ou Crie Categoria de Venda
+            let categoryId = null;
+            if (user) {
+                const { data: existingCat } = await supabaseDb
+                    .from('expense_categories')
+                    .select('id')
+                    .eq('user_id', user.id)
+                    .eq('type', 'income')
+                    .ilike('name', '%Venda%')
+                    .limit(1)
+                    .single();
+
+                if (existingCat) {
+                    categoryId = existingCat.id;
+                } else {
+                    const { data: newCat } = await supabaseDb
+                        .from('expense_categories')
+                        .insert([{
+                            user_id: user.id,
+                            name: 'Vendas PDV',
+                            type: 'income',
+                            color: '#10b981'
+                        }])
+                        .select()
+                        .single();
+                    if (newCat) categoryId = newCat.id;
+                }
+            }
+
+            // 5. Integração Financeira: Injete diretamente no Fluxo de Caixa
+            if (user) {
+                await supabaseDb
+                    .from('cash_flow_entries')
+                    .insert([{
+                        user_id: user.id,
+                        type: 'income',
+                        amount: total_order,
+                        description: `Venda PDV - #${payment.order_id.substring(0, 8)}`,
+                        entry_date: new Date().toISOString().split('T')[0],
+                        payment_method: payment.method,
+                        category_id: categoryId,
+                        reference_type: 'order',
+                        reference_id: payment.order_id
+                    }]);
+            }
+
             return payData;
         },
         onSuccess: () => {

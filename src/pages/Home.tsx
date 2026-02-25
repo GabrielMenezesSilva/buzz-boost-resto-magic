@@ -7,6 +7,8 @@ import { QrCode, MessageSquare, Layers, TrendingUp, Zap, Shield, Smartphone, Ser
 import restaurantHero from '@/assets/restaurant-hero.jpg';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import HeroCanvas from '@/components/3d/HeroCanvas';
+import PhoneCanvas from '@/components/3d/PhoneCanvas';
 
 const FadeIn = ({ children, delay = 0, direction = 'up' }: any) => {
   const directions = {
@@ -89,6 +91,7 @@ export default function Home() {
 
       {/* Background Ambience elements */}
       <div className="fixed inset-0 pointer-events-none z-0">
+        <HeroCanvas />
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[50%] bg-orange-light/20 rounded-full blur-[120px] mix-blend-screen"></div>
       </div>
@@ -97,7 +100,8 @@ export default function Home() {
       <section ref={targetRef} className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden z-10 min-h-[90vh] flex items-center">
         <motion.div style={{ y, opacity }} className="absolute inset-0 z-[-1]">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/80 to-background z-10"></div>
-          <img src={restaurantHero} alt="Restaurant background" className="w-full h-[150%] object-cover object-top opacity-30 select-none brightness-50" />
+          {/* A imagem estática fica com opacidade reduzida para mesclar com as partículas 3D atrás */}
+          <img src={restaurantHero} alt="Restaurant background" className="w-full h-[150%] object-cover object-top opacity-10 select-none brightness-50" />
         </motion.div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -151,7 +155,7 @@ export default function Home() {
       </section>
 
       {/* Video / Dashboard Pseudo-3D Mockup */}
-      <section className="relative -mt-20 lg:-mt-32 pb-24 z-20 px-4 sm:px-6">
+      <section className="relative mt-8 pb-24 z-20 px-4 sm:px-6">
         <FadeIn delay={0.4}>
           <div className="max-w-6xl mx-auto relative group perspective-[2000px]">
             {/* Efeito Glow atras do Dashboard */}
@@ -372,7 +376,7 @@ export default function Home() {
       </section>
 
       {/* QR Code Highlight Section - Parallax style */}
-      <section className="py-32 relative overflow-hidden bg-foreground text-background">
+      <section id="phone-trigger-section" className="py-32 relative overflow-hidden bg-foreground text-background transition-colors duration-1000">
         {/* Abstract background shapes */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[100%] bg-primary/20 blur-[100px] rounded-full transform rotate-45"></div>
@@ -412,41 +416,8 @@ export default function Home() {
             </FadeIn>
 
             <FadeIn direction="left" delay={0.2}>
-              <div className="relative mx-auto max-w-sm lg:max-w-md perspective-[1000px]">
-                <motion.div
-                  animate={{ rotateY: [0, -5, 5, 0], rotateX: [0, 5, -5, 0] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                  className="relative"
-                >
-                  {/* Smartphone frame */}
-                  <div className="absolute -inset-4 bg-gradient-to-tr from-primary/30 to-blue-500/30 rounded-[3rem] blur-2xl opacity-60"></div>
-                  <div className="relative bg-background p-2 rounded-[2.5rem] shadow-2xl border-4 border-muted">
-                    <div className="absolute top-0 inset-x-0 h-6 flex justify-center">
-                      <div className="w-32 h-6 bg-muted rounded-b-3xl"></div>
-                    </div>
-                    <div className="bg-muted/30 w-full aspect-[9/19] rounded-[2rem] overflow-hidden relative flex flex-col pt-10 border border-border/50">
-                      <div className="p-6 text-foreground flex-1 flex flex-col">
-                        <div className="w-full flex justify-between items-center mb-6">
-                          <div className="font-bold text-xl">DopplerDine</div>
-                          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                            <ShoppingBag className="w-4 h-4 text-primary" />
-                          </div>
-                        </div>
-                        <div className="relative mx-auto w-3/4 aspect-square bg-background rounded-xl p-4 shadow-sm border border-border flex items-center justify-center mb-8">
-                          <QrCode className="w-full h-full text-foreground" />
-                        </div>
-                        <div className="space-y-4">
-                          <div className="h-4 w-3/4 bg-foreground/10 rounded"></div>
-                          <div className="h-4 w-1/2 bg-foreground/10 rounded"></div>
-                          <div className="h-4 w-5/6 bg-foreground/10 rounded"></div>
-                        </div>
-                      </div>
-                      <div className="h-16 bg-primary w-full flex items-center justify-center text-primary-foreground font-bold">
-                        Escanear para Pedir
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
+              <div className="relative mx-auto w-full max-w-md flex justify-center perspective-[1000px]">
+                <PhoneCanvas />
               </div>
             </FadeIn>
           </div>
