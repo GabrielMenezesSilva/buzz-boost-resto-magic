@@ -3,6 +3,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { useToast } from './use-toast';
 import { ExpenseCategory } from './useExpenseCategories';
+import { Database } from '@/integrations/supabase/types';
+
+type CashFlowEntryRow = Database['public']['Tables']['cash_flow_entries']['Row'];
 
 export type CashFlowEntry = {
     id: string;
@@ -34,7 +37,7 @@ export function useCashFlow(startDate?: string, endDate?: string) {
             if (!user) return [];
 
             let query = supabase
-                .from('cash_flow_entries' as any)
+                .from('cash_flow_entries')
                 .select(`
                     *,
                     category:expense_categories(name, color)
@@ -64,7 +67,7 @@ export function useCashFlow(startDate?: string, endDate?: string) {
             if (!user) throw new Error('Não autenticado');
 
             const { data, error } = await supabase
-                .from('cash_flow_entries' as any)
+                .from('cash_flow_entries')
                 .insert([{ ...newEntry, user_id: user.id }])
                 .select()
                 .single();
@@ -84,7 +87,7 @@ export function useCashFlow(startDate?: string, endDate?: string) {
     const deleteEntry = useMutation({
         mutationFn: async (id: string) => {
             const { data, error } = await supabase
-                .from('cash_flow_entries' as any)
+                .from('cash_flow_entries')
                 .delete()
                 .eq('id', id)
                 .select();

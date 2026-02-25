@@ -74,7 +74,7 @@ export default function Layout({ children }: LayoutProps) {
   ];
 
   // Navigation for authenticated users
-  let authenticatedNavigation: any[] = [
+  const authenticatedNavigation: any[] = [
     { name: t('nav.dashboard'), href: '/dashboard', icon: LayoutDashboard },
     {
       name: t('nav.stockManagement'),

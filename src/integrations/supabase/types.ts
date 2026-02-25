@@ -169,6 +169,116 @@ export type Database = {
           },
         ]
       }
+      cash_flow_entries: {
+        Row: {
+          amount: number
+          category_id: string | null
+          created_at: string | null
+          description: string
+          entry_date: string
+          id: string
+          is_recurring: boolean | null
+          payment_method: string | null
+          reference_id: string | null
+          reference_type: string | null
+          type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          category_id?: string | null
+          created_at?: string | null
+          description: string
+          entry_date?: string
+          id?: string
+          is_recurring?: boolean | null
+          payment_method?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
+          type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Update: {
+          amount?: number
+          category_id?: string | null
+          created_at?: string | null
+          description?: string
+          entry_date?: string
+          id?: string
+          is_recurring?: boolean | null
+          payment_method?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
+          type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_flow_entries_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "expense_categories"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      expense_categories: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          id: string
+          name: string
+          type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          id?: string
+          name: string
+          type: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          id: string
+          total: number
+          created_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          total: number
+          created_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          total?: number
+          created_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           active: boolean | null

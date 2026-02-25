@@ -3,6 +3,19 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { startOfMonth, endOfMonth, format, subMonths } from 'date-fns';
 
+interface CashFlowMetric {
+    amount: number;
+    type: string;
+    entry_date: string;
+}
+
+interface OrderMetric {
+    id: string;
+    total: number;
+    created_at: string;
+    status: string;
+}
+
 export function useReports(period: 'month' | 'last_month' | 'year' = 'month') {
     const { user } = useAuth();
 
@@ -36,10 +49,10 @@ export function useReports(period: 'month' | 'last_month' | 'year' = 'month') {
             if (!user) return null;
 
             // Buscamos fluxo de caixa
-            let cashFlowArray: any[] = [];
+            let cashFlowArray: CashFlowMetric[] = [];
 
             const { data: cashFlow, error: cfError } = await supabase
-                .from('cash_flow_entries' as any)
+                .from('cash_flow_entries')
                 .select('amount, type, entry_date')
                 .eq('user_id', user.id)
                 .gte('entry_date', start)
@@ -50,17 +63,17 @@ export function useReports(period: 'month' | 'last_month' | 'year' = 'month') {
                 const localStr = localStorage.getItem('dd_mock_cashflow');
                 if (localStr) {
                     const localData = JSON.parse(localStr);
-                    cashFlowArray = localData.filter((e: any) => e.entry_date >= start && e.entry_date <= end);
+                    cashFlowArray = localData.filter((e: CashFlowMetric) => e.entry_date >= start && e.entry_date <= end);
                 }
             } else {
-                cashFlowArray = cashFlow as any[];
+                cashFlowArray = cashFlow as unknown as CashFlowMetric[];
             }
 
             // Buscamos itens de pedidos finalizados para metrics
             // We need to join orders with order_items. 
             // supabase-js approach: fetch orders in range, then fetch order_items for those orders.
             const { data: orders, error: ordersError } = await supabase
-                .from('orders' as any)
+                .from('orders')
                 .select('id, total, created_at, status')
                 .eq('user_id', user.id)
                 .eq('status', 'completed')
@@ -68,7 +81,7 @@ export function useReports(period: 'month' | 'last_month' | 'year' = 'month') {
                 .lte('created_at', `${end}T23:59:59Z`);
 
             // Ignore order errors if tables don't exist, to not block cashflow viewing
-            const ordersArray = ordersError ? [] : (orders as any[]);
+            const ordersArray = ordersError ? [] : (orders as unknown as OrderMetric[]);
 
             let totalIncome = 0;
             let totalExpense = 0;
