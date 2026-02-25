@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
 
 interface DashboardStats {
   totalContacts: number;
@@ -48,51 +49,42 @@ export const useDashboardData = () => {
 
   const fetchDashboardData = async () => {
     if (!user) return;
-    
+
     try {
       setLoading(true);
 
-      // Fetch contacts and campaigns in parallel
-      const [contactsResult, campaignsResult] = await Promise.all([
-        supabase
-          .from('contacts')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false }),
-        supabase
-          .from('campaigns')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-      ]);
-
-      const contacts = contactsResult.data || [];
-      const campaigns = campaignsResult.data || [];
-
-      // Calculate recent contacts (last 7 days)
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      const recentContactsCount = contacts.filter(
-        contact => new Date(contact.created_at) > sevenDaysAgo
-      ).length;
 
-      // Calculate active campaigns
-      const activeCampaignsCount = campaigns.filter(
-        campaign => ['scheduled', 'sending', 'sent'].includes(campaign.status)
-      ).length;
+      const [
+        contactsCountRes,
+        recentContactsCountRes,
+        campaignsCountRes,
+        activeCampaignsCountRes,
+        recentContactsDataRes,
+        recentCampaignsDataRes
+      ] = await Promise.all([
+        supabase.from('contacts').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+        supabase.from('contacts').select('*', { count: 'exact', head: true }).eq('user_id', user.id).gte('created_at', sevenDaysAgo.toISOString()),
+        supabase.from('campaigns').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+        supabase.from('campaigns').select('*', { count: 'exact', head: true }).eq('user_id', user.id).in('status', ['scheduled', 'sending', 'sent']),
+        supabase.from('contacts').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(5),
+        supabase.from('campaigns').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(3)
+      ]);
 
       setStats({
-        totalContacts: contacts.length,
-        totalCampaigns: campaigns.length,
-        activeCampaigns: activeCampaignsCount,
-        recentContacts: recentContactsCount
+        totalContacts: contactsCountRes.count || 0,
+        totalCampaigns: campaignsCountRes.count || 0,
+        activeCampaigns: activeCampaignsCountRes.count || 0,
+        recentContacts: recentContactsCountRes.count || 0
       });
 
-      setRecentContacts(contacts.slice(0, 5));
-      setRecentCampaigns(campaigns.slice(0, 3));
+      setRecentContacts(recentContactsDataRes.data || []);
+      setRecentCampaigns(recentCampaignsDataRes.data || []);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching dashboard data:', error);
+      toast.error('Erro ao carregar dados do painel', { description: error.message });
     } finally {
       setLoading(false);
     }

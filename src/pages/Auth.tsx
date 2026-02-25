@@ -9,12 +9,13 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useEffect } from "react";
 import { Mail, Lock, User, Store } from "lucide-react";
+import { toast } from "sonner";
 
 const Auth = () => {
   const { signIn, signUp, user, loading } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
-  
+
   const [loginData, setLoginData] = useState({
     email: "",
     password: ""
@@ -45,18 +46,19 @@ const Auth = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (signupData.password !== signupData.confirmPassword) {
+      toast.error(t('auth.passwordMismatch') || "As senhas não coincidem.");
       return;
     }
 
     const { error } = await signUp(
-      signupData.email, 
-      signupData.password, 
+      signupData.email,
+      signupData.password,
       signupData.restaurantName,
       signupData.ownerName
     );
-    
+
     if (!error) {
       navigate("/dashboard");
     }
@@ -85,7 +87,7 @@ const Auth = () => {
               <TabsTrigger value="login">{t('auth.loginTab')}</TabsTrigger>
               <TabsTrigger value="signup">{t('auth.signupTab')}</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
@@ -103,7 +105,7 @@ const Auth = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="login-password">{t('auth.password')}</Label>
                   <div className="relative">
@@ -119,13 +121,13 @@ const Auth = () => {
                     />
                   </div>
                 </div>
-                
+
                 <Button type="submit" className="w-full">
                   {t('auth.loginButton')}
                 </Button>
               </form>
             </TabsContent>
-            
+
             <TabsContent value="signup">
               <form onSubmit={handleSignup} className="space-y-4">
                 <div className="space-y-2">
@@ -159,7 +161,7 @@ const Auth = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">{t('auth.email')}</Label>
                   <div className="relative">
@@ -175,7 +177,7 @@ const Auth = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">{t('auth.password')}</Label>
                   <div className="relative">
@@ -191,7 +193,7 @@ const Auth = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="signup-confirm">{t('auth.confirmPassword')}</Label>
                   <div className="relative">
@@ -207,7 +209,7 @@ const Auth = () => {
                     />
                   </div>
                 </div>
-                
+
                 <Button type="submit" className="w-full">
                   {t('auth.signupButton')}
                 </Button>

@@ -16,18 +16,7 @@ export default function CashFlow() {
     const { t, language } = useLanguage();
     const { entries, addEntry, deleteEntry, isLoading, error } = useCashFlow();
 
-    if (error) {
-        return (
-            <div className="container mx-auto p-4 md:p-8 md:pt-24 min-h-screen">
-                <div className="max-w-2xl mx-auto p-6 bg-destructive/10 text-destructive rounded-lg border border-destructive/20 text-center mt-8">
-                    <Wallet className="w-12 h-12 mx-auto mb-4 opacity-80" />
-                    <h2 className="text-2xl font-bold mb-2">{t("cashflow.errorTitle")}</h2>
-                    <p className="mb-4">{t("cashflow.errorDesc1")}</p>
-                    <p className="text-sm opacity-90 mb-6">{t("cashflow.errorDesc2")}</p>
-                </div>
-            </div>
-        );
-    }
+
     const { categories } = useExpenseCategories();
 
     const [isAddOpen, setIsAddOpen] = useState(false);
@@ -42,6 +31,19 @@ export default function CashFlow() {
         reference_type: 'manual',
         is_recurring: false
     });
+
+    if (error) {
+        return (
+            <div className="container mx-auto p-4 md:p-8 md:pt-24 min-h-screen">
+                <div className="max-w-2xl mx-auto p-6 bg-destructive/10 text-destructive rounded-lg border border-destructive/20 text-center mt-8">
+                    <Wallet className="w-12 h-12 mx-auto mb-4 opacity-80" />
+                    <h2 className="text-2xl font-bold mb-2">{t("cashflow.errorTitle")}</h2>
+                    <p className="mb-4">{t("cashflow.errorDesc1")}</p>
+                    <p className="text-sm opacity-90 mb-6">{t("cashflow.errorDesc2")}</p>
+                </div>
+            </div>
+        );
+    }
 
     const incomeTotal = entries.filter(e => e.type === 'income').reduce((acc, e) => acc + Number(e.amount), 0);
     const expenseTotal = entries.filter(e => e.type === 'expense').reduce((acc, e) => acc + Number(e.amount), 0);
