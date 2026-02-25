@@ -4,10 +4,10 @@ import { useDashboardData } from '@/hooks/useDashboardData';
 import QRGenerator from '@/components/QRGenerator';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Link } from 'react-router-dom';
-import { 
-  Users, 
-  MessageSquare, 
-  TrendingUp, 
+import {
+  Users,
+  MessageSquare,
+  TrendingUp,
   Calendar,
   Target,
   Clock,
@@ -19,7 +19,7 @@ import {
 
 export default function DashboardOverview() {
   const { t } = useLanguage();
-  const { stats, recentContacts, recentCampaigns, loading, refetch } = useDashboardData();
+  const { stats, recentContacts, recentCampaigns, loading, error, refetch } = useDashboardData();
 
   if (loading) {
     return (
@@ -37,6 +37,31 @@ export default function DashboardOverview() {
             </Card>
           ))}
         </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold">{t('dashboard.overviewTitle')}</h2>
+            <p className="text-muted-foreground">{t('dashboard.overviewSubtitle')}</p>
+          </div>
+        </div>
+        <Card className="border-destructive/50 bg-destructive/5">
+          <CardContent className="flex flex-col items-center justify-center p-12 text-center">
+            <AlertCircle className="h-12 w-12 text-destructive mb-4 opacity-80" />
+            <h3 className="text-xl font-semibold mb-2">Erro ao carregar o painel</h3>
+            <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
+              Não foi possível conectar ao banco de dados ou houve uma falha na sua sessão.
+            </p>
+            <Button onClick={refetch} variant="outline" className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground">
+              Tentar Novamente
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }

@@ -1,5 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Button } from './ui/button';
+import { logger } from '@/lib/logger';
 
 interface Props {
     children?: ReactNode;
@@ -20,7 +21,7 @@ export class ErrorBoundary extends Component<Props, State> {
     }
 
     public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-        console.error('Uncaught error:', error, errorInfo);
+        logger.error('Uncaught React Rendering Error:', error, { errorInfo });
     }
 
     public render() {

@@ -20,65 +20,65 @@ const FadeIn = ({ children, delay = 0, y = 50 }: any) => (
 
 export default function Plans() {
   const { t } = useLanguage();
-  const [isAnnual, setIsAnnual] = useState(true);
-
-  // calculate prices based on toggle
-  const proPrice = isAnnual ? "119" : "149";
-  const premiumPrice = isAnnual ? "239" : "299";
-
   const plans = [
     {
       id: 'starter',
-      name: t('plans.starter') || "Starter",
-      subtitle: t('plans.starterSubtitle') || "Para testar o impacto no seu salão",
-      description: t('plans.starterDesc') || "O essencial para modernizar sua operação sem custo.",
-      price: t('plans.price.free') || "Grátis",
-      period: t('plans.first14Days') || "para sempre",
+      name: t('plans.starter'),
+      subtitle: t('plans.starterSubtitle'),
+      description: t('plans.starterDesc'),
+      price: t('plans.price.starter'),
+      period: t('plans.perMonth'),
       badge: null,
       popular: false,
-      ctaText: t('plans.startFree') || "Começar Grátis",
+      ctaText: t('plans.startNow'),
       features: [
-        t('plans.features.pos1'),
-        t('plans.features.inventoryBase'),
-        t('plans.features.menuProducts'),
-        t('plans.emailSupport') || "Suporte por Email"
+        t('plans.features.starter1'),
+        t('plans.features.starter2'),
+        t('plans.features.starter3'),
+        t('plans.features.starter4'),
+        t('plans.features.starter5'),
+        t('plans.features.starter6'),
+        t('plans.features.starter7')
       ]
     },
     {
       id: 'professional',
-      name: t('plans.professional') || "Pro",
-      subtitle: t('plans.professionalSubtitle') || "O motor completo para multiplicar lucros",
-      description: t('plans.professionalDesc') || "Todas as ferramentas avançadas no piloto automático.",
-      price: `R$${proPrice}`,
-      period: t('plans.perMonth') || "/mês",
-      badge: t('plans.mostPopular') || "Mais Escolhido",
+      name: t('plans.professional'),
+      subtitle: t('plans.professionalSubtitle'),
+      description: t('plans.professionalDesc'),
+      price: t('plans.price.pro'),
+      period: t('plans.perMonth'),
+      badge: t('plans.mostPopular'),
       popular: true,
-      ctaText: t('plans.upgradeNow') || "Escalar Minhas Vendas",
+      ctaText: t('plans.upgradeNow'),
       features: [
-        t('plans.features.posInfinite'),
-        t('plans.features.qrMenu'),
-        t('plans.features.inventoryInfinite'),
-        t('plans.features.dashboard'),
-        t('plans.basicAnalytics') || "Histórico Completo",
-        t('plans.prioritySupport') || "Suporte Prioritário 24/7"
+        t('plans.features.pro1'),
+        t('plans.features.pro2'),
+        t('plans.features.pro3'),
+        t('plans.features.pro4'),
+        t('plans.features.pro5'),
+        t('plans.features.pro6'),
+        t('plans.features.pro7')
       ]
     },
     {
       id: 'premium',
-      name: t('plans.premium') || "Scale",
-      subtitle: t('plans.premiumSubtitle') || "Para expansão agressiva",
-      description: t('plans.premiumDesc') || "Inteligência Artificial e suporte VIP dedicado.",
-      price: `R$${premiumPrice}`,
-      period: t('plans.perMonth') || "/mês",
-      badge: t('plans.bestValue') || "Máximo Valor",
+      name: t('plans.premium'),
+      subtitle: t('plans.premiumSubtitle'),
+      description: t('plans.premiumDesc'),
+      price: null,
+      period: "",
+      badge: t('plans.inDevelopment'),
       popular: false,
-      ctaText: t('plans.choosePlan') || "Falar com Especialista",
+      disabled: true,
+      ctaText: t('plans.comingSoon'),
       features: [
-        t('plans.features.allPro'),
-        t('plans.features.smsMarketing'),
-        t('plans.features.cashflow'),
-        t('plans.features.ai'),
-        t('plans.features.manager')
+        t('plans.features.scale1'),
+        t('plans.features.scale2'),
+        t('plans.features.scale3'),
+        t('plans.features.scale4'),
+        t('plans.features.scale5'),
+        t('plans.features.scale6')
       ]
     }
   ];
@@ -99,7 +99,7 @@ export default function Plans() {
           transition={{ duration: 0.6 }}
         >
           <Badge variant="outline" className="mb-6 px-4 py-1.5 font-bold uppercase tracking-widest bg-primary/5 border-primary/20 text-primary backdrop-blur-md rounded-full">
-            <Crown className="w-4 h-4 mr-2" /> {t('plans.heroBadge') || "Libere o Potencial"}
+            <Crown className="w-4 h-4 mr-2" /> {t('plans.heroBadge')}
           </Badge>
           <h1 className="text-5xl md:text-7xl font-black text-foreground leading-[1.1] tracking-tight mb-6 mt-4">
             {t('plans.heroTitleLine1')} <br className="hidden md:block" />
@@ -108,15 +108,6 @@ export default function Plans() {
           <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto font-medium leading-relaxed">
             {t('plans.heroDesc')}
           </p>
-
-          <div className="flex items-center justify-center gap-4 mt-12 bg-muted/40 w-fit mx-auto px-6 py-4 rounded-full border border-border/50 shadow-sm backdrop-blur-sm">
-            <span className={`text-sm font-bold transition-colors ${!isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>{t('plans.monthly')}</span>
-            <Switch checked={isAnnual} onCheckedChange={setIsAnnual} className="data-[state=checked]:bg-primary" />
-            <span className={`text-sm font-bold flex items-center gap-2 transition-colors ${isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
-              {t('plans.annual')}
-              <Badge className="bg-green-500/10 text-green-600 border-green-500/30 text-[10px] uppercase font-black px-2 py-0.5 shadow-none ml-1">{t('plans.save20')}</Badge>
-            </span>
-          </div>
 
         </motion.div>
       </section>
@@ -134,7 +125,9 @@ export default function Plans() {
               transition={{ duration: 0.6, delay: index * 0.15 }}
               className={`relative h-full flex flex-col rounded-[2.5rem] transition-all duration-500 ${plan.popular
                 ? 'bg-card border border-primary/40 shadow-[0_0_80px_-15px_rgba(var(--primary),0.25)] lg:-mt-8 lg:mb-8 scale-100 lg:scale-105 z-20'
-                : 'bg-card/50 backdrop-blur-xl border border-border/60 hover:border-border shadow-xl hover:-translate-y-2 z-10'
+                : plan.disabled
+                  ? 'bg-card/90 backdrop-blur-xl border-2 border-dashed border-border/80 opacity-90 grayscale-[40%] z-10'
+                  : 'bg-card/50 backdrop-blur-xl border border-border/60 hover:border-border shadow-xl hover:-translate-y-2 z-10'
                 }`}
             >
               {/* Popular Glow Background */}
@@ -153,37 +146,43 @@ export default function Plans() {
               )}
 
               <div className="p-8 pb-6 flex flex-col items-center text-center relative z-20">
-                <h3 className={`text-2xl font-black mt-2 tracking-tight ${plan.popular ? 'text-primary' : 'text-foreground'}`}>{plan.name}</h3>
+                <h3 className={`text-2xl font-black mt-2 tracking-tight ${plan.popular ? 'text-primary' : plan.disabled ? 'text-muted-foreground' : 'text-foreground'}`}>{plan.name}</h3>
                 <p className="text-[13px] font-medium text-muted-foreground mt-2 min-h-[40px] flex items-center justify-center max-w-[200px] leading-relaxed">
                   {plan.subtitle}
                 </p>
 
                 <div className="my-6">
                   <div className="flex items-start justify-center text-foreground">
-                    <span className="text-6xl font-black tracking-tighter">{plan.price}</span>
+                    <span className={`text-6xl font-black tracking-tighter ${plan.disabled ? 'opacity-80 text-muted-foreground' : ''}`}>{plan.price}</span>
                   </div>
-                  <div className="text-sm text-primary font-bold mt-1 tracking-widest">{plan.period}</div>
+                  <div className={`text-sm font-bold mt-1 tracking-widest ${plan.disabled ? 'text-muted-foreground' : 'text-primary'}`}>{plan.period}</div>
                 </div>
 
-                <p className="text-sm text-muted-foreground mb-8 min-h-[40px]">
+                <p className={`text-sm text-muted-foreground mb-8 min-h-[40px] ${plan.disabled ? 'opacity-70' : ''}`}>
                   {plan.description}
                 </p>
 
                 <Button
                   size="lg"
-                  className={`w-full h-14 rounded-2xl text-lg font-bold group border transition-all ${plan.popular
-                    ? 'bg-primary border-primary text-primary-foreground shadow-[0_8px_30px_rgba(var(--primary),0.3)] hover:shadow-[0_8px_40px_rgba(var(--primary),0.5)] hover:-translate-y-1'
-                    : plan.id === 'premium'
-                      ? 'bg-foreground border-foreground text-background hover:bg-foreground/90'
+                  disabled={plan.disabled}
+                  className={`w-full h-14 rounded-2xl text-lg font-bold group border transition-all ${plan.disabled
+                    ? 'bg-muted/50 border-border text-muted-foreground cursor-not-allowed opacity-80 shadow-none'
+                    : plan.popular
+                      ? 'bg-primary border-primary text-primary-foreground shadow-[0_8px_30px_rgba(var(--primary),0.3)] hover:shadow-[0_8px_40px_rgba(var(--primary),0.5)] hover:-translate-y-1'
                       : 'bg-transparent border-primary/20 text-foreground hover:bg-primary/5 hover:border-primary/50'
                     }`}
-                  asChild
+                  asChild={!plan.disabled}
                 >
-                  <Link to={plan.id === 'premium' ? "#contato" : "/auth"} className="w-full h-full flex items-center justify-center gap-2">
-                    {plan.id === 'premium' && <PhoneCall className="w-5 h-5" />}
-                    {plan.ctaText}
-                    {plan.id !== 'premium' && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
-                  </Link>
+                  {plan.disabled ? (
+                    <div className="w-full h-full flex items-center justify-center gap-2">
+                      {plan.ctaText}
+                    </div>
+                  ) : (
+                    <Link to="/auth" className="w-full h-full flex items-center justify-center gap-2">
+                      {plan.ctaText}
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  )}
                 </Button>
               </div>
 
@@ -206,33 +205,50 @@ export default function Plans() {
         </div>
       </section>
 
-      {/* Safety / Trust Section */}
-      <section className="py-24 relative z-10 w-full">
+      {/* Add-ons Section */}
+      <section className="py-16 px-4 relative z-10 w-full max-w-4xl mx-auto">
         <FadeIn>
-          <div className="max-w-4xl mx-auto px-4 bg-muted/30 border border-border/50 rounded-3xl p-10 backdrop-blur-md shadow-sm">
-            <div className="flex flex-col md:flex-row items-center justify-evenly gap-12 text-center md:text-left">
-              <div className="flex items-center gap-6">
-                <div className="w-16 h-16 rounded-2xl bg-background border border-border shadow-sm flex items-center justify-center flex-shrink-0">
-                  <ShieldCheck className="w-8 h-8 text-primary" />
-                </div>
-                <div>
-                  <div className="text-xl font-black text-foreground">{t('plans.safety.cancel') || 'Cancelamento Livre'}</div>
-                  <div className="text-muted-foreground font-medium mt-1 text-sm">{t('plans.safety.nocontract') || 'Sem letras miúdas ou multas.'}</div>
-                </div>
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-black mb-4">{t('plans.addons.title')}</h2>
+            <p className="text-muted-foreground">{t('plans.addons.subtitle')}</p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-card p-6 rounded-2xl border border-border shadow-sm flex flex-col h-full">
+              <h4 className="font-bold text-lg mb-2 flex items-center gap-2"><ArrowRight className="w-5 h-5 text-primary" /> {t('plans.addons.smsTitle')}</h4>
+              <p className="text-sm text-muted-foreground mb-6">
+                {t('plans.addons.smsDesc')}
+              </p>
+              <ul className="text-sm space-y-4 font-medium mt-auto">
+                <li className="flex flex-col"><div className="flex items-center"><Badge variant="secondary" className="mr-3">500 SMS</Badge> {t('plans.addons.sms500')}</div></li>
+                <li className="flex flex-col"><div className="flex items-center"><Badge variant="secondary" className="mr-3">1.000 SMS</Badge> {t('plans.addons.sms1000')}</div></li>
+                <li className="flex flex-col"><div className="flex items-center"><Badge variant="secondary" className="mr-3">2.000 SMS</Badge> {t('plans.addons.sms2000')}</div></li>
+              </ul>
+            </div>
+
+            <div className="space-y-6">
+              <div className="bg-card p-6 rounded-2xl border border-primary/20 shadow-sm">
+                <h4 className="font-bold text-lg mb-4 flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-primary" /> {t('plans.addons.servicesTitle')}</h4>
+                <ul className="text-sm space-y-3 text-muted-foreground">
+                  <li className="flex justify-between items-center"><strong className="text-foreground">{t('plans.addons.extraUnit')}</strong> <span>+ CHF 49{t('plans.perMonth')}</span></li>
+                  <li className="flex justify-between items-center"><strong className="text-foreground">{t('plans.addons.doneForYou')}</strong> <span>{t('plans.campaignPrice')}</span></li>
+                  <li className="flex justify-between items-center"><strong className="text-foreground">{t('plans.addons.vipSupport')}</strong> <span>+ CHF 59{t('plans.perMonth')}</span></li>
+                </ul>
               </div>
-
-              <div className="w-px h-16 bg-border hidden md:block"></div>
-
-              <div className="flex items-center gap-6">
-                <div className="w-16 h-16 rounded-2xl bg-background border border-border shadow-sm flex items-center justify-center flex-shrink-0">
-                  <Zap className="w-8 h-8 text-orange-500" />
-                </div>
-                <div>
-                  <div className="text-xl font-black text-foreground">{t('plans.safety.setup') || 'Onboarding VIP'}</div>
-                  <div className="text-muted-foreground font-medium mt-1 text-sm">{t('plans.safety.minutes') || 'Seu negócio rodando rápido.'}</div>
-                </div>
+              <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
+                <h4 className="font-bold text-lg mb-4 flex items-center gap-2"><Crown className="w-5 h-5 text-primary" /> {t('plans.addons.materialTitle')}</h4>
+                <ul className="text-sm space-y-2 text-muted-foreground font-medium list-inside list-disc">
+                  <li>{t('plans.addons.material1')}</li>
+                  <li>{t('plans.addons.material2')}</li>
+                  <li>{t('plans.addons.material3')}</li>
+                </ul>
               </div>
             </div>
+          </div>
+
+          <div className="mt-12 text-center text-[12px] text-muted-foreground/60 space-y-1.5 font-medium">
+            <p>{t('plans.restrictions.1')}</p>
+            <p>{t('plans.restrictions.2')}</p>
+            <p>{t('plans.restrictions.3')}</p>
           </div>
         </FadeIn>
       </section>

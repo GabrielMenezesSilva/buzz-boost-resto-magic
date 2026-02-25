@@ -20,7 +20,7 @@ import {
   Line,
   Legend
 } from 'recharts';
-import { 
+import {
   TrendingUp,
   Users,
   MessageSquare,
@@ -28,14 +28,15 @@ import {
   Target,
   Activity,
   Calendar,
-  RefreshCw
+  RefreshCw,
+  AlertCircle
 } from 'lucide-react';
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8dd1e1'];
 
 export default function DashboardAnalytics() {
   const [timeRange, setTimeRange] = useState('30d');
-  const { data, isLoading, refreshAnalytics } = useAnalytics(timeRange);
+  const { data, isLoading, error, refreshAnalytics } = useAnalytics(timeRange);
   const { t } = useLanguage();
 
   const TIME_RANGES = [
@@ -80,7 +81,7 @@ export default function DashboardAnalytics() {
             {t('analytics.subtitle')}
           </p>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row gap-3">
           <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger className="w-[180px]">
@@ -95,8 +96,8 @@ export default function DashboardAnalytics() {
               ))}
             </SelectContent>
           </Select>
-          
-          <Button 
+
+          <Button
             onClick={refreshAnalytics}
             variant="outline"
             disabled={isLoading}
@@ -108,204 +109,221 @@ export default function DashboardAnalytics() {
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('analytics.campaigns')}</CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{data.totalCampaigns}</div>
-            <p className="text-xs text-muted-foreground">
-              {t('analytics.inPeriod')}
+      {error ? (
+        <Card className="border-destructive/50 bg-destructive/5 mt-6">
+          <CardContent className="flex flex-col items-center justify-center p-12 text-center">
+            <AlertCircle className="h-12 w-12 text-destructive mb-4 opacity-80" />
+            <h3 className="text-xl font-semibold mb-2">Falha ao carregar Analytics</h3>
+            <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
+              Houve um erro conectando à base de dados ou sua sessão expirou.
             </p>
+            <Button onClick={refreshAnalytics} variant="outline" className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground">
+              Tentar Novamente
+            </Button>
           </CardContent>
         </Card>
+      ) : (
+        <>
+          {/* KPI Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{t('analytics.campaigns')}</CardTitle>
+                <MessageSquare className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{data.totalCampaigns}</div>
+                <p className="text-xs text-muted-foreground">
+                  {t('analytics.inPeriod')}
+                </p>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('analytics.sent')}</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{data.totalSent}</div>
-            <p className="text-xs text-muted-foreground">
-              {formatPercentage(data.successRate)} {t('analytics.success')}
-            </p>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{t('analytics.sent')}</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{data.totalSent}</div>
+                <p className="text-xs text-muted-foreground">
+                  {formatPercentage(data.successRate)} {t('analytics.success')}
+                </p>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('analytics.contacts')}</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{data.totalContacts}</div>
-            <p className="text-xs text-muted-foreground">
-              {t('analytics.newContacts')}
-            </p>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{t('analytics.contacts')}</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{data.totalContacts}</div>
+                <p className="text-xs text-muted-foreground">
+                  {t('analytics.newContacts')}
+                </p>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('analytics.cost')}</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(data.totalCost)}</div>
-            <p className="text-xs text-muted-foreground">
-              {t('analytics.totalCost')}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Trend Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('analytics.sendTrend')}</CardTitle>
-            <CardDescription>
-              {t('analytics.sentVsDelivered')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={data.sentTrend}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="sent" 
-                  stroke="#8884d8" 
-                  name={t('analytics.sent.chart')}
-                  strokeWidth={2}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="delivered" 
-                  stroke="#82ca9d" 
-                  name={t('analytics.delivered.chart')}
-                  strokeWidth={2}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Campaign Types Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('analytics.campaignTypes')}</CardTitle>
-            <CardDescription>
-              {t('analytics.distributionByType')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie
-                  data={data.campaignsByType}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ type, percent }) => 
-                    `${TYPE_LABELS[type as keyof typeof TYPE_LABELS] || type} ${(percent * 100).toFixed(0)}%`
-                  }
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="count"
-                >
-                  {data.campaignsByType.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Performance Metrics */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('analytics.performanceMetrics')}</CardTitle>
-          <CardDescription>
-            {t('analytics.keySuccessIndicators')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-600">
-                {formatPercentage(data.successRate)}
-              </div>
-              <p className="text-sm text-muted-foreground">{t('analytics.deliveryRate')}</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">
-                {data.totalSent > 0 ? (data.totalCost / data.totalSent).toFixed(4) : '0.0000'}
-              </div>
-              <p className="text-sm text-muted-foreground">{t('analytics.costPerMessage')}</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600">
-                {data.totalContacts > 0 ? (data.totalSent / data.totalContacts).toFixed(1) : '0.0'}
-              </div>
-              <p className="text-sm text-muted-foreground">{t('analytics.messagesPerContact')}</p>
-            </div>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{t('analytics.cost')}</CardTitle>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{formatCurrency(data.totalCost)}</div>
+                <p className="text-xs text-muted-foreground">
+                  {t('analytics.totalCost')}
+                </p>
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Recent Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('analytics.recentActivity')}</CardTitle>
-          <CardDescription>
-            {t('analytics.lastActions')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {data.recentActivity.length === 0 ? (
-            <div className="text-center py-6 text-muted-foreground">
-              <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>{t('analytics.noRecentActivity')}</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {data.recentActivity.slice(0, 3).map((activity) => (
-                <div key={activity.id} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    {activity.type === 'campaign' ? (
-                      <MessageSquare className="h-4 w-4 text-blue-600" />
-                    ) : (
-                      <Users className="h-4 w-4 text-green-600" />
-                    )}
-                    <div>
-                      <p className="text-sm font-medium">{activity.description}</p>
-                      <p className="text-xs text-muted-foreground">{activity.date}</p>
-                    </div>
+          {/* Charts Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Trend Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('analytics.sendTrend')}</CardTitle>
+                <CardDescription>
+                  {t('analytics.sentVsDelivered')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={250}>
+                  <LineChart data={data.sentTrend}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="sent"
+                      stroke="#8884d8"
+                      name={t('analytics.sent.chart')}
+                      strokeWidth={2}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="delivered"
+                      stroke="#82ca9d"
+                      name={t('analytics.delivered.chart')}
+                      strokeWidth={2}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Campaign Types Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('analytics.campaignTypes')}</CardTitle>
+                <CardDescription>
+                  {t('analytics.distributionByType')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={data.campaignsByType}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ type, percent }) =>
+                        `${TYPE_LABELS[type as keyof typeof TYPE_LABELS] || type} ${(percent * 100).toFixed(0)}%`
+                      }
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="count"
+                    >
+                      {data.campaignsByType.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Performance Metrics */}
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('analytics.performanceMetrics')}</CardTitle>
+              <CardDescription>
+                {t('analytics.keySuccessIndicators')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-green-600">
+                    {formatPercentage(data.successRate)}
                   </div>
-                  <Badge variant={activity.type === 'campaign' ? 'default' : 'secondary'} className="text-xs">
-                    {activity.type === 'campaign' ? t('analytics.campaign.label') : t('analytics.contact.label')}
-                  </Badge>
+                  <p className="text-sm text-muted-foreground">{t('analytics.deliveryRate')}</p>
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-blue-600">
+                    {data.totalSent > 0 ? (data.totalCost / data.totalSent).toFixed(4) : '0.0000'}
+                  </div>
+                  <p className="text-sm text-muted-foreground">{t('analytics.costPerMessage')}</p>
+                </div>
+
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-purple-600">
+                    {data.totalContacts > 0 ? (data.totalSent / data.totalContacts).toFixed(1) : '0.0'}
+                  </div>
+                  <p className="text-sm text-muted-foreground">{t('analytics.messagesPerContact')}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Recent Activity */}
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('analytics.recentActivity')}</CardTitle>
+              <CardDescription>
+                {t('analytics.lastActions')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {data.recentActivity.length === 0 ? (
+                <div className="text-center py-6 text-muted-foreground">
+                  <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>{t('analytics.noRecentActivity')}</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {data.recentActivity.slice(0, 3).map((activity) => (
+                    <div key={activity.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        {activity.type === 'campaign' ? (
+                          <MessageSquare className="h-4 w-4 text-blue-600" />
+                        ) : (
+                          <Users className="h-4 w-4 text-green-600" />
+                        )}
+                        <div>
+                          <p className="text-sm font-medium">{activity.description}</p>
+                          <p className="text-xs text-muted-foreground">{activity.date}</p>
+                        </div>
+                      </div>
+                      <Badge variant={activity.type === 'campaign' ? 'default' : 'secondary'} className="text-xs">
+                        {activity.type === 'campaign' ? t('analytics.campaign.label') : t('analytics.contact.label')}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </>
+      )}
     </div>
   );
 }

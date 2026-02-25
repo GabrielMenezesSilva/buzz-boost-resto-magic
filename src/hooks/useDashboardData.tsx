@@ -40,6 +40,7 @@ export const useDashboardData = () => {
   const [recentContacts, setRecentContacts] = useState<Contact[]>([]);
   const [recentCampaigns, setRecentCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -52,6 +53,7 @@ export const useDashboardData = () => {
 
     try {
       setLoading(true);
+      setError(null);
 
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -84,6 +86,7 @@ export const useDashboardData = () => {
 
     } catch (error: any) {
       console.error('Error fetching dashboard data:', error);
+      setError(error);
       toast.error('Erro ao carregar dados do painel', { description: error.message });
     } finally {
       setLoading(false);
@@ -95,6 +98,7 @@ export const useDashboardData = () => {
     recentContacts,
     recentCampaigns,
     loading,
+    error,
     refetch: fetchDashboardData
   };
 };

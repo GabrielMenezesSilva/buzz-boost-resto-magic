@@ -32,6 +32,7 @@ export function useAnalytics(timeRange: string = '30d') {
     recentActivity: []
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const { user } = useAuth();
 
   // Calculate date range
@@ -45,8 +46,9 @@ export function useAnalytics(timeRange: string = '30d') {
 
   const fetchAnalytics = async () => {
     if (!user) return;
-    
+
     setIsLoading(true);
+    setError(null);
     try {
       const { startDate, endDate } = getDateRange();
 
@@ -111,12 +113,12 @@ export function useAnalytics(timeRange: string = '30d') {
         const date = new Date();
         date.setDate(date.getDate() - i);
         const dateStr = date.toISOString().split('T')[0];
-        
-        const daySends = sends?.filter(send => 
+
+        const daySends = sends?.filter(send =>
           send.created_at?.startsWith(dateStr)
         ).length || 0;
-        
-        const dayDelivered = sends?.filter(send => 
+
+        const dayDelivered = sends?.filter(send =>
           send.delivered_at?.startsWith(dateStr)
         ).length || 0;
 
@@ -129,7 +131,7 @@ export function useAnalytics(timeRange: string = '30d') {
 
       // Recent activity
       const recentActivity = [];
-      
+
       // Add recent campaigns
       campaigns?.slice(0, 3).forEach(campaign => {
         recentActivity.push({
@@ -165,8 +167,9 @@ export function useAnalytics(timeRange: string = '30d') {
         recentActivity: recentActivity.slice(0, 5)
       });
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching analytics:', error);
+      setError(error);
     } finally {
       setIsLoading(false);
     }
@@ -179,6 +182,7 @@ export function useAnalytics(timeRange: string = '30d') {
   return {
     data,
     isLoading,
+    error,
     refreshAnalytics: fetchAnalytics
   };
 }
