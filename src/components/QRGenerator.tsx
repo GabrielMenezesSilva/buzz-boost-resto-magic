@@ -4,8 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { QrCode, Download, Share, Copy, Loader2 } from 'lucide-react';
+import { QrCode, Download, Share, Copy, Loader2, Save, Gift, Printer } from 'lucide-react';
 import QRCode from 'qrcode';
+import { supabase } from '@/integrations/supabase/client';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 interface QRGeneratorProps {
   className?: string;
@@ -19,18 +23,30 @@ export default function QRGenerator({ className }: QRGeneratorProps) {
   const [qrCodeImage, setQrCodeImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [restaurantName, setRestaurantName] = useState<string>('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [incentiveTitle, setIncentiveTitle] = useState('');
+  const [incentiveText, setIncentiveText] = useState('');
 
   useEffect(() => {
     const fetchProfile = async () => {
       if (!user || !profile) return;
 
       try {
-        // Get profile data from auth context (already loaded)
-        setQrCode(profile.qr_code);
-        setRestaurantName(profile.restaurant_name || 'Meu Restaurante');
-        
+        const { data: dbProfile, error } = await supabase
+          .from('profiles')
+          .select('*, qr_promotional_title, qr_promotional_text')
+          .eq('user_id', user.id)
+          .single();
+
+        if (error) throw error;
+
+        setQrCode(dbProfile.qr_code);
+        setRestaurantName(dbProfile.restaurant_name || 'Meu Restaurante');
+        setIncentiveTitle(dbProfile.qr_promotional_title || '');
+        setIncentiveText(dbProfile.qr_promotional_text || '');
+
         // Generate QR code image
-        const url = `${window.location.origin}/form/${profile.qr_code}`;
+        const url = `${window.location.origin}/form/${dbProfile.qr_code}`;
         const qrImageUrl = await QRCode.toDataURL(url, {
           width: 300,
           margin: 2,
@@ -57,7 +73,7 @@ export default function QRGenerator({ className }: QRGeneratorProps) {
 
   const copyLink = () => {
     if (!qrCode) return;
-    
+
     const url = `${window.location.origin}/form/${qrCode}`;
     navigator.clipboard.writeText(url);
     toast({
@@ -73,6 +89,35 @@ export default function QRGenerator({ className }: QRGeneratorProps) {
     link.download = `qr-code-${restaurantName.toLowerCase().replace(/\s+/g, '-')}.png`;
     link.href = qrCodeImage;
     link.click();
+  };
+
+  const saveIncentive = async () => {
+    if (!user) return;
+    setIsSaving(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          qr_promotional_title: incentiveTitle,
+          qr_promotional_text: incentiveText
+        })
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+      toast({
+        title: t('qrGenerator.incentiveSaved'),
+        description: t('qrGenerator.incentiveSavedDesc'),
+      });
+    } catch (error) {
+      console.error('Error saving incentive:', error);
+      toast({
+        title: t('qrGenerator.saveError'),
+        description: t('qrGenerator.saveErrorDesc'),
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const shareQR = async () => {
@@ -91,6 +136,11 @@ export default function QRGenerator({ className }: QRGeneratorProps) {
       // Fallback to copy
       copyLink();
     }
+  };
+
+  const printQR = () => {
+    if (!qrCode) return;
+    window.open(`/print/${qrCode}`, '_blank');
   };
 
   if (isLoading) {
@@ -129,16 +179,51 @@ export default function QRGenerator({ className }: QRGeneratorProps) {
           {t('qrGenerator.shareDescription')}
         </CardDescription>
       </CardHeader>
-      
+
       <CardContent className="space-y-6">
         {/* QR Code Image */}
         <div className="flex justify-center">
           <div className="bg-white p-4 rounded-lg shadow-sm border">
-            <img 
-              src={qrCodeImage} 
-              alt="QR Code" 
+            <img
+              src={qrCodeImage}
+              alt="QR Code"
               className="w-64 h-64"
             />
+          </div>
+        </div>
+
+        {/* Incentive Settings */}
+        <div className="bg-primary/5 p-5 rounded-lg border border-primary/10 space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Gift className="h-5 w-5 text-primary" />
+            <h3 className="font-semibold text-foreground">{t('qrGenerator.incentiveTitle')}</h3>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">
+            {t('qrGenerator.incentiveDesc')}
+          </p>
+
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <Label>{t('qrGenerator.promoTitleLabel')}</Label>
+              <Input
+                placeholder={t('qrGenerator.promoTitlePlaceholder')}
+                value={incentiveTitle}
+                onChange={(e) => setIncentiveTitle(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label>{t('qrGenerator.promoMessageLabel')}</Label>
+              <Textarea
+                placeholder={t('qrGenerator.promoMessagePlaceholder')}
+                rows={2}
+                value={incentiveText}
+                onChange={(e) => setIncentiveText(e.target.value)}
+              />
+            </div>
+            <Button onClick={saveIncentive} disabled={isSaving} className="w-full mt-2">
+              {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+              {t('qrGenerator.saveIncentive')}
+            </Button>
           </div>
         </div>
 
@@ -161,22 +246,31 @@ export default function QRGenerator({ className }: QRGeneratorProps) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-2">
-          <Button 
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button
             onClick={downloadQR}
-            variant="outline" 
+            variant="outline"
             className="flex-1"
           >
             <Download className="h-4 w-4 mr-2" />
             {t('qrGenerator.downloadQr')}
           </Button>
-          
-          <Button 
+
+          <Button
             onClick={shareQR}
+            variant="outline"
             className="flex-1"
           >
             <Share className="h-4 w-4 mr-2" />
             {t('qrGenerator.share')}
+          </Button>
+
+          <Button
+            onClick={printQR}
+            className="flex-1"
+          >
+            <Printer className="h-4 w-4 mr-2" />
+            {t('qrGenerator.printDisplay')}
           </Button>
         </div>
 

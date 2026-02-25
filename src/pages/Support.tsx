@@ -7,11 +7,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  HelpCircle, 
-  MessageSquare, 
-  Book, 
-  Video, 
+import { useLanguage } from '@/contexts/LanguageContext';
+import {
+  HelpCircle,
+  MessageSquare,
+  Book,
+  Video,
   Send,
   Search,
   Phone,
@@ -28,6 +29,7 @@ import {
 
 export default function Support() {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [contactForm, setContactForm] = useState({
     subject: '',
@@ -38,60 +40,60 @@ export default function Support() {
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
-      title: "Mensagem enviada",
-      description: "Nossa equipe responderá em até 24 horas.",
+      title: t('support.msgSent'),
+      description: t('support.msgDesc'),
     });
     setContactForm({ subject: '', message: '', priority: 'medium' });
   };
 
   const faqItems = [
     {
-      question: "Como criar minha primeira campanha?",
-      answer: "Para criar uma campanha, vá até 'Campanhas' no menu principal, clique em 'Nova Campanha' e siga o assistente passo a passo. Você poderá escolher o público-alvo, personalizar a mensagem e agendar o envio."
+      question: t('support.faq.q1'),
+      answer: t('support.faq.a1')
     },
     {
-      question: "Como funciona a coleta de contatos via QR Code?",
-      answer: "Nosso sistema gera QR Codes únicos que, quando escaneados pelos clientes, direcionam para um formulário otimizado. Os dados são automaticamente sincronizados com sua base de contatos em tempo real."
+      question: t('support.faq.q2'),
+      answer: t('support.faq.a2')
     },
     {
-      question: "Posso personalizar as mensagens das campanhas?",
-      answer: "Sim! Oferecemos templates personalizáveis e a opção de criar mensagens do zero. Você pode incluir o nome do cliente, oferecer descontos personalizados e muito mais."
+      question: t('support.faq.q3'),
+      answer: t('support.faq.a3')
     },
     {
-      question: "Como funciona o programa de indicações?",
-      answer: "A cada cliente que você indica e que se torna um usuário ativo, você ganha créditos que podem ser usados para envios extras ou upgrades no seu plano."
+      question: t('support.faq.q4'),
+      answer: t('support.faq.a4')
     },
     {
-      question: "Meus dados estão seguros?",
-      answer: "Absolutamente. Utilizamos criptografia de ponta a ponta, backup automático e seguimos todas as normas da LGPD. Seus dados jamais são compartilhados com terceiros sem autorização."
+      question: t('support.faq.q5'),
+      answer: t('support.faq.a5')
     }
   ];
 
   const quickLinks = [
     {
-      title: "Guia de Início Rápido",
-      description: "Primeiros passos no DopplerDine",
+      title: t('support.links.t1'),
+      description: t('support.links.d1'),
       icon: Zap,
       url: "#",
       color: "text-orange-600"
     },
     {
-      title: "Documentação Completa",
-      description: "Guias detalhados e tutoriais",
+      title: t('support.links.t2'),
+      description: t('support.links.d2'),
       icon: Book,
       url: "#",
       color: "text-blue-600"
     },
     {
-      title: "Vídeos Tutoriais",
-      description: "Aprenda assistindo",
+      title: t('support.links.t3'),
+      description: t('support.links.d3'),
       icon: Video,
       url: "#",
       color: "text-purple-600"
     },
     {
-      title: "Segurança e Privacidade",
-      description: "Como protegemos seus dados",
+      title: t('support.links.t4'),
+      description: t('support.links.d4'),
       icon: Shield,
       url: "#",
       color: "text-green-600"
@@ -110,10 +112,10 @@ export default function Support() {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-foreground mb-4 flex items-center justify-center gap-3">
             <HelpCircle className="w-10 h-10" />
-            Central de Ajuda
+            {t('support.title')}
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Estamos aqui para ajudar você a aproveitar ao máximo o DopplerDine
+            {t('support.subtitle')}
           </p>
         </div>
 
@@ -122,14 +124,14 @@ export default function Support() {
           <CardContent className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-              <span className="font-medium text-green-800">Todos os sistemas operacionais</span>
+              <span className="font-medium text-green-800">{t('support.allSystemsOperational')}</span>
               <Badge variant="secondary" className="bg-green-100 text-green-800">
-                99.9% Uptime
+                {t('support.uptime')}
               </Badge>
             </div>
             <div className="flex items-center gap-2 text-sm text-green-700">
               <Clock className="w-4 h-4" />
-              Última atualização: há 2 min
+              {t('support.lastUpdate')}
             </div>
           </CardContent>
         </Card>
@@ -141,10 +143,10 @@ export default function Support() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Search className="w-5 h-5" />
-                  Perguntas Frequentes
+                  {t('support.faqTitle')}
                 </CardTitle>
                 <CardDescription>
-                  Encontre respostas rápidas para as dúvidas mais comuns
+                  {t('support.faqDesc')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -152,14 +154,14 @@ export default function Support() {
                 <div className="relative mb-6">
                   <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                   <Input
-                    placeholder="Busque por palavra-chave..."
+                    placeholder={t("support.searchPlaceholder")}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10"
                   />
                   {searchQuery && (
                     <div className="absolute right-3 top-3 text-xs text-muted-foreground">
-                      {filteredFAQ.length} resultado(s)
+                      {filteredFAQ.length} {t('support.results')}
                     </div>
                   )}
                 </div>
@@ -180,8 +182,8 @@ export default function Support() {
                 {filteredFAQ.length === 0 && searchQuery && (
                   <div className="text-center py-8 text-muted-foreground">
                     <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    <p>Nenhum resultado encontrado para "{searchQuery}"</p>
-                    <p className="text-sm">Tente outros termos ou entre em contato conosco</p>
+                    <p>{t("support.noResults")} "{searchQuery}"</p>
+                    <p className="text-sm">{t('support.tryOtherTerms')}</p>
                   </div>
                 )}
               </CardContent>
@@ -192,53 +194,53 @@ export default function Support() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MessageSquare className="w-5 h-5" />
-                  Entre em Contato
+                  {t('support.contactTitle')}
                 </CardTitle>
                 <CardDescription>
-                  Não encontrou o que procura? Nossa equipe está pronta para ajudar
+                  {t('support.contactDesc')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleContactSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="subject">Assunto</Label>
+                      <Label htmlFor="subject">{t('support.subject')}</Label>
                       <Input
                         id="subject"
                         value={contactForm.subject}
                         onChange={(e) => setContactForm(prev => ({ ...prev, subject: e.target.value }))}
-                        placeholder="Resumo da sua dúvida"
+                        placeholder={t("support.subjectPlaceholder")}
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="priority">Prioridade</Label>
+                      <Label htmlFor="priority">{t('support.priority')}</Label>
                       <select
                         id="priority"
                         value={contactForm.priority}
                         onChange={(e) => setContactForm(prev => ({ ...prev, priority: e.target.value }))}
                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                       >
-                        <option value="low">🟢 Baixa</option>
-                        <option value="medium">🟡 Média</option>
-                        <option value="high">🔴 Alta</option>
+                        <option value="low">🟢 {t('support.low')}</option>
+                        <option value="medium">🟡 {t('support.medium')}</option>
+                        <option value="high">🔴 {t('support.high')}</option>
                       </select>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="message">Mensagem</Label>
+                    <Label htmlFor="message">{t('support.message')}</Label>
                     <Textarea
                       id="message"
                       value={contactForm.message}
                       onChange={(e) => setContactForm(prev => ({ ...prev, message: e.target.value }))}
-                      placeholder="Descreva sua dúvida ou problema em detalhes..."
+                      placeholder={t("support.messagePlaceholder")}
                       rows={5}
                       required
                     />
                   </div>
                   <Button type="submit" className="w-full md:w-auto">
                     <Send className="w-4 h-4 mr-2" />
-                    Enviar Mensagem
+                    {t('support.send')}
                   </Button>
                 </form>
               </CardContent>
@@ -250,7 +252,7 @@ export default function Support() {
             {/* Links Rápidos */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Links Úteis</CardTitle>
+                <CardTitle className="text-lg">{t('support.usefulLinks')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {quickLinks.map((link, index) => (
@@ -277,29 +279,29 @@ export default function Support() {
             {/* Contato Direto */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Contato Direto</CardTitle>
-                <CardDescription>Para suporte urgente</CardDescription>
+                <CardTitle className="text-lg">{t('support.directContact')}</CardTitle>
+                <CardDescription>{t('support.urgentSupport')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-lg">
                   <Phone className="w-5 h-5 text-primary" />
                   <div>
-                    <p className="font-medium text-sm">Telefone</p>
+                    <p className="font-medium text-sm">{t('support.phone')}</p>
                     <p className="text-sm text-muted-foreground">(11) 9999-9999</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-lg">
                   <Mail className="w-5 h-5 text-primary" />
                   <div>
-                    <p className="font-medium text-sm">Email</p>
+                    <p className="font-medium text-sm">{t('support.email')}</p>
                     <p className="text-sm text-muted-foreground">suporte@dopplerdine.com</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
                   <Clock className="w-5 h-5 text-green-600" />
                   <div>
-                    <p className="font-medium text-sm text-green-800">Horário de Atendimento</p>
-                    <p className="text-sm text-green-700">Seg-Sex: 8h às 18h</p>
+                    <p className="font-medium text-sm text-green-800">{t('support.businessHours')}</p>
+                    <p className="text-sm text-green-700">{t('support.hours')}</p>
                   </div>
                 </div>
               </CardContent>
@@ -308,23 +310,23 @@ export default function Support() {
             {/* Status da Conta */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Status da Conta</CardTitle>
+                <CardTitle className="text-lg">{t('support.accountStatus')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm">Plano Atual</span>
+                  <span className="text-sm">{t('nav.currentPlan')}</span>
                   <Badge variant="default">Pro</Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm">Suporte</span>
+                  <span className="text-sm">{t('nav.helpSupport')}</span>
                   <Badge variant="secondary" className="text-green-700 bg-green-100">
                     <CheckCircle className="w-3 h-3 mr-1" />
-                    Prioritário
+                    {t('support.priorityBadge')}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm">Tempo Médio</span>
-                  <span className="text-sm font-medium">2-4 horas</span>
+                  <span className="text-sm">{t('support.avgTime')}</span>
+                  <span className="text-sm font-medium">{t('support.timeFrame')}</span>
                 </div>
               </CardContent>
             </Card>

@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 
 interface ProtectedRouteProps {
@@ -7,7 +7,8 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { user, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -19,6 +20,16 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   if (!user) {
     return <Navigate to="/" replace />;
+  }
+
+  // Force onboarding if not completed AND not already on the onboarding page
+  if (profile && profile.onboarding_completed === false && location.pathname !== '/onboarding') {
+    return <Navigate to="/onboarding" replace />;
+  }
+
+  // Prevent accessing onboarding again if already completed
+  if (profile && profile.onboarding_completed === true && location.pathname === '/onboarding') {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <>{children}</>;

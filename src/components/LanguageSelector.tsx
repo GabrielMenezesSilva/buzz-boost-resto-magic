@@ -12,6 +12,7 @@ const LanguageSelector = () => {
   const { language, setLanguage } = useLanguage();
 
   const languages = [
+    { code: 'pt' as const, name: 'Português', flag: '🇧🇷' },
     { code: 'fr' as const, name: 'Français', flag: '🇫🇷' },
     { code: 'en' as const, name: 'English', flag: '🇬🇧' },
     { code: 'it' as const, name: 'Italiano', flag: '🇮🇹' },
@@ -33,9 +34,8 @@ const LanguageSelector = () => {
           <DropdownMenuItem
             key={lang.code}
             onClick={() => setLanguage(lang.code)}
-            className={`flex items-center space-x-2 ${
-              language === lang.code ? 'bg-accent' : ''
-            }`}
+            className={`flex items-center space-x-2 ${language === lang.code ? 'bg-accent' : ''
+              }`}
           >
             <span>{lang.flag}</span>
             <span>{lang.name}</span>

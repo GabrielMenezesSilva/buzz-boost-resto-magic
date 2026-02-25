@@ -141,7 +141,7 @@ export default function Profile() {
                     value={formData.phone}
                     onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                     disabled={!isEditing}
-                    placeholder="(11) 99999-9999"
+                    placeholder={t('profile.phonePlaceholder')}
                     className={isEditing ? "border-primary/50 focus:border-primary" : ""}
                   />
                 </div>

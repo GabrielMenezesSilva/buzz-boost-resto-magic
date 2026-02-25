@@ -271,9 +271,9 @@ export default function Campaigns() {
                       <SelectValue placeholder={t('campaigns.selectType')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="sms">SMS</SelectItem>
-                      <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                      <SelectItem value="email">Email</SelectItem>
+                      <SelectItem value="sms">{t('campaigns.sms')}</SelectItem>
+                      <SelectItem value="whatsapp">{t('campaigns.whatsapp')}</SelectItem>
+                      <SelectItem value="email">{t('campaigns.email')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

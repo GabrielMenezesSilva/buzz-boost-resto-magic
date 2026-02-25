@@ -9,6 +9,7 @@ interface UserProfile {
   restaurant_name: string | null;
   phone: string | null;
   qr_code: string;
+  role: string;
 }
 
 interface AuthContextType {
@@ -38,12 +39,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .select('*')
         .eq('user_id', userId)
         .single();
-      
+
       if (error && error.code !== 'PGRST116') {
         console.error('Error fetching profile:', error);
         return null;
       }
-      
+
       return data;
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -57,7 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         if (session?.user) {
           // Fetch user profile
           setTimeout(async () => {
@@ -76,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      
+
       if (session?.user) {
         fetchUserProfile(session.user.id).then((userProfile) => {
           setProfile(userProfile);
@@ -93,7 +94,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signUp = async (email: string, password: string, restaurantName: string, ownerName: string) => {
     try {
       const redirectUrl = `${window.location.origin}/`;
-      
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -163,7 +164,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
-      
+
       toast({
         title: "Logout realizado",
         description: "Você foi desconectado com sucesso."

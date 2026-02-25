@@ -48,8 +48,8 @@ export default function Settings() {
 
   const handleSave = () => {
     toast({
-      title: "Configurações salvas",
-      description: "Suas preferências foram atualizadas com sucesso.",
+      title: t('settings.savedTitle'),
+      description: t('settings.savedDesc'),
     });
   };
 
@@ -70,9 +70,9 @@ export default function Settings() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2 flex items-center gap-3">
             <SettingsIcon className="w-8 h-8" />
-            Configurações
+            {t('nav.settings')}
           </h1>
-          <p className="text-muted-foreground">Personalize sua experiência no DopplerDine</p>
+          <p className="text-muted-foreground">{t('settings.personalize')}</p>
         </div>
 
         <div className="space-y-8">
@@ -81,10 +81,10 @@ export default function Settings() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Bell className="w-5 h-5" />
-                Notificações
+                {t('settings.notifications')}
               </CardTitle>
               <CardDescription>
-                Controle como e quando você recebe notificações
+                {t('settings.notificationsDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -94,7 +94,7 @@ export default function Settings() {
                     <div className="flex items-center gap-3">
                       <Mail className="w-4 h-4 text-muted-foreground" />
                       <Label htmlFor="email-notifications" className="text-sm font-medium">
-                        Notificações por Email
+                        {t('settings.emailNotifs')}
                       </Label>
                     </div>
                     <Switch
@@ -104,7 +104,7 @@ export default function Settings() {
                     />
                   </div>
                   <p className="text-xs text-muted-foreground ml-7">
-                    Receba updates sobre campanhas e novos contatos
+                    {t('settings.emailNotifsDesc')}
                   </p>
                 </div>
 
@@ -113,7 +113,7 @@ export default function Settings() {
                     <div className="flex items-center gap-3">
                       <Smartphone className="w-4 h-4 text-muted-foreground" />
                       <Label htmlFor="push-notifications" className="text-sm font-medium">
-                        Notificações Push
+                        {t('settings.pushNotifs')}
                       </Label>
                     </div>
                     <Switch
@@ -123,7 +123,7 @@ export default function Settings() {
                     />
                   </div>
                   <p className="text-xs text-muted-foreground ml-7">
-                    Alertas instantâneos no navegador
+                    {t('settings.pushNotifsDesc')}
                   </p>
                 </div>
 
@@ -142,7 +142,7 @@ export default function Settings() {
                     />
                   </div>
                   <p className="text-xs text-muted-foreground ml-7">
-                    Notificações importantes via SMS
+                    {t('settings.smsNotifsDesc')}
                   </p>
                 </div>
 
@@ -151,7 +151,7 @@ export default function Settings() {
                     <div className="flex items-center gap-3">
                       <Volume2 className="w-4 h-4 text-muted-foreground" />
                       <Label htmlFor="marketing-notifications" className="text-sm font-medium">
-                        Marketing
+                        {t('settings.marketingNotifs')}
                       </Label>
                     </div>
                     <Switch
@@ -161,7 +161,7 @@ export default function Settings() {
                     />
                   </div>
                   <p className="text-xs text-muted-foreground ml-7">
-                    Novidades e promoções do DopplerDine
+                    {t('settings.marketingNotifsDesc')}
                   </p>
                 </div>
               </div>
@@ -173,16 +173,16 @@ export default function Settings() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Palette className="w-5 h-5" />
-                Aparência
+                {t('settings.appearance')}
               </CardTitle>
               <CardDescription>
-                Personalize a interface de acordo com suas preferências
+                {t('settings.appearanceDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <Label className="text-sm font-medium">Tema</Label>
+                  <Label className="text-sm font-medium">{t('settings.themeLabel')}</Label>
                   <Select
                     value={settings.preferences.theme}
                     onValueChange={(value) => updateSetting('preferences', 'theme', value)}
@@ -208,7 +208,7 @@ export default function Settings() {
                 </div>
 
                 <div className="space-y-3">
-                  <Label className="text-sm font-medium">Idioma</Label>
+                  <Label className="text-sm font-medium">{t('settings.languageLabel')}</Label>
                   <Select
                     value={settings.preferences.language}
                     onValueChange={(value) => updateSetting('preferences', 'language', value)}
@@ -217,10 +217,10 @@ export default function Settings() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="pt-BR">🇧🇷 Português (Brasil)</SelectItem>
-                      <SelectItem value="en-US">🇺🇸 English (US)</SelectItem>
-                      <SelectItem value="es-ES">🇪🇸 Español (España)</SelectItem>
-                      <SelectItem value="fr-FR">🇫🇷 Français (France)</SelectItem>
+                      <SelectItem value="pt-BR">{t('settings.langPt')}</SelectItem>
+                      <SelectItem value="en-US">{t('settings.langEn')}</SelectItem>
+                      <SelectItem value="es-ES">{t('settings.langEs')}</SelectItem>
+                      <SelectItem value="fr-FR">{t('settings.langFr')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -230,7 +230,7 @@ export default function Settings() {
                 <div className="flex items-center gap-3">
                   <Volume2 className="w-4 h-4 text-muted-foreground" />
                   <Label htmlFor="sound-effects" className="text-sm font-medium">
-                    Efeitos Sonoros
+                    {t('settings.soundEffects')}
                   </Label>
                 </div>
                 <Switch
@@ -247,10 +247,10 @@ export default function Settings() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="w-5 h-5" />
-                Privacidade e Segurança
+                {t('settings.privacySecurity')}
               </CardTitle>
               <CardDescription>
-                Gerencie como seus dados são coletados e utilizados
+                {t('settings.privacyDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -258,10 +258,10 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <Label htmlFor="analytics" className="text-sm font-medium">
-                      Análise de Uso
+                      {t('settings.usageAnalytics')}
                     </Label>
                     <p className="text-xs text-muted-foreground">
-                      Nos ajude a melhorar o produto com dados anônimos de uso
+                      {t('settings.usageDesc')}
                     </p>
                   </div>
                   <Switch
@@ -276,10 +276,10 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <Label htmlFor="cookies" className="text-sm font-medium">
-                      Cookies Funcionais
+                      {t('settings.functionalCookies')}
                     </Label>
                     <p className="text-xs text-muted-foreground">
-                      Necessários para manter suas preferências e sessão
+                      {t('settings.cookiesDesc')}
                     </p>
                   </div>
                   <Switch
@@ -294,10 +294,10 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <Label htmlFor="data-sharing" className="text-sm font-medium">
-                      Compartilhamento de Dados
+                      {t('settings.dataSharing')}
                     </Label>
                     <p className="text-xs text-muted-foreground">
-                      Permitir compartilhamento com parceiros para melhorar serviços
+                      {t('settings.dataSharingDesc')}
                     </p>
                   </div>
                   <Switch
@@ -315,26 +315,25 @@ export default function Settings() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Database className="w-5 h-5" />
-                Dados e Backup
+                {t('settings.dataBackup')}
               </CardTitle>
               <CardDescription>
-                Gerencie seus dados e faça backup das informações
+                {t('settings.dataBackupDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Button variant="outline" className="justify-start">
                   <Database className="w-4 h-4 mr-2" />
-                  Exportar Dados
+                  {t('settings.exportData')}
                 </Button>
                 <Button variant="outline" className="justify-start">
                   <Shield className="w-4 h-4 mr-2" />
-                  Backup Automático
+                  {t('settings.autoBackup')}
                 </Button>
               </div>
               <p className="text-sm text-muted-foreground">
-                Seus dados são automaticamente salvos em backup a cada 24 horas.
-                Último backup: há 2 horas
+                {t('settings.backupInfo')}
               </p>
             </CardContent>
           </Card>
@@ -342,7 +341,7 @@ export default function Settings() {
           {/* Botão de Salvar - Lei de Fitts (posição acessível) */}
           <div className="flex justify-end pt-6">
             <Button onClick={handleSave} size="lg" className="px-8">
-              Salvar Configurações
+              {t('settings.save')}
             </Button>
           </div>
         </div>
