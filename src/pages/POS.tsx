@@ -44,7 +44,7 @@ export default function POS() {
     const cartItemCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
     // Handlers
-    const handleProductClick = (product: import('@/types/pos').Product) => {
+    const handleProductClick = (product: import('@/hooks/useProducts').Product) => {
         if (!selectedTable) {
             toast.error(t('pos.selectTable'));
             setActiveTab('tables');
@@ -107,7 +107,7 @@ export default function POS() {
         <div className="h-screen w-full flex flex-col overflow-hidden bg-background">
             <POSHeader
                 t={t}
-                user={user}
+                user={user as any}
                 session={session}
                 tables={tables}
                 activeTab={activeTab}

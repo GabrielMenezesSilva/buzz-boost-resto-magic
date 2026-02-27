@@ -11,6 +11,7 @@ interface UserProfile {
   phone: string | null;
   qr_code: string;
   role: string;
+  onboarding_completed?: boolean;
 }
 
 interface AuthContextType {

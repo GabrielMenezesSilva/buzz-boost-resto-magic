@@ -26,7 +26,7 @@ export default function Orders() {
     const { t, language } = useLanguage();
     const [searchTerm, setSearchTerm] = useState("");
     const [daysFilter, setDaysFilter] = useState<number | null>(7);
-    const [selectedOrder, setSelectedOrder] = useState<Record<string, unknown> | null>(null);
+    const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
     const dateLocale = language === 'pt' ? ptBR : enUS;
 
     // Fetch Completed Orders
@@ -55,7 +55,7 @@ export default function Orders() {
             const { data, error } = await query;
 
             if (error) throw error;
-            return data;
+            return data as any[];
         },
         enabled: !!user,
     });
@@ -182,7 +182,7 @@ export default function Orders() {
                                     <span>{t('orders.qtdItem')}</span>
                                     <span>{t('orders.currency')}</span>
                                 </div>
-                                {(selectedOrder.order_items as Array<Record<string, unknown>>)?.map((item: Record<string, unknown>) => (
+                                {(selectedOrder.order_items as any[])?.map((item: any) => (
                                     <div key={item.id as string} className="flex justify-between">
                                         <span>{item.quantity}x {item.product_name}</span>
                                         <span>{Number(item.subtotal || 0).toFixed(2).replace('.', ',')}</span>
