@@ -34,7 +34,8 @@ const Contacts = () => {
     setFilterSource,
     addContact,
     updateContact,
-    deleteContact
+    deleteContact,
+    exportToCSV
   } = useContacts();
 
   const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
@@ -135,7 +136,7 @@ const Contacts = () => {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -198,7 +199,7 @@ const Contacts = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="flex gap-3">
                 <Select value={filterSource} onValueChange={setFilterSource}>
                   <SelectTrigger className="w-40">
@@ -214,10 +215,10 @@ const Contacts = () => {
                 </Select>
 
                 {selectedContacts.length > 0 && (
-                    <Button variant="outline" size="sm">
-                      <Download className="w-4 h-4 mr-2" />
-                      {t('contacts.export')} ({selectedContacts.length})
-                    </Button>
+                  <Button variant="outline" size="sm" onClick={() => exportToCSV(selectedContacts)}>
+                    <Download className="w-4 h-4 mr-2" />
+                    {t('contacts.export')} ({selectedContacts.length})
+                  </Button>
                 )}
               </div>
             </div>
@@ -248,9 +249,8 @@ const Contacts = () => {
                 {contacts.map((contact) => (
                   <div
                     key={contact.id}
-                    className={`flex items-center justify-between p-4 rounded-lg border transition-colors hover:bg-muted/50 ${
-                      selectedContacts.includes(contact.id) ? 'bg-muted border-primary' : ''
-                    }`}
+                    className={`flex items-center justify-between p-4 rounded-lg border transition-colors hover:bg-muted/50 ${selectedContacts.includes(contact.id) ? 'bg-muted border-primary' : ''
+                      }`}
                   >
                     <div className="flex items-center space-x-4">
                       <input
@@ -259,11 +259,11 @@ const Contacts = () => {
                         onChange={() => handleSelectContact(contact.id)}
                         className="rounded"
                       />
-                      
+
                       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                         <Users className="w-6 h-6 text-primary" />
                       </div>
-                      
+
                       <div>
                         <h3 className="font-medium text-lg">{contact.name}</h3>
                         <div className="flex items-center space-x-4 text-sm text-muted-foreground">
@@ -299,7 +299,7 @@ const Contacts = () => {
                         <p>{t('contacts.addedOn')}</p>
                         <p>{formatDate(contact.created_at)}</p>
                       </div>
-                      
+
                       <div className="flex space-x-1">
                         <ContactDialog
                           contact={contact}
@@ -310,7 +310,7 @@ const Contacts = () => {
                             </Button>
                           }
                         />
-                        
+
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
@@ -321,7 +321,7 @@ const Contacts = () => {
                             <AlertDialogHeader>
                               <AlertDialogTitle>{t('contacts.confirmDelete')}</AlertDialogTitle>
                               <AlertDialogDescription>
-                                {t('contacts.deleteConfirmMessage')} "{contact.name}"? 
+                                {t('contacts.deleteConfirmMessage')} "{contact.name}"?
                                 {t('contacts.deleteWarning')}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
@@ -346,25 +346,25 @@ const Contacts = () => {
                 <Users className="w-16 h-16 mx-auto text-muted-foreground mb-4 opacity-50" />
                 <h3 className="text-lg font-medium mb-2">{t('contacts.noContactsFoundMessage')}</h3>
                 <p className="text-muted-foreground mb-6">
-                  {searchTerm || filterSource !== 'all' 
+                  {searchTerm || filterSource !== 'all'
                     ? t('contacts.adjustFilters')
                     : t('contacts.getStarted')
                   }
                 </p>
                 <div className="flex justify-center gap-3">
                   <Link to="/qr">
-                      <Button variant="outline">
-                        <QrCode className="w-4 h-4 mr-2" />
-                        {t('contacts.scanQrCode')}
-                      </Button>
+                    <Button variant="outline">
+                      <QrCode className="w-4 h-4 mr-2" />
+                      {t('contacts.scanQrCode')}
+                    </Button>
                   </Link>
                   <ContactDialog
                     onSave={addContact}
                     trigger={
-                        <Button>
-                          <Plus className="w-4 h-4 mr-2" />
-                          {t('contacts.addContact')}
-                        </Button>
+                      <Button>
+                        <Plus className="w-4 h-4 mr-2" />
+                        {t('contacts.addContact')}
+                      </Button>
                     }
                   />
                 </div>

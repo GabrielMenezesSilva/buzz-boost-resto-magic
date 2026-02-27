@@ -22,19 +22,22 @@ import {
     Minus,
     Trash2,
     Coffee,
-    CreditCard,
     Banknote,
-    QrCode
+    QrCode,
+    Loader2,
+    CreditCard
 } from "lucide-react";
+import { toast } from 'sonner';
 
 export default function POS() {
     const { user } = useAuth();
     const { t } = useLanguage();
     const { session, isLoading: sessionLoading, openSession, closeSession } = usePosSession();
-    const { tables } = useTables();
-    const { activeOrders } = useOrders(session?.id);
-    const { data: products = [], isLoading: productsLoading } = useProducts();
-    const { data: categories = [] } = useCategories();
+
+    const { activeOrders, processCheckout } = useOrders(session?.id);
+    const { tables, isLoading: isLoadingTables } = useTables();
+    const { products = [], isLoading: productsLoading } = useProducts();
+    const { categories = [] } = useCategories();
 
     // Cart from Zustand
     const { items: cartItems, addItem, removeItem, updateQuantity, clearCart } = useCart();
@@ -52,7 +55,40 @@ export default function POS() {
     const cartTotal = cartItems.reduce((acc, item) => acc + (item.product.sell_price * item.quantity), 0);
     const cartItemCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
-    if (sessionLoading || productsLoading) {
+    // Handlers
+    const handleProductClick = (product: any) => {
+        if (!selectedTable) {
+            alert(t('pos.selectTable'));
+            setActiveTab('tables');
+            return;
+        }
+        addItem(product);
+    };
+
+    const handleCheckout = async (method: 'cash' | 'credit' | 'pix' | 'none') => {
+        if (cartItems.length === 0) return;
+        if (method === 'none' && !selectedTable) {
+            toast.error(t('pos.selectTableError') || 'Selecione uma mesa para enviar o pedido para a cozinha.');
+            return;
+        }
+
+        try {
+            await processCheckout.mutateAsync({
+                cartItems,
+                total: cartTotal,
+                method,
+                table_id: selectedTable || undefined
+            });
+            clearCart();
+            setSelectedTable(null); // Clear selected table after checkout
+            toast.success(t('pos.orderSentSuccess') || 'Pedido enviado com sucesso!');
+        } catch (error) {
+            console.error(error);
+            toast.error(t('pos.orderSentError') || 'Erro ao enviar o pedido.');
+        }
+    };
+
+    if (sessionLoading || productsLoading || isLoadingTables) {
         return <div className="h-screen w-full flex items-center justify-center">{t('pos.loading')}</div>;
     }
 
@@ -78,16 +114,6 @@ export default function POS() {
             </div>
         );
     }
-
-    // Handlers
-    const handleProductClick = (product: any) => {
-        if (!selectedTable) {
-            alert(t('pos.selectTable'));
-            setActiveTab('tables');
-            return;
-        }
-        addItem(product);
-    };
 
     return (
         <div className="h-screen w-full flex flex-col overflow-hidden bg-background">
@@ -187,7 +213,7 @@ export default function POS() {
                                                 {product.image_url ? (
                                                     <img src={product.image_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                                 ) : (
-                                                    <span className="text-4xl">{product.category?.icon || '🍽️'}</span>
+                                                    <span className="text-4xl">{(product.category as any)?.icon || '🍽️'}</span>
                                                 )}
                                                 {product.current_stock <= product.min_stock && (
                                                     <Badge variant="destructive" className="absolute top-2 right-2 text-[10px] px-1.5 py-0 h-4 uppercase">
@@ -205,7 +231,9 @@ export default function POS() {
                                     ))}
                                     {filteredProducts.length === 0 && (
                                         <div className="col-span-full py-12 flex flex-col items-center justify-center text-muted-foreground">
-                                            <Search className="h-12 w-12 mb-4 opacity-20" />
+                                            <div className="w-10 h-10 rounded-full flex items-center justify-center mb-2" style={{ backgroundColor: `${categories.find(c => c.id === selectedCategory)?.color || '#ccc'}20`, color: categories.find(c => c.id === selectedCategory)?.color || '#ccc' }}>
+                                                <span className="text-xl">{(categories.find(c => c.id === selectedCategory) as any)?.icon || '🏷️'}</span>
+                                            </div>
                                             <p>{t('pos.noProducts')}</p>
                                         </div>
                                     )}
@@ -345,15 +373,15 @@ export default function POS() {
                         </div>
 
                         <div className="grid grid-cols-3 gap-2">
-                            <Button variant="outline" className="flex flex-col h-14 bg-background hover:border-primary/50" disabled={cartItems.length === 0}>
+                            <Button variant="outline" className="flex flex-col h-14 bg-background hover:border-primary/50" disabled={cartItems.length === 0 || processCheckout.isPending} onClick={() => handleCheckout('cash')}>
                                 <Banknote className="w-4 h-4 mb-1 text-emerald-600" />
                                 <span className="text-[10px]">{t('pos.cash')}</span>
                             </Button>
-                            <Button variant="outline" className="flex flex-col h-14 bg-background hover:border-primary/50" disabled={cartItems.length === 0}>
+                            <Button variant="outline" className="flex flex-col h-14 bg-background hover:border-primary/50" disabled={cartItems.length === 0 || processCheckout.isPending} onClick={() => handleCheckout('credit')}>
                                 <CreditCard className="w-4 h-4 mb-1 text-blue-600" />
                                 <span className="text-[10px]">{t('pos.card')}</span>
                             </Button>
-                            <Button variant="outline" className="flex flex-col h-14 bg-background hover:border-primary/50" disabled={cartItems.length === 0}>
+                            <Button variant="outline" className="flex flex-col h-14 bg-background hover:border-primary/50" disabled={cartItems.length === 0 || processCheckout.isPending} onClick={() => handleCheckout('pix')}>
                                 <QrCode className="w-4 h-4 mb-1 text-teal-600" />
                                 <span className="text-[10px]">{t('pos.pix')}</span>
                             </Button>
@@ -365,16 +393,17 @@ export default function POS() {
                                 size="lg"
                                 className="w-full text-destructive border-destructive/30 hover:bg-destructive/10"
                                 onClick={clearCart}
-                                disabled={cartItems.length === 0}
+                                disabled={cartItems.length === 0 || processCheckout.isPending}
                             >
                                 {t('pos.cancel')}
                             </Button>
                             <Button
                                 size="lg"
                                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-md shadow-primary/20 text-lg"
-                                disabled={cartItems.length === 0 || !selectedTable}
+                                disabled={cartItems.length === 0 || !selectedTable || processCheckout.isPending}
+                                onClick={() => handleCheckout('none')}
                             >
-                                {t('pos.sendOrder')}
+                                {processCheckout.isPending ? <Loader2 className="animate-spin w-5 h-5" /> : t('pos.sendOrder')}
                             </Button>
                         </div>
                     </div>

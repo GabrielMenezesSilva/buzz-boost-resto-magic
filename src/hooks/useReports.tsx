@@ -58,16 +58,8 @@ export function useReports(period: 'month' | 'last_month' | 'year' = 'month') {
                 .gte('entry_date', start)
                 .lte('entry_date', end);
 
-            if (cfError) {
-                console.warn("Reports: Supabase missing, fetching from LocalStorage mock.");
-                const localStr = localStorage.getItem('dd_mock_cashflow');
-                if (localStr) {
-                    const localData = JSON.parse(localStr);
-                    cashFlowArray = localData.filter((e: CashFlowMetric) => e.entry_date >= start && e.entry_date <= end);
-                }
-            } else {
-                cashFlowArray = cashFlow as unknown as CashFlowMetric[];
-            }
+            if (cfError) throw cfError;
+            cashFlowArray = cashFlow as unknown as CashFlowMetric[];
 
             // Buscamos itens de pedidos finalizados para metrics
             // We need to join orders with order_items. 

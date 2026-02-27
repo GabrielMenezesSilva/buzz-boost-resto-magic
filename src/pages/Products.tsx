@@ -27,7 +27,8 @@ export default function Products() {
         name: '', description: '', unit: 'un',
         cost_price: 0, sell_price: 0,
         current_stock: 0, min_stock: 0,
-        category_id: '', supplier_id: ''
+        category_id: '', supplier_id: '',
+        sku: '', expiry_date: ''
     });
 
     const handleCreate = async () => {
@@ -41,8 +42,8 @@ export default function Products() {
             sell_price: Number(newProd.sell_price),
             current_stock: Number(newProd.current_stock),
             min_stock: Number(newProd.min_stock),
-            category_id: newProd.category_id || null,
-            supplier_id: newProd.supplier_id || null,
+            category_id: newProd.category_id === 'none' ? null : (newProd.category_id || null),
+            supplier_id: newProd.supplier_id === 'none' ? null : (newProd.supplier_id || null),
             active: true,
             show_in_pos: true
         });
@@ -51,7 +52,7 @@ export default function Products() {
         setNewProd({
             name: '', description: '', unit: 'un',
             cost_price: 0, sell_price: 0, current_stock: 0, min_stock: 0,
-            category_id: '', supplier_id: ''
+            category_id: '', supplier_id: '', sku: '', expiry_date: ''
         });
     };
 
@@ -102,7 +103,7 @@ export default function Products() {
                                         <SelectValue placeholder={t('products.selectPlaceholder')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="">{t('products.noCategory')}</SelectItem>
+                                        <SelectItem value="none">{t('products.noCategory')}</SelectItem>
                                         {categories.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
@@ -115,7 +116,7 @@ export default function Products() {
                                         <SelectValue placeholder={t('products.selectPlaceholder')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="">{t('products.noSupplier')}</SelectItem>
+                                        <SelectItem value="none">{t('products.noSupplier')}</SelectItem>
                                         {suppliers.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
@@ -154,6 +155,24 @@ export default function Products() {
                                     type="number" step="0.01" min="0"
                                     value={newProd.min_stock}
                                     onChange={(e) => setNewProd({ ...newProd, min_stock: Number(e.target.value) })}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>{t('products.batch') || 'Lote (Opcional)'}</Label>
+                                <Input
+                                    placeholder="Ex: L12345"
+                                    value={newProd.sku}
+                                    onChange={(e) => setNewProd({ ...newProd, sku: e.target.value })}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>{t('products.expiry') || 'Validade (Opcional)'}</Label>
+                                <Input
+                                    type="date"
+                                    value={newProd.expiry_date}
+                                    onChange={(e) => setNewProd({ ...newProd, expiry_date: e.target.value })}
                                 />
                             </div>
                         </div>

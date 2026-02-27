@@ -14,15 +14,16 @@ export function useInventoryAlerts() {
             if (!user) return { lowStock: [], expiring: [] };
 
             // 1. Fetch low stock items
-            const { data: lowStockData, error: stockError } = await supabase
+            const { data: allProducts, error: stockError } = await supabase
                 .from('products')
                 .select('*')
                 .eq('user_id', user.id)
                 .eq('active', true)
-                .lte('current_stock', 'min_stock')
                 .order('current_stock', { ascending: true });
 
             if (stockError) throw stockError;
+
+            const lowStockData = (allProducts as Product[]).filter(p => p.current_stock <= p.min_stock);
 
             // 2. Fetch expiring items (next 30 days)
             const thirtyDaysFromNow = new Date();

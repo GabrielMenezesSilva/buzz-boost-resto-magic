@@ -28,7 +28,7 @@ export default function Plans() {
       description: t('plans.starterDesc'),
       price: t('plans.price.starter'),
       period: t('plans.perMonth'),
-      badge: null,
+      badge: t('plans.badge.starter'),
       popular: false,
       ctaText: t('plans.startNow'),
       features: [

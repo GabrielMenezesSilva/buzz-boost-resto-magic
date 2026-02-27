@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Contact {
   id: string;
@@ -24,6 +25,7 @@ export const useContacts = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSource, setFilterSource] = useState<string>('all');
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (user) {
@@ -33,7 +35,7 @@ export const useContacts = () => {
 
   const fetchContacts = async () => {
     if (!user) return;
-    
+
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -70,7 +72,7 @@ export const useContacts = () => {
         .single();
 
       if (error) throw error;
-      
+
       setContacts(prev => [data, ...prev]);
       toast({
         title: "Contato adicionado",
@@ -101,8 +103,8 @@ export const useContacts = () => {
         .single();
 
       if (error) throw error;
-      
-      setContacts(prev => prev.map(contact => 
+
+      setContacts(prev => prev.map(contact =>
         contact.id === contactId ? data : contact
       ));
 
@@ -133,7 +135,7 @@ export const useContacts = () => {
         .eq('user_id', user.id);
 
       if (error) throw error;
-      
+
       setContacts(prev => prev.filter(contact => contact.id !== contactId));
       toast({
         title: "Contato removido",
@@ -151,14 +153,61 @@ export const useContacts = () => {
     }
   };
 
+  const exportToCSV = (selectedIds: string[]) => {
+    try {
+      const contactsToExport = contacts.filter(c => selectedIds.includes(c.id));
+      if (contactsToExport.length === 0) return { success: false, error: 'No contacts selected' };
+
+      // Generate CSV headers
+      const headers = [
+        t('contacts.exportHeaders.name'),
+        t('contacts.exportHeaders.phone'),
+        t('contacts.exportHeaders.email'),
+        t('contacts.exportHeaders.source'),
+        t('contacts.exportHeaders.date')
+      ].join(',');
+
+      // Generate rows
+      const rows = contactsToExport.map(c => {
+        const date = new Date(c.created_at).toLocaleDateString();
+        // Safe wrap quotes for CSV parsing
+        return `"${c.name}","${c.phone}","${c.email || ''}","${c.source}","${date}"`;
+      }).join('\n');
+
+      const csvContent = `${headers}\n${rows}`;
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `contatos_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast({
+        title: t('contacts.exportSuccess'),
+        description: t('contacts.exportSuccessDesc')
+      });
+      return { success: true };
+    } catch (error: any) {
+      toast({
+        title: t('contacts.exportError'),
+        description: error.message || t('contacts.exportErrorDesc'),
+        variant: "destructive"
+      });
+      return { success: false, error };
+    }
+  };
+
   // Filtros
   const filteredContacts = contacts.filter(contact => {
     const matchesSearch = contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         contact.phone.includes(searchTerm) ||
-                         (contact.email && contact.email.toLowerCase().includes(searchTerm.toLowerCase()));
-    
+      contact.phone.includes(searchTerm) ||
+      (contact.email && contact.email.toLowerCase().includes(searchTerm.toLowerCase()));
+
     const matchesFilter = filterSource === 'all' || contact.source === filterSource;
-    
+
     return matchesSearch && matchesFilter;
   });
 
@@ -172,6 +221,7 @@ export const useContacts = () => {
     addContact,
     updateContact,
     deleteContact,
+    exportToCSV,
     refetch: fetchContacts
   };
 };

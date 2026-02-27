@@ -102,11 +102,61 @@ export function useProducts() {
         }
     });
 
+    const addStock = useMutation({
+        mutationFn: async ({ id, amount, reason, batch, expiryDate }: { id: string, amount: number, reason?: string, batch?: string, expiryDate?: string }) => {
+            if (!user) throw new Error('Não autenticado');
+
+            // 1. Get current
+            const { data: prod, error: fetchErr } = await supabase
+                .from('products')
+                .select('current_stock')
+                .eq('id', id)
+                .single();
+            if (fetchErr) throw fetchErr;
+
+            const newStock = Number(prod?.current_stock || 0) + Number(amount);
+
+            // 2. Update stock & expiry/batch if provided
+            const updatePayload: any = { current_stock: newStock };
+            if (expiryDate) updatePayload.expiry_date = expiryDate;
+            if (batch) updatePayload.sku = batch; // Saving batch in SKU column for now
+
+            const { error: updateErr } = await supabase
+                .from('products')
+                .update(updatePayload)
+                .eq('id', id);
+            if (updateErr) throw updateErr;
+
+            // 3. Log movement
+            let finalReason = reason || 'Entrada manual de estoque';
+            if (batch) finalReason += ` (Lote: ${batch})`;
+
+            await supabase.from('stock_movements').insert([{
+                product_id: id,
+                user_id: user.id,
+                type: 'entry',
+                quantity: Number(amount),
+                reason: finalReason
+            }]);
+
+            return { id, newStock };
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['products'] });
+            queryClient.invalidateQueries({ queryKey: ['inventoryAlerts'] });
+            toast({ title: 'Estoque atualizado com sucesso' });
+        },
+        onError: (error) => {
+            toast({ title: 'Erro ao atualizar estoque', description: error.message, variant: 'destructive' });
+        }
+    });
+
     return {
         products: products || [],
         isLoading,
         addProduct,
         updateProduct,
-        deleteProduct
+        deleteProduct,
+        addStock
     };
 }
