@@ -3,7 +3,7 @@ import { Shield, Store, MenuSquare, TrendingUp, Users, Search, Bell, DollarSign,
 import { Badge } from '@/components/ui/badge';
 
 // Using a custom FadeIn placeholder here, but ideal would be to pass it as a prop or keep local
-const FadeIn = ({ children, delay = 0, direction = 'up' }: any) => {
+const FadeIn = ({ children, delay = 0, direction = 'up' }: { children: React.ReactNode, delay?: number, direction?: 'up' | 'down' | 'left' | 'right' }) => {
     const directions = {
         up: { y: 40, x: 0 },
         down: { y: -40, x: 0 },

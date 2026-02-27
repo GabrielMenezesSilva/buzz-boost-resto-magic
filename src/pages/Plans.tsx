@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 
-const FadeIn = ({ children, delay = 0, y = 50 }: any) => (
+const FadeIn = ({ children, delay = 0, y = 50 }: { children: React.ReactNode, delay?: number, y?: number }) => (
   <motion.div
     initial={{ opacity: 0, y }}
     whileInView={{ opacity: 1, y: 0 }}

@@ -8,7 +8,7 @@
 
 type LogLevel = 'info' | 'warn' | 'error' | 'debug';
 
-function log(level: LogLevel, message: string, context?: any) {
+function log(level: LogLevel, message: string, context?: Record<string, unknown>) {
     // Em dev, sempre mostra
     if (import.meta.env.DEV) {
         if (context) {
@@ -25,8 +25,8 @@ function log(level: LogLevel, message: string, context?: any) {
 }
 
 export const logger = {
-    info: (message: string, context?: any) => log('info', message, context),
-    warn: (message: string, context?: any) => log('warn', message, context),
-    error: (message: string, error?: Error | any, context?: any) => log('error', message, { error, ...context }),
-    debug: (message: string, context?: any) => log('debug', message, context),
+    info: (message: string, context?: Record<string, unknown>) => log('info', message, context),
+    warn: (message: string, context?: Record<string, unknown>) => log('warn', message, context),
+    error: (message: string, error?: unknown, context?: Record<string, unknown>) => log('error', message, { error, ...context }),
+    debug: (message: string, context?: Record<string, unknown>) => log('debug', message, context),
 };

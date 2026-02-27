@@ -198,9 +198,9 @@ export default function QRForm() {
 
       toast.success(t('qrForm.contactSaved'));
       resetScanner();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving contact:', error);
-      toast.error(error.message || t('qrForm.saveError'));
+      toast.error(error instanceof Error ? error.message : t('qrForm.saveError'));
     } finally {
       setIsSubmitting(false);
     }

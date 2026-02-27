@@ -23,7 +23,7 @@ interface Contact {
 
 interface ContactDialogProps {
   contact?: Contact;
-  onSave: (contactData: any) => Promise<{ success: boolean }>;
+  onSave: (contactData: Omit<Contact, 'id'>) => Promise<{ success: boolean }>;
   trigger: React.ReactNode;
 }
 
@@ -47,7 +47,7 @@ const ContactDialog = ({ contact, onSave, trigger }: ContactDialogProps) => {
     setLoading(true);
 
     const result = await onSave(formData);
-    
+
     if (result.success) {
       setOpen(false);
       if (!contact) {
@@ -63,7 +63,7 @@ const ContactDialog = ({ contact, onSave, trigger }: ContactDialogProps) => {
         });
       }
     }
-    
+
     setLoading(false);
   };
 
@@ -95,7 +95,7 @@ const ContactDialog = ({ contact, onSave, trigger }: ContactDialogProps) => {
             {contact ? t('contact.editContact') : t('contact.newContact')}
           </DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Nome *</Label>
@@ -111,8 +111,8 @@ const ContactDialog = ({ contact, onSave, trigger }: ContactDialogProps) => {
           <InternationalPhoneInput
             id="phone"
             value={formData.phone}
-            onChange={(value, country) => setFormData(prev => ({ 
-              ...prev, 
+            onChange={(value, country) => setFormData(prev => ({
+              ...prev,
               phone: value,
               country_code: country.code
             }))}
@@ -134,8 +134,8 @@ const ContactDialog = ({ contact, onSave, trigger }: ContactDialogProps) => {
 
           <div className="space-y-2">
             <Label htmlFor="source">Origem</Label>
-            <Select 
-              value={formData.source} 
+            <Select
+              value={formData.source}
               onValueChange={(value) => setFormData(prev => ({ ...prev, source: value }))}
             >
               <SelectTrigger>

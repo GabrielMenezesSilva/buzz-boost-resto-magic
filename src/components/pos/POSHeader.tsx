@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 
 interface POSHeaderProps {
     t: (key: string) => string;
-    user: any;
-    session: any;
-    tables: any[];
+    user: { user_metadata?: { first_name?: string };[key: string]: unknown } | null;
+    session: { id: string;[key: string]: unknown };
+    tables: { id: string; status: string;[key: string]: unknown }[];
     activeTab: 'products' | 'orders' | 'tables';
     setActiveTab: (tab: 'products' | 'orders' | 'tables') => void;
-    closeSession: any;
+    closeSession: { mutate: (args: { id: string; closingBalance: number }) => void; isPending: boolean };
 }
 
 export function POSHeader({

@@ -44,7 +44,7 @@ export default function POS() {
     const cartItemCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
     // Handlers
-    const handleProductClick = (product: any) => {
+    const handleProductClick = (product: import('@/types/pos').Product) => {
         if (!selectedTable) {
             toast.error(t('pos.selectTable'));
             setActiveTab('tables');

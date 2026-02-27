@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -17,8 +18,8 @@ interface AuthContextType {
   profile: UserProfile | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, restaurantName: string, ownerName: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, restaurantName: string, ownerName: string) => Promise<{ error: Error | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -122,14 +123,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       return { error: null };
-    } catch (error: any) {
-      const errorMessage = error.message || "Erro no cadastro";
+    } catch (error: unknown) {
+      const authError = error instanceof Error ? error : new Error(String(error));
+      const errorMessage = authError.message || "Erro no cadastro";
       toast({
         title: "Erro no cadastro",
         description: errorMessage,
         variant: "destructive"
       });
-      return { error: { message: errorMessage } };
+      return { error: authError };
     }
   };
 
@@ -150,14 +152,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       return { error: null };
-    } catch (error: any) {
-      const errorMessage = error.message || "Erro no login";
+    } catch (error: unknown) {
+      const authError = error instanceof Error ? error : new Error(String(error));
+      const errorMessage = authError.message || "Erro no login";
       toast({
         title: "Erro no login",
         description: errorMessage,
         variant: "destructive"
       });
-      return { error: { message: errorMessage } };
+      return { error: authError };
     }
   };
 

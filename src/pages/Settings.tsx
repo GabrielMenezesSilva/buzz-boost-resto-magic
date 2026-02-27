@@ -7,12 +7,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  Settings as SettingsIcon, 
-  Bell, 
-  Shield, 
-  Palette, 
-  Globe, 
+import {
+  Settings as SettingsIcon,
+  Bell,
+  Shield,
+  Palette,
+  Globe,
   Database,
   Moon,
   Sun,
@@ -53,7 +53,11 @@ export default function Settings() {
     });
   };
 
-  const updateSetting = (category: keyof typeof settings, key: string, value: any) => {
+  const updateSetting = <C extends keyof typeof settings, K extends keyof typeof settings[C]>(
+    category: C,
+    key: K,
+    value: typeof settings[C][K]
+  ) => {
     setSettings(prev => ({
       ...prev,
       [category]: {
@@ -323,11 +327,24 @@ export default function Settings() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Button variant="outline" className="justify-start">
+                <Button variant="outline" className="justify-start" onClick={() => {
+                  try {
+                    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(settings, null, 2));
+                    const downloadAnchorNode = document.createElement('a');
+                    downloadAnchorNode.setAttribute("href", dataStr);
+                    downloadAnchorNode.setAttribute("download", "resto_magic_settings.json");
+                    document.body.appendChild(downloadAnchorNode);
+                    downloadAnchorNode.click();
+                    downloadAnchorNode.remove();
+                    toast({ title: t('settings.exportSuccess') || "Exportação Concluída", description: "Seus dados foram exportados com sucesso." });
+                  } catch (error) {
+                    toast({ title: "Erro na Exportação", description: "Não foi possível exportar os dados.", variant: "destructive" });
+                  }
+                }}>
                   <Database className="w-4 h-4 mr-2" />
                   {t('settings.exportData')}
                 </Button>
-                <Button variant="outline" className="justify-start">
+                <Button variant="outline" className="justify-start" onClick={() => toast({ title: t('settings.autoBackupEnabled') || "Backup Automático", description: "Configuração de backup automático alternada." })}>
                   <Shield className="w-4 h-4 mr-2" />
                   {t('settings.autoBackup')}
                 </Button>

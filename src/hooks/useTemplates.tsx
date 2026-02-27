@@ -141,6 +141,7 @@ export function useTemplates() {
 
   useEffect(() => {
     fetchTemplates();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   return {

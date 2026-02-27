@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { QrCode, MessageSquare, Layers, TrendingUp, Server, Store } from 'lucide-react';
 
-const FadeIn = ({ children, delay = 0, direction = 'up' }: any) => {
+const FadeIn = ({ children, delay = 0, direction = 'up' }: { children: React.ReactNode, delay?: number, direction?: 'up' | 'down' | 'left' | 'right' }) => {
     const directions = {
         up: { y: 40, x: 0 },
         down: { y: -40, x: 0 },

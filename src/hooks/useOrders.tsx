@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const supabaseDb = supabase as any;
 import { useAuth } from '@/hooks/useAuth';
 import { Order, OrderItem, Payment } from '@/types/pos';
@@ -29,6 +30,7 @@ export const useOrders = (sessionId?: string) => {
         const { data, error } = await query;
 
         if (error) throw error;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return data as any[];
     };
 
@@ -208,6 +210,7 @@ export const useOrders = (sessionId?: string) => {
     // Process Checkout Completo
     const processCheckout = useMutation({
         mutationFn: async (vars: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             cartItems: any[],
             total: number,
             method: 'cash' | 'credit' | 'debit' | 'pix' | 'none',

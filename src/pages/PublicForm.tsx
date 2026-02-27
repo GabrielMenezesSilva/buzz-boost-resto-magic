@@ -17,7 +17,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 const formSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
   phone: z.string().min(8, 'Telefone deve ter pelo menos 8 dígitos').regex(
-    /^(\+41|0041|\+55|0055|\(\d{2}\)|\d{2}|\d{1,4})[0-9\s\-\(\)]{6,15}$/,
+    /^(\+41|0041|\+55|0055|\(\d{2}\)|\d{2}|\d{1,4})[0-9\s\-()]{6,15}$/,
     'Formato de telefone inválido (aceita Brasil, Suíça e outros formatos internacionais)'
   ),
   email: z.string().min(1, 'Email é obrigatório').email('Email inválido'),
@@ -94,11 +94,11 @@ export default function PublicForm() {
         }
 
         setRestaurantInfo(data);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Error:', error);
         toast({
           title: t('publicForm.error'),
-          description: error.message || t('publicForm.unexpectedError'),
+          description: error instanceof Error ? error.message : t('publicForm.unexpectedError'),
           variant: "destructive"
         });
         navigate('/');
@@ -169,11 +169,11 @@ export default function PublicForm() {
       localStorage.setItem(`redeemed_${qrCode}`, 'true');
       setIsRedeemed(true);
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error submitting form:', error);
       toast({
         title: t('publicForm.error'),
-        description: error.message || t('publicForm.cannotSave'),
+        description: error instanceof Error ? error.message : t('publicForm.cannotSave'),
         variant: "destructive"
       });
     } finally {

@@ -31,6 +31,7 @@ export const useContacts = () => {
     if (user) {
       fetchContacts();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const fetchContacts = async () => {
@@ -46,11 +47,12 @@ export const useContacts = () => {
 
       if (error) throw error;
       setContacts(data || []);
-    } catch (error: any) {
-      console.error('Error fetching contacts:', error);
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      console.error('Error fetching contacts:', err);
       toast({
         title: "Erro ao carregar contatos",
-        description: error.message || "Não foi possível carregar os contatos.",
+        description: err.message || "Não foi possível carregar os contatos.",
         variant: "destructive"
       });
     } finally {
@@ -80,13 +82,14 @@ export const useContacts = () => {
       });
 
       return { success: true, data };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
       toast({
         title: "Erro ao adicionar contato",
-        description: error.message || "Não foi possível adicionar o contato.",
+        description: err.message || "Não foi possível adicionar o contato.",
         variant: "destructive"
       });
-      return { success: false, error };
+      return { success: false, error: err };
     }
   };
 
@@ -114,13 +117,14 @@ export const useContacts = () => {
       });
 
       return { success: true, data };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
       toast({
         title: "Erro ao atualizar contato",
-        description: error.message || "Não foi possível atualizar o contato.",
+        description: err.message || "Não foi possível atualizar o contato.",
         variant: "destructive"
       });
-      return { success: false, error };
+      return { success: false, error: err };
     }
   };
 
@@ -143,13 +147,14 @@ export const useContacts = () => {
       });
 
       return { success: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
       toast({
         title: "Erro ao remover contato",
-        description: error.message || "Não foi possível remover o contato.",
+        description: err.message || "Não foi possível remover o contato.",
         variant: "destructive"
       });
-      return { success: false, error };
+      return { success: false, error: err };
     }
   };
 
@@ -190,13 +195,14 @@ export const useContacts = () => {
         description: t('contacts.exportSuccessDesc')
       });
       return { success: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
       toast({
         title: t('contacts.exportError'),
-        description: error.message || t('contacts.exportErrorDesc'),
+        description: err.message || t('contacts.exportErrorDesc'),
         variant: "destructive"
       });
-      return { success: false, error };
+      return { success: false, error: err };
     }
   };
 

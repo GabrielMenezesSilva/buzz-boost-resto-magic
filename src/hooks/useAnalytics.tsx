@@ -167,9 +167,9 @@ export function useAnalytics(timeRange: string = '30d') {
         recentActivity: recentActivity.slice(0, 5)
       });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error fetching analytics:', error);
-      setError(error);
+      setError(error instanceof Error ? error : new Error(String(error)));
     } finally {
       setIsLoading(false);
     }
@@ -177,6 +177,7 @@ export function useAnalytics(timeRange: string = '30d') {
 
   useEffect(() => {
     fetchAnalytics();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, timeRange]);
 
   return {

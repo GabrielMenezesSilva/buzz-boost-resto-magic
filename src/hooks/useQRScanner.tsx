@@ -65,18 +65,18 @@ export const useQRScanner = ({ onScan, onError }: UseQRScannerProps) => {
         description: "Aponte a câmera para um QR code para escanear."
       });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error starting QR scanner:', error);
       setHasPermission(false);
       setIsScanning(false);
 
       if (onError) {
-        onError(error);
+        onError(error instanceof Error ? error : new Error(String(error)));
       }
 
       toast({
         title: "Erro ao acessar câmera",
-        description: error.message || "Não foi possível acessar a câmera. Verifique as permissões.",
+        description: error instanceof Error ? error.message : "Não foi possível acessar a câmera. Verifique as permissões.",
         variant: "destructive"
       });
     }

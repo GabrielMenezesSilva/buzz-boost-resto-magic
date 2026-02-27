@@ -60,7 +60,7 @@ export function AppHeader() {
     ];
 
     // Navigation for authenticated users
-    const authenticatedNavigation: any[] = [
+    const authenticatedNavigation = [
         { name: t('nav.dashboard'), href: '/dashboard', icon: LayoutDashboard },
         {
             name: t('nav.stockManagement'),
@@ -118,7 +118,7 @@ export function AppHeader() {
                             const Icon = item.icon;
 
                             if (item.items) {
-                                const isAnyActive = item.items.some((subItem: any) => isActive(subItem.href));
+                                const isAnyActive = item.items.some((subItem) => isActive(subItem.href));
 
                                 return (
                                     <DropdownMenu key={item.name}>
@@ -136,7 +136,7 @@ export function AppHeader() {
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="start" className="w-48 z-50">
-                                            {item.items.map((subItem: any) => {
+                                            {item.items.map((subItem) => {
                                                 const SubIcon = subItem.icon;
                                                 const subActive = isActive(subItem.href);
                                                 return (
@@ -295,7 +295,7 @@ export function AppHeader() {
                                             <span>{item.name}</span>
                                         </div>
                                         <div className="pl-11 space-y-1">
-                                            {item.items.map((subItem: any) => {
+                                            {item.items.map((subItem) => {
                                                 const SubIcon = subItem.icon;
                                                 const subActive = isActive(subItem.href);
                                                 return (

@@ -46,6 +46,7 @@ export const useDashboardData = () => {
     if (user) {
       fetchDashboardData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const fetchDashboardData = async () => {
@@ -84,10 +85,11 @@ export const useDashboardData = () => {
       setRecentContacts(recentContactsDataRes.data || []);
       setRecentCampaigns(recentCampaignsDataRes.data || []);
 
-    } catch (error: any) {
-      console.error('Error fetching dashboard data:', error);
-      setError(error);
-      toast.error('Erro ao carregar dados do painel', { description: error.message });
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      console.error('Error fetching dashboard data:', err);
+      setError(err);
+      toast.error('Erro ao carregar dados do painel', { description: err.message });
     } finally {
       setLoading(false);
     }

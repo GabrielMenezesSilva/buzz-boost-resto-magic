@@ -3,7 +3,7 @@ import { Float, Environment } from "@react-three/drei";
 import { useMemo, useRef, Suspense } from "react";
 import * as THREE from "three";
 
-function Particle({ position, scale, color, speed }: any) {
+function Particle({ position, scale, color, speed }: { position: [number, number, number], scale: number, color: string, speed: number }) {
     const meshRef = useRef<THREE.Mesh>(null);
 
     useFrame((state) => {

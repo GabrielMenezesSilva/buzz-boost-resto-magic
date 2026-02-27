@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const supabaseDb = supabase as any;
 import { useAuth } from '@/hooks/useAuth';
 import { PosSession } from '@/types/pos';
@@ -36,7 +37,7 @@ export const usePosSession = () => {
         mutationFn: async (openingBalance: number) => {
             if (!user) throw new Error('Not authenticated');
 
-            const { data, error } = await supabase
+            const { data, error } = await supabaseDb
                 .from('pos_sessions')
                 .insert([{
                     user_id: user.id,
@@ -62,7 +63,7 @@ export const usePosSession = () => {
         mutationFn: async ({ id, closingBalance }: { id: string; closingBalance: number }) => {
             if (!user) throw new Error('Not authenticated');
 
-            const { data, error } = await supabase
+            const { data, error } = await supabaseDb
                 .from('pos_sessions')
                 .update({
                     status: 'closed',

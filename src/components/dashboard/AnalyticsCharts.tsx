@@ -6,7 +6,7 @@ const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8dd1e1'];
 
 interface AnalyticsChartsProps {
     data: {
-        sentTrend: any[];
+        sentTrend: { date: string; sent: number; delivered: number }[];
         campaignsByType: { type: string; count: number }[];
     };
 }

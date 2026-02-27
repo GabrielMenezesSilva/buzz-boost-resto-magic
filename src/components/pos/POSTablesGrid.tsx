@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 
 interface POSTablesGridProps {
     t: (key: string) => string;
-    tables: any[];
+    tables: { id: string; name: string; status: string; capacity: number;[key: string]: unknown }[];
     selectedTable: string | null;
     setSelectedTable: (id: string | null) => void;
     setActiveTab: (tab: 'products' | 'orders' | 'tables') => void;

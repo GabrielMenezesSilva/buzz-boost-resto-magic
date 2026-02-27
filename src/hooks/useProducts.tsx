@@ -117,7 +117,7 @@ export function useProducts() {
             const newStock = Number(prod?.current_stock || 0) + Number(amount);
 
             // 2. Update stock & expiry/batch if provided
-            const updatePayload: any = { current_stock: newStock };
+            const updatePayload: Record<string, unknown> = { current_stock: newStock };
             if (expiryDate) updatePayload.expiry_date = expiryDate;
             if (batch) updatePayload.sku = batch; // Saving batch in SKU column for now
 

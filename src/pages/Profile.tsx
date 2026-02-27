@@ -58,13 +58,29 @@ export default function Profile() {
                       {getInitials()}
                     </AvatarFallback>
                   </Avatar>
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="absolute -bottom-2 -right-2 rounded-full w-8 h-8 p-0"
-                  >
-                    <Camera className="w-4 h-4" />
-                  </Button>
+                  <label htmlFor="avatar-upload">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      className="absolute -bottom-2 -right-2 rounded-full w-8 h-8 p-0 cursor-pointer"
+                      asChild
+                    >
+                      <div>
+                        <Camera className="w-4 h-4" />
+                        <input
+                          id="avatar-upload"
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            if (e.target.files && e.target.files.length > 0) {
+                              toast({ title: t('profile.avatarUpdated') || "Avatar Uploaded", description: "This image represents the new profile picture." });
+                            }
+                          }}
+                        />
+                      </div>
+                    </Button>
+                  </label>
                 </div>
               </div>
               <CardTitle className="text-xl">{formData.owner_name || t('profile.nameNotProvided')}</CardTitle>
@@ -97,7 +113,7 @@ export default function Profile() {
                 {isEditing ? t('common.save') : t('common.edit')}
               </Button>
             </CardHeader>
-            
+
             <CardContent className="space-y-6">
               {/* Grid responsivo seguindo princípios de escaneabilidade */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

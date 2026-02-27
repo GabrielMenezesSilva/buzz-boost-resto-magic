@@ -48,14 +48,14 @@ export default function PrintQR() {
                     window.print();
                 }, 1000);
 
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error(err);
-                setError(err.message);
+                setError(err instanceof Error ? err.message : String(err));
             }
         };
 
         loadPrintData();
-    }, [qrCode]);
+    }, [qrCode, t]);
 
     if (error) {
         return <div className="p-12 text-center text-red-500">{error}</div>;

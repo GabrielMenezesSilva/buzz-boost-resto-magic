@@ -4,11 +4,11 @@ import { Badge } from "@/components/ui/badge";
 
 interface POSProductsGridProps {
     t: (key: string) => string;
-    categories: any[];
+    categories: { id: string; name: string; color?: string; icon?: string;[key: string]: unknown }[];
     selectedCategory: string | null;
     setSelectedCategory: (id: string | null) => void;
-    filteredProducts: any[];
-    handleProductClick: (product: any) => void;
+    filteredProducts: { id: string; name: string; sell_price: number; image_url?: string; current_stock: number; min_stock: number; category?: { icon?: string;[key: string]: unknown };[key: string]: unknown }[];
+    handleProductClick: (product: { id: string; name: string; sell_price: number; image_url?: string; current_stock: number; min_stock: number; category?: { icon?: string;[key: string]: unknown };[key: string]: unknown }) => void;
 }
 
 export function POSProductsGrid({
@@ -57,7 +57,7 @@ export function POSProductsGrid({
                                 {product.image_url ? (
                                     <img src={product.image_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                 ) : (
-                                    <span className="text-4xl">{(product.category as any)?.icon || '🍽️'}</span>
+                                    <span className="text-4xl">{product.category?.icon || '🍽️'}</span>
                                 )}
                                 {product.current_stock <= product.min_stock && (
                                     <Badge variant="destructive" className="absolute top-2 right-2 text-[10px] px-1.5 py-0 h-4 uppercase">
@@ -76,7 +76,7 @@ export function POSProductsGrid({
                     {filteredProducts.length === 0 && (
                         <div className="col-span-full py-12 flex flex-col items-center justify-center text-muted-foreground">
                             <div className="w-10 h-10 rounded-full flex items-center justify-center mb-2" style={{ backgroundColor: `${categories.find(c => c.id === selectedCategory)?.color || '#ccc'}20`, color: categories.find(c => c.id === selectedCategory)?.color || '#ccc' }}>
-                                <span className="text-xl">{(categories.find(c => c.id === selectedCategory) as any)?.icon || '🏷️'}</span>
+                                <span className="text-xl">{(categories.find(c => c.id === selectedCategory))?.icon || '🏷️'}</span>
                             </div>
                             <p>{t('pos.noProducts')}</p>
                         </div>

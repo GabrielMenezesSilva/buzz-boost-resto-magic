@@ -27,7 +27,7 @@ export default function Tables() {
     const [isAddOpen, setIsAddOpen] = useState(false);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [tableToDelete, setTableToDelete] = useState<string | null>(null);
-    const [selectedTable, setSelectedTable] = useState<any>(null);
+    const [selectedTable, setSelectedTable] = useState<{ id: string; name: string; capacity?: number } | null>(null);
 
     const [formData, setFormData] = useState({
         name: "",
@@ -57,7 +57,7 @@ export default function Tables() {
         setIsEditOpen(false);
     };
 
-    const openEdit = (table: any) => {
+    const openEdit = (table: { id: string; name: string; capacity?: number }) => {
         setSelectedTable(table);
         setFormData({ name: table.name, capacity: table.capacity || 4 });
         setIsEditOpen(true);

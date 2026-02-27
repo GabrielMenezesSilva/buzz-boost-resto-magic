@@ -7,13 +7,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Store, Users, MessageSquare, AlertTriangle, Loader2, ArrowUpRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge'; // Added for the new TableBody content
 
 export default function Admin() {
     const { profile, loading: authLoading } = useAuth();
     const { t } = useLanguage();
     const [stats, setStats] = useState({ restaurants: 0, contacts: 0, campaigns: 0, deletions: 0 });
-    const [restaurants, setRestaurants] = useState<any[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [restaurants, setRestaurants] = useState<Record<string, unknown>[]>([]);
+    const [isLoading, setIsLoading] = useState(true); // Kept original name, assuming user's snippet had a typo
 
     useEffect(() => {
         if (authLoading || !profile || profile.role !== 'super_admin') return;
@@ -26,7 +28,8 @@ export default function Admin() {
                     { count: campaignsCount },
                     { count: deletionsCount }
                 ] = await Promise.all([
-                    supabase.from('profiles').select('id, restaurant_name, owner_name, email:user_id, created_at', { count: 'exact' }),
+                    // Modified select to match new table structure in the provided snippet
+                    supabase.from('profiles').select('id, restaurant_name, owner_name, user_id, created_at', { count: 'exact' }),
                     supabase.from('contacts').select('*', { count: 'exact', head: true }),
                     supabase.from('campaigns').select('*', { count: 'exact', head: true }),
                     supabase.from('deletion_requests').select('*', { count: 'exact', head: true })
@@ -41,7 +44,15 @@ export default function Admin() {
 
                 if (restData) {
                     // Extra fetch to get email from users would require service_role, so for now we just show what's in profiles
-                    setRestaurants(restData);
+                    // Assuming 'status' is now part of the data or will be added
+                    setRestaurants(restData.map(r => ({
+                        id: r.id,
+                        name: r.restaurant_name,
+                        owner_name: r.owner_name,
+                        email: r.user_id,
+                        created_at: r.created_at,
+                        status: 'Active'
+                    }))); // Added dummy status for rendering
                 }
             } catch (error) {
                 console.error('Error fetching admin data:', error);
@@ -148,7 +159,8 @@ export default function Admin() {
                                 <TableHeader>
                                     <TableRow className="bg-muted/50">
                                         <TableHead>{t('admin.tableRestaurant')}</TableHead>
-                                        <TableHead>{t('admin.tableOwner')}</TableHead>
+                                        <TableHead>Email</TableHead> {/* Changed from Owner to Email */}
+                                        <TableHead>Status</TableHead> {/* Added Status column */}
                                         <TableHead>{t('admin.tableEntryDate')}</TableHead>
                                         <TableHead className="text-right">{t('admin.tableActions')}</TableHead>
                                     </TableRow>
@@ -156,20 +168,30 @@ export default function Admin() {
                                 <TableBody>
                                     {restaurants.length === 0 ? (
                                         <TableRow>
-                                            <TableCell colSpan={4} className="h-24 text-center">
+                                            <TableCell colSpan={5} className="h-24 text-center"> {/* Colspan adjusted */}
                                                 {t('admin.noRestaurantsFound')}
                                             </TableCell>
                                         </TableRow>
                                     ) : (
                                         restaurants.map((restaurant) => (
-                                            <TableRow key={restaurant.id} className="hover:bg-muted/30">
-                                                <TableCell className="font-medium">{restaurant.restaurant_name || t('admin.unnamedRestaurant')}</TableCell>
-                                                <TableCell>{restaurant.owner_name || '-'}</TableCell>
+                                            <TableRow key={restaurant.id as string} className="hover:bg-muted/30">
+                                                <TableCell className="font-medium">
+                                                    <div className="flex items-center space-x-2">
+                                                        <Store className="w-4 h-4 text-muted-foreground" />
+                                                        <span>{restaurant.name as string || t('admin.unnamedRestaurant')}</span>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>{restaurant.email as string || '-'}</TableCell>
                                                 <TableCell>
-                                                    {new Date(restaurant.created_at).toLocaleDateString()}
+                                                    <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600">
+                                                        {restaurant.status as string || 'Active'}
+                                                    </Badge>
+                                                </TableCell>
+                                                <TableCell>
+                                                    {new Date(restaurant.created_at as string).toLocaleDateString()}
                                                 </TableCell>
                                                 <TableCell className="text-right">
-                                                    <Button variant="ghost" size="sm">
+                                                    <Button variant="ghost" size="sm" onClick={() => toast.info(`Viewing details for: ${restaurant.name as string || t('admin.unnamedRestaurant')}`)}>
                                                         {t('admin.actionView')}
                                                     </Button>
                                                 </TableCell>

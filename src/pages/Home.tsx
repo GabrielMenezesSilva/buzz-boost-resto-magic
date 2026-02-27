@@ -8,11 +8,11 @@ import { FeaturesGrid } from '@/components/home/FeaturesGrid';
 import { QrCode, MessageSquare, Layers, TrendingUp, Zap, Shield, Smartphone, Server, Store, ShoppingBag, Target, ArrowRight, CheckCircle2, Activity, Bell, Search, DollarSign, Users, MenuSquare } from 'lucide-react';
 import restaurantHero from '@/assets/restaurant-hero.jpg';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import HeroCanvas from '@/components/3d/HeroCanvas';
 import PhoneCanvas from '@/components/3d/PhoneCanvas';
 
-const FadeIn = ({ children, delay = 0, direction = 'up' }: any) => {
+const FadeIn = ({ children, delay = 0, direction = 'up' }: { children: React.ReactNode, delay?: number, direction?: string }) => {
   const directions = {
     up: { y: 40, x: 0 },
     down: { y: -40, x: 0 },
@@ -32,7 +32,38 @@ const FadeIn = ({ children, delay = 0, direction = 'up' }: any) => {
 };
 
 export default function Home() {
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
+  const [activeSection, setActiveSection] = useState('hero');
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    }, { threshold: 0.5 }); // Adjust threshold as needed
+
+    // Observe sections by their IDs
+    const sections = ['hero-section', 'features-grid-section', 'phone-trigger-section']; // Example IDs, adjust based on your actual section IDs
+    sections.forEach(id => {
+      const element = document.getElementById(id);
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    return () => {
+      sections.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          observer.unobserve(element);
+        }
+      });
+      observer.disconnect();
+    };
+  }, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
+
   const targetRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: targetRef,
@@ -215,8 +246,8 @@ export default function Home() {
                   ))}
                 </ul>
                 <div className="pt-4">
-                  <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg rounded-full h-14 px-8 border-none">
-                    {t('home.showcase.button')}
+                  <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg rounded-full h-14 px-8 border-none">
+                    <Link to="/auth">{t('home.showcase.button')}</Link>
                   </Button>
                 </div>
               </div>

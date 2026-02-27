@@ -19,20 +19,22 @@ import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { toast } from "sonner";
 
 export default function Orders() {
     const { user } = useAuth();
     const { t, language } = useLanguage();
     const [searchTerm, setSearchTerm] = useState("");
-    const [selectedOrder, setSelectedOrder] = useState<any>(null);
+    const [daysFilter, setDaysFilter] = useState<number | null>(7);
+    const [selectedOrder, setSelectedOrder] = useState<Record<string, unknown> | null>(null);
     const dateLocale = language === 'pt' ? ptBR : enUS;
 
     // Fetch Completed Orders
     const { data: orders = [], isLoading } = useQuery({
-        queryKey: ['orderHistory', user?.id],
+        queryKey: ['orderHistory', user?.id, daysFilter],
         queryFn: async () => {
             if (!user) return [];
-            const { data, error } = await supabase
+            let query = supabase
                 .from('orders')
                 .select(`
                     *,
@@ -43,6 +45,14 @@ export default function Orders() {
                 `)
                 .eq('user_id', user.id)
                 .order('created_at', { ascending: false });
+
+            if (daysFilter) {
+                const date = new Date();
+                date.setDate(date.getDate() - daysFilter);
+                query = query.gte('created_at', date.toISOString());
+            }
+
+            const { data, error } = await query;
 
             if (error) throw error;
             return data;
@@ -90,7 +100,11 @@ export default function Orders() {
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <Button variant="outline" className="w-full sm:w-auto">
+                    <Button
+                        variant={daysFilter === 7 ? "default" : "outline"}
+                        className="w-full sm:w-auto"
+                        onClick={() => setDaysFilter(daysFilter === 7 ? null : 7)}
+                    >
                         <Calendar className="w-4 h-4 mr-2" />
                         {t('orders.last7days')}
                     </Button>
@@ -168,8 +182,8 @@ export default function Orders() {
                                     <span>{t('orders.qtdItem')}</span>
                                     <span>{t('orders.currency')}</span>
                                 </div>
-                                {selectedOrder.order_items?.map((item: any) => (
-                                    <div key={item.id} className="flex justify-between">
+                                {(selectedOrder.order_items as Array<Record<string, unknown>>)?.map((item: Record<string, unknown>) => (
+                                    <div key={item.id as string} className="flex justify-between">
                                         <span>{item.quantity}x {item.product_name}</span>
                                         <span>{Number(item.subtotal || 0).toFixed(2).replace('.', ',')}</span>
                                     </div>

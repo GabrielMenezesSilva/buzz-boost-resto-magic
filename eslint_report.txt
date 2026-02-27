@@ -1,0 +1,152 @@
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/components/3d/HeroCanvas.tsx[24m[0m
+[0m  [2m6:54[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/components/pos/POSHeader.tsx[24m[0m
+[0m   [2m7:11[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m   [2m8:14[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m   [2m9:13[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m12:19[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/components/pos/POSProductsGrid.tsx[24m[0m
+[0m   [2m7:17[22m   [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m10:23[22m   [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m11:35[22m   [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m60:86[22m   [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m79:112[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/components/pos/POSTablesGrid.tsx[24m[0m
+[0m  [2m5:13[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/components/templates/TemplateForm.tsx[24m[0m
+[0m  [2m12:14[22m  [33mwarning[39m  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  [2mreact-refresh/only-export-components[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/components/ui/badge.tsx[24m[0m
+[0m  [2m36:17[22m  [33mwarning[39m  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  [2mreact-refresh/only-export-components[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/components/ui/button.tsx[24m[0m
+[0m  [2m56:18[22m  [33mwarning[39m  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  [2mreact-refresh/only-export-components[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/components/ui/command.tsx[24m[0m
+[0m  [2m24:11[22m  [33mwarning[39m  An interface declaring no members is equivalent to its supertype  [2m@typescript-eslint/no-empty-object-type[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/components/ui/form.tsx[24m[0m
+[0m  [2m168:3[22m  [33mwarning[39m  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  [2mreact-refresh/only-export-components[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/components/ui/navigation-menu.tsx[24m[0m
+[0m  [2m119:3[22m  [33mwarning[39m  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  [2mreact-refresh/only-export-components[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/components/ui/sidebar.tsx[24m[0m
+[0m  [2m760:3[22m  [33mwarning[39m  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  [2mreact-refresh/only-export-components[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/components/ui/sonner.tsx[24m[0m
+[0m  [2m29:19[22m  [33mwarning[39m  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  [2mreact-refresh/only-export-components[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/components/ui/textarea.tsx[24m[0m
+[0m  [2m5:18[22m  [33mwarning[39m  An interface declaring no members is equivalent to its supertype  [2m@typescript-eslint/no-empty-object-type[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/components/ui/toggle.tsx[24m[0m
+[0m  [2m43:18[22m  [33mwarning[39m  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  [2mreact-refresh/only-export-components[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/contexts/LanguageContext.tsx[24m[0m
+[0m  [2m19:38[22m  [33mwarning[39m  Unexpected any. Specify a different type                                                                                        [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m55:17[22m  [33mwarning[39m  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  [2mreact-refresh/only-export-components[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/hooks/useAnalytics.tsx[24m[0m
+[0m  [2m170:21[22m  [33mwarning[39m  Unexpected any. Specify a different type                                                                           [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m180:6[22m   [33mwarning[39m  React Hook useEffect has a missing dependency: 'fetchAnalytics'. Either include it or remove the dependency array  [2mreact-hooks/exhaustive-deps[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/hooks/useAuth.tsx[24m[0m
+[0m   [2m20:108[22m  [33mwarning[39m  Unexpected any. Specify a different type                                                                                        [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m   [2m21:65[22m   [33mwarning[39m  Unexpected any. Specify a different type                                                                                        [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m125:21[22m   [33mwarning[39m  Unexpected any. Specify a different type                                                                                        [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m153:21[22m   [33mwarning[39m  Unexpected any. Specify a different type                                                                                        [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m192:14[22m   [33mwarning[39m  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  [2mreact-refresh/only-export-components[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/hooks/useContacts.tsx[24m[0m
+[0m   [2m34:6[22m   [33mwarning[39m  React Hook useEffect has a missing dependency: 'fetchContacts'. Either include it or remove the dependency array  [2mreact-hooks/exhaustive-deps[22m[0m
+[0m   [2m49:21[22m  [33mwarning[39m  Unexpected any. Specify a different type                                                                          [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m   [2m83:21[22m  [33mwarning[39m  Unexpected any. Specify a different type                                                                          [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m117:21[22m  [33mwarning[39m  Unexpected any. Specify a different type                                                                          [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m146:21[22m  [33mwarning[39m  Unexpected any. Specify a different type                                                                          [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m193:21[22m  [33mwarning[39m  Unexpected any. Specify a different type                                                                          [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/hooks/useDashboardData.tsx[24m[0m
+[0m  [2m49:6[22m   [33mwarning[39m  React Hook useEffect has a missing dependency: 'fetchDashboardData'. Either include it or remove the dependency array  [2mreact-hooks/exhaustive-deps[22m[0m
+[0m  [2m87:21[22m  [33mwarning[39m  Unexpected any. Specify a different type                                                                               [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/hooks/useEmployees.tsx[24m[0m
+[0m  [2m3:32[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/hooks/useExpenseCategories.tsx[24m[0m
+[0m  [2m30:47[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m47:47[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m67:47[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m88:47[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/hooks/useOrders.tsx[24m[0m
+[0m    [2m3:32[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m   [2m32:24[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m211:24[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/hooks/usePosSession.tsx[24m[0m
+[0m  [2m3:32[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/hooks/useProducts.tsx[24m[0m
+[0m  [2m120:34[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/hooks/useQRScanner.tsx[24m[0m
+[0m  [2m68:21[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/hooks/useTables.tsx[24m[0m
+[0m  [2m3:32[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/hooks/useTemplates.tsx[24m[0m
+[0m  [2m144:6[22m  [33mwarning[39m  React Hook useEffect has a missing dependency: 'fetchTemplates'. Either include it or remove the dependency array  [2mreact-hooks/exhaustive-deps[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/lib/logger.ts[24m[0m
+[0m  [2m11:58[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m28:39[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m29:39[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m30:46[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m30:61[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m31:40[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/pages/Employees.tsx[24m[0m
+[0m  [2m39:62[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m89:28[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/pages/Home.tsx[24m[0m
+[0m  [2m15:60[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/pages/POS.tsx[24m[0m
+[0m  [2m47:42[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/pages/Plans.tsx[24m[0m
+[0m  [2m10:50[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/pages/PrintQR.tsx[24m[0m
+[0m  [2m51:27[22m  [33mwarning[39m  Unexpected any. Specify a different type                                                              [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m58:8[22m   [33mwarning[39m  React Hook useEffect has a missing dependency: 't'. Either include it or remove the dependency array  [2mreact-hooks/exhaustive-deps[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/pages/PublicForm.tsx[24m[0m
+[0m   [2m20:60[22m  [33mwarning[39m  Unnecessary escape character: \(          [2mno-useless-escape[22m[0m
+[0m   [2m20:62[22m  [33mwarning[39m  Unnecessary escape character: \)          [2mno-useless-escape[22m[0m
+[0m   [2m97:23[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m172:21[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/pages/QRForm.tsx[24m[0m
+[0m  [2m201:21[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/src/pages/Tables.tsx[24m[0m
+[0m  [2m30:56[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m60:30[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/tailwind.config.ts[24m[0m
+[0m  [2m119:12[22m  [33mwarning[39m  A `require()` style import is forbidden  [2m@typescript-eslint/no-require-imports[22m[0m
+[0m[0m
+[0m[4m/Users/mrmenezes/Desktop/DD/buzz-boost-resto-magic/vitest.config.ts[24m[0m
+[0m  [2m7:26[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[33m[1m✖ 73 problems (0 errors, 73 warnings)[22m[39m[0m
+[0m[33m[1m[22m[39m[0m

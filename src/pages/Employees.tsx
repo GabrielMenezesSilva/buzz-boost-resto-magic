@@ -36,7 +36,7 @@ export default function Employees() {
     const { employees, isLoading, addEmployee, updateEmployee, deleteEmployee, generateDefaultOwner } = useEmployees();
     const [isAddOpen, setIsAddOpen] = useState(false);
     const [isEditOpen, setIsEditOpen] = useState(false);
-    const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
+    const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
     const [employeeToDelete, setEmployeeToDelete] = useState<string | null>(null);
 
     const ROLE_LABELS: Record<string, string> = {
@@ -86,7 +86,7 @@ export default function Employees() {
         setIsEditOpen(false);
     };
 
-    const openEdit = (emp: any) => {
+    const openEdit = (emp: Employee) => {
         setSelectedEmployee(emp);
         setFormData({ name: emp.name, role: emp.role, phone: emp.phone || "", pin: emp.pin || "" });
         setIsEditOpen(true);

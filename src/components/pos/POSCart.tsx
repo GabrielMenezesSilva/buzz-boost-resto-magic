@@ -6,16 +6,16 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface POSCartProps {
     t: (key: string) => string;
-    cartItems: any[];
+    cartItems: { product: { id: string; name: string; sell_price: number }; quantity: number }[];
     cartTotal: number;
     cartItemCount: number;
     selectedTable: string | null;
     setSelectedTable: (id: string | null) => void;
-    tables: any[];
+    tables: { id: string; name: string }[];
     updateQuantity: (id: string, quantity: number) => void;
     removeItem: (id: string) => void;
     clearCart: () => void;
-    processCheckout: any;
+    processCheckout: { isPending: boolean };
     handleCheckout: (method: 'cash' | 'credit' | 'pix' | 'none') => void;
 }
 

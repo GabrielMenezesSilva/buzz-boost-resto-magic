@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 import ptBR from '@/locales/pt-BR.json';
@@ -16,7 +17,7 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-const translations: Record<Language, any> = {
+const translations: Record<Language, Record<string, string>> = {
   pt: ptBR,
   en,
   fr,
