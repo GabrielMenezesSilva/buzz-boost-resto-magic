@@ -1,99 +1,46 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { InternationalPhoneInput } from "@/components/ui/international-phone-input";
-import { useQRScanner } from "@/hooks/useQRScanner";
-import { useContacts } from "@/hooks/useContacts";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
+import jsQR from "jsqr";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import {
-  QrCode,
-  Camera,
-  CameraOff,
-  User,
-  Mail,
-  Save,
-  ArrowLeft,
-  CheckCircle,
-  AlertCircle,
-  Plus,
-  X
-} from "lucide-react";
+import { QRScannerCard } from "@/components/qr/QRScannerCard";
+import { QRContactForm, ContactFormData } from "@/components/qr/QRContactForm";
+import { QRTipsCard } from "@/components/qr/QRTipsCard";
 
-interface ContactForm {
-  name: string;
-  phone: string;
-  email: string;
-  notes: string;
-  tags: string[];
-  country_code: string;
-}
-
-const QRForm = () => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const { addContact } = useContacts();
+export default function QRForm() {
   const { t } = useLanguage();
-  
-  const [scannedData, setScannedData] = useState<string>('');
-  const [contactForm, setContactForm] = useState<ContactForm>({
-    name: '',
-    phone: '',
-    email: '',
-    notes: '',
-    tags: [],
-    country_code: 'BR'
-  });
-  const [newTag, setNewTag] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const [isScanning, setIsScanning] = useState(false);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [scannedData, setScannedData] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleScan = (result: string) => {
-    setScannedData(result);
-    
-    // Try to parse QR code data
-    try {
-      const data = JSON.parse(result);
-      if (data.name || data.phone || data.email) {
-        setContactForm(prev => ({
-          ...prev,
-          name: data.name || '',
-          phone: data.phone || '',
-          email: data.email || '',
-          notes: data.notes || ''
-        }));
-      }
-    } catch {
-      // If not JSON, check if it looks like a phone number or email
-      if (result.includes('@')) {
-        setContactForm(prev => ({ ...prev, email: result }));
-      } else if (result.match(/[\d\s\-\+\(\)]+/)) {
-        setContactForm(prev => ({ ...prev, phone: result }));
-      } else {
-        setContactForm(prev => ({ ...prev, notes: `QR Code: ${result}` }));
-      }
-    }
-    
-    setShowForm(true);
-    
-    toast({
-      title: t('qrForm.qrScanned'),
-      description: t('qrForm.fillDataBelow'),
-      variant: "default"
-    });
-  };
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
-  const { videoRef, isScanning, hasPermission, toggleScanning } = useQRScanner({
-    onScan: handleScan,
-    onError: (error) => {
-      console.error('QR Scanner error:', error);
-    }
+  const [contactForm, setContactForm] = useState<ContactFormData>({
+    name: "",
+    phone: "",
+    email: "",
+    notes: "",
+    tags: [],
+    country_code: "BR"
   });
+
+  const [newTag, setNewTag] = useState("");
+
+  useEffect(() => {
+    return () => {
+      stopCamera();
+    };
+  }, []);
 
   const addTag = () => {
     if (newTag.trim() && !contactForm.tags.includes(newTag.trim())) {
@@ -101,7 +48,7 @@ const QRForm = () => {
         ...prev,
         tags: [...prev.tags, newTag.trim()]
       }));
-      setNewTag('');
+      setNewTag("");
     }
   };
 
@@ -112,68 +59,156 @@ const QRForm = () => {
     }));
   };
 
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" }
+      });
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.setAttribute("playsinline", "true");
+        videoRef.current.play();
+        streamRef.current = stream;
+        setHasPermission(true);
+        setIsScanning(true);
+        requestAnimationFrame(tick);
+      }
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+      setHasPermission(false);
+      toast.error(t('qrForm.cameraError'));
+    }
+  };
+
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    setIsScanning(false);
+  };
+
+  const toggleScanning = () => {
+    if (isScanning) {
+      stopCamera();
+    } else {
+      startCamera();
+    }
+  };
+
+  const tick = () => {
+    const video = videoRef.current;
+
+    if (video && video.readyState === video.HAVE_ENOUGH_DATA) {
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        const code = jsQR(imageData.data, imageData.width, imageData.height, {
+          inversionAttempts: "dontInvert",
+        });
+
+        if (code) {
+          toast.success(t('qrForm.qrReadSuccess'));
+          setScannedData(code.data);
+
+          try {
+            const parsedData = JSON.parse(code.data);
+            if (parsedData.phone) {
+              setContactForm(prev => ({
+                ...prev,
+                phone: parsedData.phone,
+                name: parsedData.name || prev.name,
+                email: parsedData.email || prev.email
+              }));
+            }
+          } catch (e) {
+            console.log("Not a JSON QR code, using raw data");
+            const phoneMatch = code.data.match(/\+?\d{10,15}/);
+            if (phoneMatch) {
+              setContactForm(prev => ({
+                ...prev,
+                phone: phoneMatch[0]
+              }));
+            }
+          }
+
+          setShowForm(true);
+          stopCamera();
+          return;
+        }
+      }
+    }
+
+    if (isScanning) {
+      requestAnimationFrame(tick);
+    }
+  };
+
+  const resetScanner = () => {
+    setScannedData("");
+    setShowForm(false);
+    setContactForm({
+      name: "",
+      phone: "",
+      email: "",
+      notes: "",
+      tags: [],
+      country_code: "BR"
+    });
+    if (!isScanning) {
+      startCamera();
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!contactForm.name || !contactForm.phone) {
-        toast({
-          title: t('qrForm.requiredFields'),
-          description: t('qrForm.namePhoneRequired'),
-          variant: "destructive"
-        });
+    if (!user) {
+      toast.error("User not authenticated");
       return;
     }
 
     setIsSubmitting(true);
 
-    const result = await addContact({
-      ...contactForm,
-      source: 'qr_scan'
-    });
+    try {
+      const { data, error } = await supabase
+        .from('contacts')
+        .insert([{
+          user_id: user.id,
+          name: contactForm.name,
+          phone: contactForm.phone,
+          email: contactForm.email || null,
+          notes: contactForm.notes || null,
+          tags: contactForm.tags.length > 0 ? contactForm.tags : null,
+          country_code: contactForm.country_code,
+          status: 'active',
+          source: 'qr_scan',
+          opt_in: true
+        }])
+        .select()
+        .single();
 
-    if (result.success) {
-      toast({
-        title: t('qrForm.contactAdded'),
-        description: `${contactForm.name} ${t('qrForm.contactAddedToList')}`,
-        variant: "default"
-      });
-      
-      // Reset form
-      setContactForm({
-        name: '',
-        phone: '',
-        email: '',
-        notes: '',
-        tags: [],
-        country_code: 'BR'
-      });
-      setScannedData('');
-      setShowForm(false);
-      
-      // Navigate to contacts or dashboard
-      navigate('/contacts');
+      if (error) throw error;
+
+      toast.success(t('qrForm.contactSaved'));
+      resetScanner();
+    } catch (error: any) {
+      console.error('Error saving contact:', error);
+      toast.error(error.message || t('qrForm.saveError'));
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setIsSubmitting(false);
-  };
-
-  const resetScanner = () => {
-    setScannedData('');
-    setShowForm(false);
-    setContactForm({
-      name: '',
-      phone: '',
-      email: '',
-      notes: '',
-      tags: [],
-      country_code: 'BR'
-    });
   };
 
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button variant="ghost" onClick={() => navigate('/dashboard')}>
@@ -189,249 +224,34 @@ const QRForm = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Scanner Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <QrCode className="w-5 h-5" />
-                {t('qrForm.cameraScanner')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Camera Preview */}
-              <div className="relative">
-                <video
-                  ref={videoRef}
-                  className="w-full aspect-square object-cover rounded-lg bg-muted"
-                  playsInline
-                  muted
-                />
-                
-                {!isScanning && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-muted rounded-lg">
-                    <div className="text-center">
-                      <Camera className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                      <p className="text-muted-foreground">
-                        {hasPermission === false 
-                          ? t('qrForm.permissionDenied')
-                          : t('qrForm.clickToStart')
-                        }
-                      </p>
-                    </div>
-                  </div>
-                )}
+          <div className="space-y-6">
+            <QRScannerCard
+              videoRef={videoRef}
+              isScanning={isScanning}
+              hasPermission={hasPermission}
+              toggleScanning={toggleScanning}
+              scannedData={scannedData}
+              showForm={showForm}
+              resetScanner={resetScanner}
+            />
+            <QRTipsCard />
+          </div>
 
-                {/* Scanning overlay */}
-                {isScanning && (
-                  <div className="absolute inset-4 border-2 border-primary border-dashed rounded-lg flex items-center justify-center">
-                    <div className="text-center text-white bg-black/50 p-2 rounded">
-                      <p className="text-sm">{t('qrForm.pointToQR')}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Scanner Controls */}
-              <div className="flex gap-3">
-                <Button
-                  onClick={toggleScanning}
-                  className="flex-1 flex items-center gap-2"
-                  variant={isScanning ? "destructive" : "default"}
-                >
-                  {isScanning ? (
-                    <>
-                      <CameraOff className="w-4 h-4" />
-                      {t('qrForm.stopScanner')}
-                    </>
-                  ) : (
-                    <>
-                      <Camera className="w-4 h-4" />
-                      {t('qrForm.startScanner')}
-                    </>
-                  )}
-                </Button>
-                
-                {(scannedData || showForm) && (
-                  <Button variant="outline" onClick={resetScanner}>
-                    {t('qrForm.reset')}
-                  </Button>
-                )}
-              </div>
-
-              {/* Scanned Data */}
-              {scannedData && (
-                <div className="p-3 bg-muted rounded-lg">
-                  <div className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-sm">{t('qrForm.qrDetected')}</p>
-                      <p className="text-sm text-muted-foreground break-all">
-                        {scannedData}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Instructions */}
-              <div className="text-sm text-muted-foreground space-y-2">
-                <p className="flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4" />
-                  {t('qrForm.positionQR')}
-                </p>
-                <p>• {t('qrForm.contactDataFilled')}</p>
-                <p>• {t('qrForm.otherQRSaved')}</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Contact Form */}
-          <Card className={showForm ? '' : 'opacity-50'}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="w-5 h-5" />
-                {t('qrForm.contactData')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {showForm ? (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">{t('qrForm.nameRequired')}</Label>
-                    <Input
-                      id="name"
-                      value={contactForm.name}
-                      onChange={(e) => setContactForm(prev => ({ ...prev, name: e.target.value }))}
-                      placeholder={t('qrForm.customerName')}
-                      required
-                    />
-                  </div>
-
-                  <InternationalPhoneInput
-                    id="phone"
-                    value={contactForm.phone}
-                    onChange={(value, country) => setContactForm(prev => ({ 
-                      ...prev, 
-                      phone: value,
-                      country_code: country.code
-                    }))}
-                    label={t('qrForm.phone')}
-                    defaultCountry={contactForm.country_code}
-                    required
-                  />
-
-                  <div className="space-y-2">
-                    <Label htmlFor="email">{t('qrForm.email')}</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="email"
-                        type="email"
-                        value={contactForm.email}
-                        onChange={(e) => setContactForm(prev => ({ ...prev, email: e.target.value }))}
-                        placeholder="email@exemplo.com"
-                        className="pl-10"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>{t('qrForm.tags')}</Label>
-                    <div className="flex gap-2 mb-2">
-                      <Input
-                        value={newTag}
-                        onChange={(e) => setNewTag(e.target.value)}
-                        placeholder={t('qrForm.addTag')}
-                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-                      />
-                      <Button type="button" onClick={addTag} size="sm">
-                        <Plus className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                      {contactForm.tags.map((tag, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
-                          {tag}
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="ml-1 h-auto p-0"
-                            onClick={() => removeTag(tag)}
-                          >
-                            <X className="w-3 h-3" />
-                          </Button>
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="notes">{t('qrForm.notes')}</Label>
-                    <Textarea
-                      id="notes"
-                      value={contactForm.notes}
-                      onChange={(e) => setContactForm(prev => ({ ...prev, notes: e.target.value }))}
-                      placeholder={t('qrForm.customerNotes')}
-                      rows={3}
-                    />
-                  </div>
-
-                  <Button type="submit" className="w-full" disabled={isSubmitting}>
-                    {isSubmitting ? (
-                      t('qrForm.saving')
-                    ) : (
-                      <>
-                        <Save className="w-4 h-4 mr-2" />
-                        {t('qrForm.saveContact')}
-                      </>
-                    )}
-                  </Button>
-                </form>
-              ) : (
-                <div className="text-center py-12 text-muted-foreground">
-                  <QrCode className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                  <p>{t('qrForm.scanToFill')}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <div>
+            <QRContactForm
+              showForm={showForm}
+              contactForm={contactForm}
+              setContactForm={setContactForm}
+              newTag={newTag}
+              setNewTag={setNewTag}
+              isSubmitting={isSubmitting}
+              addTag={addTag}
+              removeTag={removeTag}
+              handleSubmit={handleSubmit}
+            />
+          </div>
         </div>
-
-        {/* Tips */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('qrForm.scanningTips')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-              <div className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
-                <div>
-                  <p className="font-medium">{t('qrForm.goodLighting')}</p>
-                  <p className="text-muted-foreground">{t('qrForm.useWellLit')}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
-                <div>
-                  <p className="font-medium">{t('qrForm.adequateDistance')}</p>
-                  <p className="text-muted-foreground">{t('qrForm.maintain10to30cm')}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
-                <div>
-                  <p className="font-medium">{t('qrForm.cleanQR')}</p>
-                  <p className="text-muted-foreground">{t('qrForm.ensureReadable')}</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
-};
-
-export default QRForm;
+}

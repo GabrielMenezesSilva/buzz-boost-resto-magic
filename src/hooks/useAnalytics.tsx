@@ -13,7 +13,7 @@ interface AnalyticsData {
   sentTrend: { date: string; sent: number; delivered: number }[];
   recentActivity: {
     id: string;
-    type: string;
+    type: 'campaign' | 'contact';
     description: string;
     date: string;
   }[];

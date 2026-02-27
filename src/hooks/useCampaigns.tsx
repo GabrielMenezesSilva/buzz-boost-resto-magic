@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { MessageSquare, Send, Target, BarChart3 } from 'lucide-react';
 import { useAuth } from './useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Json } from '@/integrations/supabase/types';
 
 interface Campaign {
   id: string;
@@ -24,13 +25,13 @@ interface CreateCampaignData {
   message: string;
   campaign_type: string;
   scheduled_at?: string;
-  filters?: any;
+  filters?: Json;
 }
 
 interface CampaignStats {
   title: string;
   value: string;
-  icon: React.ComponentType<any>;
+  icon: React.ElementType;
 }
 
 export function useCampaigns() {
@@ -40,9 +41,9 @@ export function useCampaigns() {
   const { t } = useLanguage();
 
   // Fetch campaigns
-  const fetchCampaigns = async () => {
+  const fetchCampaigns = useCallback(async () => {
     if (!user) return;
-    
+
     setIsLoading(true);
     try {
       const { data, error } = await supabase
@@ -59,7 +60,7 @@ export function useCampaigns() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user]);
 
   // Create campaign
   const createCampaign = async (campaignData: CreateCampaignData) => {
@@ -72,7 +73,7 @@ export function useCampaigns() {
         message: campaignData.message,
         campaign_type: campaignData.campaign_type,
         scheduled_at: campaignData.scheduled_at || null,
-        filters: campaignData.filters || {},
+        filters: campaignData.filters || null,
         status: 'draft',
         user_id: user.id
       }])
@@ -80,7 +81,7 @@ export function useCampaigns() {
       .single();
 
     if (error) throw error;
-    
+
     // Refresh campaigns list
     await fetchCampaigns();
     return data;
@@ -97,7 +98,7 @@ export function useCampaigns() {
       .eq('user_id', user.id);
 
     if (error) throw error;
-    
+
     // Refresh campaigns list
     await fetchCampaigns();
   };
@@ -113,7 +114,7 @@ export function useCampaigns() {
       .eq('user_id', user.id);
 
     if (error) throw error;
-    
+
     // Refresh campaigns list
     await fetchCampaigns();
   };
@@ -127,7 +128,7 @@ export function useCampaigns() {
     });
 
     if (error) throw error;
-    
+
     // Refresh campaigns list to get updated status
     await fetchCampaigns();
     return data;
@@ -147,11 +148,11 @@ export function useCampaigns() {
     },
     {
       title: t('campaigns.stats.successRate'),
-      value: campaigns.length > 0 
+      value: campaigns.length > 0
         ? `${Math.round(
-            (campaigns.reduce((sum, c) => sum + (c.successful_sends || 0), 0) / 
-             Math.max(campaigns.reduce((sum, c) => sum + (c.total_recipients || 0), 0), 1)) * 100
-          )}%`
+          (campaigns.reduce((sum, c) => sum + (c.successful_sends || 0), 0) /
+            Math.max(campaigns.reduce((sum, c) => sum + (c.total_recipients || 0), 0), 1)) * 100
+        )}%`
         : '0%',
       icon: Target
     },
@@ -165,7 +166,7 @@ export function useCampaigns() {
   // Load campaigns on mount and when user changes
   useEffect(() => {
     fetchCampaigns();
-  }, [user]);
+  }, [fetchCampaigns]);
 
   return {
     campaigns,

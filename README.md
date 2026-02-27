@@ -1,169 +1,90 @@
-# DopplerDine - Sistema de Marketing para Restaurantes
+# DopplerDine - Sistema Completo para Restaurantes 🍽️
 
-Sistema completo de marketing digital para restaurantes com geração de QR codes, coleta de contatos via formulários públicos, gestão de campanhas SMS e templates personalizáveis.
+Sistema all-in-one para restaurantes: marketing digital, geração de QR codes, coleta de contatos via formulários públicos, gestão de campanhas, analytics, controle de estoque (FEFO) e Ponto de Venda (POS) avançado operando totalmente na nuvem.
 
-## 🏗️ Arquitetura
+O projeto visa atingir um **estado da arte** impecável como plataforma multi-tenant segura para franquias e restaurantes independentes de alto padrão.
 
-**Frontend:** React + TypeScript + Vite + Tailwind CSS  
-**Backend:** Node.js + Express + Prisma + SQLite  
-**Autenticação:** JWT (JSON Web Tokens)  
-**SMS:** Integração com provedores SMS  
-**QR Codes:** Geração automática para coleta de contatos
+## 🏗️ Arquitetura e Stack
 
-## 🚀 Tecnologias
+Abaixo as tecnologias utilizadas na concepção do sistema (após refatoração para "Serverless" e BaaS):
 
-### Frontend
-- **React 18** com TypeScript
-- **Vite** para build rápido e desenvolvimento
-- **Tailwind CSS** para estilização
-- **shadcn/ui** componentes acessíveis
-- **React Router** para navegação
-- **Axios** para requisições HTTP
+**Frontend:** React 18 + Vite + TypeScript 
+**Styling:** Tailwind CSS + shadcn/ui + Framer Motion (para micro-animações)
+**State Management:** Zustand + React Query (TanStack) 
+**BaaS (Backend, Auth & Database):** Supabase (PostgreSQL 15) com Row Level Security (RLS)
+**Hosting & Deploy:** Lovable / Vercel
 
-### Backend
-- **Node.js** + **Express.js**
-- **Prisma ORM** + **SQLite**
-- **JWT** + **bcrypt**
-- **Twilio SMS** + **Resend Email**
-- **QR Code** generation
+Sustentamos um isolamento total de **Tenants** em nível de banco de dados (`auth.uid() = user_id`) assegurado por políticas estritas e auditadas internamente no Supabase.
 
-## 📦 Instalação
+---
 
-### 1. Clone o repositório
+## 🚀 Como Iniciar
+
+### 1. Clonando e Instalando
+
 ```bash
-git clone <YOUR_GIT_URL>
-cd <YOUR_PROJECT_NAME>
+git clone <URL_DO_REPOSITORIO>
+cd buzz-boost-resto-magic
+npm install
 ```
 
-### 2. Configure o Backend
+### 2. Variáveis de Ambiente
+O projeto não utiliza mais um backend isolado em Express. Tudo se conecta ao Supabase via chaves do cliente. Crie um arquivo no root chamado `.env`:
+
+```env
+VITE_SUPABASE_URL="https://sua_url_aqui.supabase.co"
+VITE_SUPABASE_ANON_KEY="sua_chave_anon_aqui"
+```
+
+### 3. Rodando Localmente
+
 ```bash
-cd backend
-npm install
-cp .env.example .env
-# Configure as variáveis no .env
-npm run db:generate
-npm run db:push
-npm run db:seed
 npm run dev
 ```
 
-### 3. Configure o Frontend
+Linter para verificação de padrões:
 ```bash
-# Em outro terminal, volte para a raiz
-cd ..
-npm install
-
-# Configure variáveis de ambiente
-cp .env.example .env
-# Edite o .env com: VITE_API_URL=http://localhost:3001/api
-
-npm run dev
+npm run lint
 ```
 
-## ⚙️ Configuração
+---
 
-### Backend (.env)
-```env
-DATABASE_URL="file:./dev.db"
-JWT_SECRET="your-super-secret-jwt-key"
-TWILIO_ACCOUNT_SID="your-twilio-sid"
-TWILIO_AUTH_TOKEN="your-twilio-token"
-TWILIO_PHONE_NUMBER="your-twilio-phone"
-RESEND_API_KEY="your-resend-key"
-PORT=3001
+## 📊 Módulos e Funcionalidades
+
+1. **POS (Point of Sale)**
+   Sessões robustas com múltiplos cartões/dinheiro, seleção de mesas visuais e grid otimizado e modularizado para alta performance em Tablets (Componentes: `POSCart`, `POSHeader`, `POSTablesGrid`, `POSProductsGrid`).
+2. **Dashboard & Analytics**
+   Dashboard refinado com métricas claras de performance, faturamento e ROI extraídas diretamente da base RLS de maneira segura.
+3. **QR Code Lead Gen (Smart Promo)**
+   Funcionalidade vital (QRForm e Public Form) que permite leitura instantânea na mesa do restaurante via web e a entrada do cliente para o funil CRM.
+4. **CRM & Campanhas SMS**
+   Gestão completa de templates e audiências (separadas por Tenant).
+5. **Estoque (FEFO)**
+   Registro e auditoria de movimentações baseada em *First Expired First Out*.
+
+---
+
+## 📁 Estrutura de Diretórios Refatorada
+
+```text
+src/
+ ├── components/     # UI Dinâmica (Botões, Layout, Tabelas, Dialogs via shadcn/ui)
+ │   ├── pos/        # Componentes particionados de vendas
+ │   ├── dashboard/  # Gráficos e Analytics isolados
+ │   ├── qr/         # Lógica isolada de escaneamento de QR
+ │   ├── templates/  # Edição de design e templates
+ │   └── ui/         # Base UI Componentes genéricos
+ ├── hooks/          # Acesso a banco Supabase e React Queries customizados (DDD-lite)
+ ├── pages/          # Rotas Container conectando hooks com os componentes (Smart/Dumb)
+ ├── contexts/       # Language, Auth, UI Theme
+ ├── lib/            # Utilitários compartihados gerais (como fetchers padrão)
+ └── integracoes/    # Subpastas preparadas para SDKs e integrações
 ```
 
-### Frontend (.env)
-```env
-VITE_API_URL=http://localhost:3001/api
-```
+## 🔒 Segurança (Auditoria Recente)
 
-## 🔧 Usuário de Teste
-
-Após executar o seed do backend:
-- **Email:** admin@dopplerdine.com
-- **Senha:** 123456
-
-## 📊 Funcionalidades
-
-- ✅ **Autenticação JWT**
-- ✅ **Gestão de Perfil do Restaurante**
-- ✅ **Captação de Contatos via QR Code**
-- ✅ **Criação e Envio de Campanhas SMS**
-- ✅ **Templates de Mensagens**
-- ✅ **Analytics e Dashboard**
-- ✅ **Integração Twilio SMS**
-- ✅ **Geração de QR Codes**
-
-## 🔗 API Endpoints
-
-### Auth
-- `POST /api/auth/register` - Registro
-- `POST /api/auth/login` - Login
-- `GET /api/auth/me` - Dados do usuário
-
-### Contatos
-- `GET /api/contacts` - Listar contatos
-- `POST /api/contacts` - Criar contato
-- `POST /api/contacts/qr/:qrCode` - Criar via QR
-
-### Campanhas
-- `GET /api/campaigns` - Listar campanhas
-- `POST /api/campaigns` - Criar campanha
-- `POST /api/campaigns/:id/send` - Enviar campanha
-
-### QR Code
-- `GET /api/qr/generate` - Gerar QR code
-- `GET /api/qr/verify/:qrCode` - Verificar QR
-
-## 🏃‍♂️ Scripts Disponíveis
-
-### Frontend
-```bash
-npm run dev          # Desenvolvimento
-npm run build        # Build para produção
-npm run preview      # Preview do build
-```
-
-### Backend
-```bash
-npm run dev          # Desenvolvimento
-npm start            # Produção
-npm run db:generate  # Gerar cliente Prisma
-npm run db:push      # Aplicar schema
-npm run db:studio    # Prisma Studio
-npm run db:seed      # Seed inicial
-```
-
-## 📁 Estrutura do Projeto
-
-```
-├── src/                 # Frontend React
-│   ├── components/      # Componentes UI
-│   ├── pages/          # Páginas da aplicação
-│   ├── hooks/          # Custom hooks
-│   └── services/       # API services (axios)
-├── backend/            # Backend Node.js
-│   ├── src/
-│   │   ├── routes/     # Rotas da API
-│   │   ├── middleware/ # Middlewares
-│   │   ├── services/   # Serviços (SMS, Email)
-│   │   └── utils/      # Utilitários
-│   └── prisma/         # Schema do banco
-```
-
-## 🚀 Deploy
-
-### Frontend
-Deploy automaticamente via [Lovable](https://lovable.dev)
-
-### Backend
-Pode ser deployado em qualquer plataforma Node.js:
-- Railway
-- Render
-- Heroku
-- VPS próprio
+- **RLS Habilitado:** Sim. O Banco isola 100% dos dados por Restaurante para tabelas de Vendas (Orders), Estoque (Stock Lots), Produtos e Contatos.`(auth.uid() = user_id)`.
+- Uso do schema público limitou e restringiu privilégios desnecessários, exceto leads e landing pages das lojas.
 
 ## 📝 Licença
-
-MIT License
+[MIT License](LICENSE)

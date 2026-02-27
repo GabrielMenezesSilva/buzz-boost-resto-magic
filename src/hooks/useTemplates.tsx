@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
-interface Template {
+export interface Template {
   id: string;
   name: string;
   message: string;
@@ -28,7 +28,7 @@ export function useTemplates() {
   // Fetch templates
   const fetchTemplates = async () => {
     if (!user) return;
-    
+
     setIsLoading(true);
     try {
       const { data, error } = await supabase
@@ -38,7 +38,7 @@ export function useTemplates() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      
+
       setTemplates((data || []).map(item => ({
         ...item,
         variables: Array.isArray(item.variables) ? item.variables.map(v => String(v)) : []
@@ -68,7 +68,7 @@ export function useTemplates() {
       .single();
 
     if (error) throw error;
-    
+
     await fetchTemplates();
     return data;
   };
@@ -84,7 +84,7 @@ export function useTemplates() {
       .eq('user_id', user.id);
 
     if (error) throw error;
-    
+
     await fetchTemplates();
   };
 
@@ -99,7 +99,7 @@ export function useTemplates() {
       .eq('user_id', user.id);
 
     if (error) throw error;
-    
+
     await fetchTemplates();
   };
 
@@ -108,13 +108,13 @@ export function useTemplates() {
     const regex = /\{\{(\w+)\}\}/g;
     const variables: string[] = [];
     let match;
-    
+
     while ((match = regex.exec(message)) !== null) {
       if (!variables.includes(match[1])) {
         variables.push(match[1]);
       }
     }
-    
+
     return variables;
   };
 
