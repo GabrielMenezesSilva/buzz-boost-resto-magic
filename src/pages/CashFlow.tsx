@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { formatCurrency } from "@/utils/currency";
 
 export default function CashFlow() {
     const { t, language } = useLanguage();
@@ -70,8 +71,114 @@ export default function CashFlow() {
         }
     };
 
+    const renderMetrics = () => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <Card className="bg-gradient-to-br from-card to-card/50 border shadow-sm">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">{t("cashflow.income")}</CardTitle>
+                    <ArrowUpCircle className="h-4 w-4 text-green-500" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold text-green-600">
+                        {formatCurrency(incomeTotal)}
+                    </div>
+                </CardContent>
+            </Card>
+            <Card className="bg-gradient-to-br from-card to-card/50 border shadow-sm">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">{t("cashflow.expense")}</CardTitle>
+                    <ArrowDownCircle className="h-4 w-4 text-red-500" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold text-red-600">
+                        {formatCurrency(expenseTotal)}
+                    </div>
+                </CardContent>
+            </Card>
+            <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 shadow-sm">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-sm font-medium text-primary">{t("cashflow.balance")}</CardTitle>
+                    <Wallet className="h-4 w-4 text-primary" />
+                </CardHeader>
+                <CardContent>
+                    <div className={`text-2xl font-bold ${balance >= 0 ? 'text-primary' : 'text-red-500'}`}>
+                        {formatCurrency(balance)}
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    );
+
+    const renderHistoryContent = () => {
+        if (isLoading) {
+            return <div className="py-8 text-center text-muted-foreground">{t("common.loading")}</div>;
+        }
+
+        if (entries.length === 0) {
+            return (
+                <div className="py-12 text-center flex flex-col items-center">
+                    <Wallet className="h-12 w-12 text-muted-foreground mb-4 opacity-20" />
+                    <p className="text-muted-foreground">{t("cashflow.empty")}</p>
+                </div>
+            );
+        }
+
+        return (
+            <div className="rounded-md border overflow-hidden">
+                <Table>
+                    <TableHeader>
+                        <TableRow className="bg-muted/50">
+                            <TableHead>{t("cashflow.colDate")}</TableHead>
+                            <TableHead>{t("cashflow.colDescription")}</TableHead>
+                            <TableHead>{t("cashflow.colCategory")}</TableHead>
+                            <TableHead className="text-right">{t("cashflow.colAmount")}</TableHead>
+                            <TableHead className="w-[50px]"></TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {entries.map((entry) => (
+                            <TableRow key={entry.id}>
+                                <TableCell className="font-medium">
+                                    {format(new Date(entry.entry_date), 'dd/MM/yyyy')}
+                                </TableCell>
+                                <TableCell>
+                                    <div className="flex flex-col">
+                                        <span>{entry.description}</span>
+                                        {entry.reference_type === 'order' && (
+                                            <span className="text-xs text-muted-foreground">{t("cashflow.orderRef")}{entry.reference_id?.split('-')[0]}</span>
+                                        )}
+                                    </div>
+                                </TableCell>
+                                <TableCell>
+                                    {entry.category ? (
+                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: `${entry.category.color}20`, color: entry.category.color || 'inherit' }}>
+                                            {entry.category.name}
+                                        </span>
+                                    ) : <span className="text-muted-foreground text-xs">-</span>}
+                                </TableCell>
+                                <TableCell className={`text-right font-semibold ${entry.type === 'income' ? 'text-green-600' : 'text-red-500'}`}>
+                                    {entry.type === 'income' ? '+' : '-'} {formatCurrency(Number(entry.amount))}
+                                </TableCell>
+                                <TableCell>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => {
+                                        if (window.confirm(t("common.confirmAction"))) {
+                                            deleteEntry.mutate(entry.id);
+                                        }
+                                    }}>
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
+        );
+    };
+
     return (
         <div className="container mx-auto p-4 md:p-8 md:pt-24 min-h-screen">
+            {/* Same header as before (lines 76-167 basically intact) */}
             <div className="flex justify-between items-center mb-6">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">{t("cashflow.title")}</h1>
@@ -165,41 +272,7 @@ export default function CashFlow() {
                 </Dialog>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <Card className="bg-gradient-to-br from-card to-card/50 border shadow-sm">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">{t("cashflow.income")}</CardTitle>
-                        <ArrowUpCircle className="h-4 w-4 text-green-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-green-600">
-                            {new Intl.NumberFormat(language === 'pt' ? 'pt-BR' : language, { style: 'currency', currency: language === 'pt' ? 'BRL' : language === 'en' ? 'USD' : 'EUR' }).format(incomeTotal)}
-                        </div>
-                    </CardContent>
-                </Card>
-                <Card className="bg-gradient-to-br from-card to-card/50 border shadow-sm">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">{t("cashflow.expense")}</CardTitle>
-                        <ArrowDownCircle className="h-4 w-4 text-red-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-red-600">
-                            {new Intl.NumberFormat(language === 'pt' ? 'pt-BR' : language, { style: 'currency', currency: language === 'pt' ? 'BRL' : language === 'en' ? 'USD' : 'EUR' }).format(expenseTotal)}
-                        </div>
-                    </CardContent>
-                </Card>
-                <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 shadow-sm">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium text-primary">{t("cashflow.balance")}</CardTitle>
-                        <Wallet className="h-4 w-4 text-primary" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className={`text-2xl font-bold ${balance >= 0 ? 'text-primary' : 'text-red-500'}`}>
-                            {new Intl.NumberFormat(language === 'pt' ? 'pt-BR' : language, { style: 'currency', currency: language === 'pt' ? 'BRL' : language === 'en' ? 'USD' : 'EUR' }).format(balance)}
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
+            {renderMetrics()}
 
             <Card>
                 <CardHeader>
@@ -207,64 +280,7 @@ export default function CashFlow() {
                     <CardDescription>{t("cashflow.historyDesc")}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    {isLoading ? (
-                        <div className="py-8 text-center text-muted-foreground">{t("common.loading")}</div>
-                    ) : entries.length === 0 ? (
-                        <div className="py-12 text-center flex flex-col items-center">
-                            <Wallet className="h-12 w-12 text-muted-foreground mb-4 opacity-20" />
-                            <p className="text-muted-foreground">{t("cashflow.empty")}</p>
-                        </div>
-                    ) : (
-                        <div className="rounded-md border overflow-hidden">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow className="bg-muted/50">
-                                        <TableHead>{t("cashflow.colDate")}</TableHead>
-                                        <TableHead>{t("cashflow.colDescription")}</TableHead>
-                                        <TableHead>{t("cashflow.colCategory")}</TableHead>
-                                        <TableHead className="text-right">{t("cashflow.colAmount")}</TableHead>
-                                        <TableHead className="w-[50px]"></TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {entries.map((entry) => (
-                                        <TableRow key={entry.id}>
-                                            <TableCell className="font-medium">
-                                                {format(new Date(entry.entry_date), 'dd/MM/yyyy')}
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex flex-col">
-                                                    <span>{entry.description}</span>
-                                                    {entry.reference_type === 'order' && (
-                                                        <span className="text-xs text-muted-foreground">{t("cashflow.orderRef")}{entry.reference_id?.split('-')[0]}</span>
-                                                    )}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                {entry.category ? (
-                                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: `${entry.category.color}20`, color: entry.category.color || 'inherit' }}>
-                                                        {entry.category.name}
-                                                    </span>
-                                                ) : <span className="text-muted-foreground text-xs">-</span>}
-                                            </TableCell>
-                                            <TableCell className={`text-right font-semibold ${entry.type === 'income' ? 'text-green-600' : 'text-red-500'}`}>
-                                                {entry.type === 'income' ? '+' : '-'} {new Intl.NumberFormat(language === 'pt' ? 'pt-BR' : language, { style: 'currency', currency: language === 'pt' ? 'BRL' : language === 'en' ? 'USD' : 'EUR' }).format(Number(entry.amount))}
-                                            </TableCell>
-                                            <TableCell>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => {
-                                                    if (window.confirm(t("common.confirmAction"))) {
-                                                        deleteEntry.mutate(entry.id);
-                                                    }
-                                                }}>
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
-                    )}
+                    {renderHistoryContent()}
                 </CardContent>
             </Card>
         </div>

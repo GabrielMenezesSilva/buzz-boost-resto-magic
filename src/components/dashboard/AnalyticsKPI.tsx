@@ -3,15 +3,15 @@ import { MessageSquare, TrendingUp, Users, DollarSign } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AnalyticsKPIProps {
-    data: {
-        totalCampaigns: number;
-        totalSent: number;
-        successRate: number;
-        totalContacts: number;
-        totalCost: number;
+    readonly data: {
+        readonly totalCampaigns: number;
+        readonly totalSent: number;
+        readonly successRate: number;
+        readonly totalContacts: number;
+        readonly totalCost: number;
     };
-    formatPercentage: (value: number) => string;
-    formatCurrency: (value: number) => string;
+    readonly formatPercentage: (value: number) => string;
+    readonly formatCurrency: (value: number) => string;
 }
 
 export function AnalyticsKPI({ data, formatPercentage, formatCurrency }: AnalyticsKPIProps) {

@@ -27,14 +27,14 @@ interface TemplateFormData {
 }
 
 interface TemplateFormProps {
-    formData: TemplateFormData;
-    setFormData: (data: TemplateFormData) => void;
-    onSubmit: (e: React.FormEvent) => void;
-    onCancel: () => void;
-    isEditing: boolean;
-    isLoading: boolean;
-    getCategoryLabel: (category: string) => string;
-    parseVariables: (msg: string) => string[];
+    readonly formData: TemplateFormData;
+    readonly setFormData: (data: TemplateFormData) => void;
+    readonly onSubmit: (e: React.FormEvent) => void;
+    readonly onCancel: () => void;
+    readonly isEditing: boolean;
+    readonly isLoading: boolean;
+    readonly getCategoryLabel: (category: string) => string;
+    readonly parseVariables: (msg: string) => string[];
 }
 
 export function TemplateForm({

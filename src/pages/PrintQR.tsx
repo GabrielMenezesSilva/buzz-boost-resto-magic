@@ -50,7 +50,7 @@ export default function PrintQR() {
 
             } catch (err: unknown) {
                 console.error(err);
-                setError(err instanceof Error ? err.message : String(err));
+                setError(err instanceof Error ? err.message : (typeof err === 'string' ? err : 'An error occurred'));
             }
         };
 

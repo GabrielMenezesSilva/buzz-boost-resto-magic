@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const localesDir = path.join(process.cwd(), 'src', 'locales');
 const files = fs.readdirSync(localesDir).filter(f => f.endsWith('.json'));

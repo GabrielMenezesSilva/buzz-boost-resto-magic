@@ -38,20 +38,40 @@ import {
     TrendingUp,
 } from 'lucide-react';
 
+interface NavSubItem {
+    name: string;
+    href: string;
+    icon: React.ElementType;
+    roles?: string[];
+}
+
+interface NavItem {
+    name: string;
+    href?: string;
+    icon: React.ElementType;
+    roles?: string[];
+    items?: NavSubItem[];
+}
+
 export function AppHeader() {
     const location = useLocation();
-    const { user, profile, signOut } = useAuth();
+    const { user, profile, activeEmployee, signOut } = useAuth();
     const { t } = useLanguage();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const isActive = (path: string) => location.pathname === path;
 
-    // Get display name - prefer owner_name, fallback to email
+    // Get display name - prefer active employee, then owner_name, fallback to email
     const getDisplayName = () => {
+        if (activeEmployee) {
+            return activeEmployee.name;
+        }
         if (profile?.owner_name) {
             return profile.owner_name;
         }
         return user?.email || 'Usuário';
     };
+
+    const effectiveRole = activeEmployee?.role || profile?.role || 'user';
 
     const publicNavigation = [
         { name: t('nav.home'), href: '/', icon: ChefHat },
@@ -59,12 +79,13 @@ export function AppHeader() {
         { name: t('nav.support'), href: '/support', icon: HelpCircle },
     ];
 
-    // Navigation for authenticated users
-    const authenticatedNavigation = [
-        { name: t('nav.dashboard'), href: '/dashboard', icon: LayoutDashboard },
+    // Navigation for authenticated users with role-based access
+    const rawAuthenticatedNavigation = [
+        { name: t('nav.dashboard'), href: '/dashboard', icon: LayoutDashboard, roles: ['super_admin', 'user', 'manager'] },
         {
             name: t('nav.stockManagement'),
             icon: Package,
+            roles: ['super_admin', 'user', 'manager'],
             items: [
                 { name: t('nav.inventory'), href: '/inventory', icon: Archive },
                 { name: t('nav.products'), href: '/products', icon: Package },
@@ -75,6 +96,7 @@ export function AppHeader() {
         {
             name: t('nav.marketingCrm'),
             icon: MessageSquare,
+            roles: ['super_admin', 'user', 'manager'],
             items: [
                 { name: t('nav.contacts'), href: '/contacts', icon: Users },
                 { name: t('nav.campaigns'), href: '/campaigns', icon: MessageSquare },
@@ -84,22 +106,39 @@ export function AppHeader() {
         {
             name: t('nav.posGroup'),
             icon: Store,
+            roles: ['super_admin', 'user', 'manager', 'cashier', 'waiter'],
             items: [
-                { name: t('nav.terminalPos'), href: '/pos', icon: LayoutDashboard },
-                { name: t('nav.orderHistory'), href: '/orders', icon: Archive },
-                { name: t('nav.tables'), href: '/tables', icon: Store },
-                { name: t('nav.employees'), href: '/employees', icon: Users },
+                { name: t('nav.terminalPos'), href: '/pos', icon: LayoutDashboard, roles: ['super_admin', 'user', 'manager', 'cashier', 'waiter'] },
+                { name: t('nav.orderHistory'), href: '/orders', icon: Archive, roles: ['super_admin', 'user', 'manager', 'cashier'] },
+                { name: t('nav.tables'), href: '/tables', icon: Store, roles: ['super_admin', 'user', 'manager'] },
+                { name: t('nav.employees'), href: '/employees', icon: Users, roles: ['super_admin', 'user', 'manager'] },
             ]
         },
         {
             name: t('nav.financeGroup') || 'Financeiro',
             icon: Wallet,
+            roles: ['super_admin', 'user', 'manager', 'cashier'],
             items: [
-                { name: t('nav.cashflow'), href: '/cashflow', icon: DollarSign },
-                { name: t('nav.reports'), href: '/reports', icon: TrendingUp },
+                { name: t('nav.cashflow'), href: '/cashflow', icon: DollarSign, roles: ['super_admin', 'user', 'manager', 'cashier'] },
+                { name: t('nav.reports'), href: '/reports', icon: TrendingUp, roles: ['super_admin', 'user', 'manager'] },
             ]
         }
     ];
+
+
+    // Filter navigation based on effectiveRole
+    const authenticatedNavigation = (rawAuthenticatedNavigation as NavItem[])
+        .filter(nav => !nav.roles || nav.roles.includes(effectiveRole))
+        .map(nav => {
+            if (nav.items) {
+                return {
+                    ...nav,
+                    items: nav.items.filter(item => !item.roles || item.roles.includes(effectiveRole))
+                };
+            }
+            return nav;
+        });
+
 
     // Choose navigation based on auth status
     const navigation = user ? authenticatedNavigation : publicNavigation;

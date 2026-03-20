@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { formatCurrency } from '@/utils/currency';
 import {
   BarChart,
   Bar,
@@ -20,7 +21,7 @@ import {
   Line,
   Legend
 } from 'recharts';
-import { 
+import {
   TrendingUp,
   Users,
   MessageSquare,
@@ -62,12 +63,7 @@ export default function Analytics() {
     { value: '365d', label: t('analytics.lastYear') }
   ];
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
+
 
   const formatPercentage = (value: number) => {
     return `${value.toFixed(1)}%`;
@@ -83,7 +79,7 @@ export default function Analytics() {
             {t('analytics.subtitle')}
           </p>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row gap-3">
           <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger className="w-[180px]">
@@ -98,8 +94,8 @@ export default function Analytics() {
               ))}
             </SelectContent>
           </Select>
-          
-          <Button 
+
+          <Button
             onClick={refreshAnalytics}
             variant="outline"
             disabled={isLoading}
@@ -183,17 +179,17 @@ export default function Analytics() {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="sent" 
-                  stroke="#8884d8" 
+                <Line
+                  type="monotone"
+                  dataKey="sent"
+                  stroke="#8884d8"
                   name={t('analytics.sent')}
                   strokeWidth={2}
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="delivered" 
-                  stroke="#82ca9d" 
+                <Line
+                  type="monotone"
+                  dataKey="delivered"
+                  stroke="#82ca9d"
                   name={t('analytics.delivered')}
                   strokeWidth={2}
                 />
@@ -218,7 +214,7 @@ export default function Analytics() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ type, percent }) => 
+                  label={({ type, percent }) =>
                     `${TYPE_LABELS[type as keyof typeof TYPE_LABELS] || type} ${(percent * 100).toFixed(0)}%`
                   }
                   outerRadius={80}
@@ -250,13 +246,13 @@ export default function Analytics() {
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={data.campaignsByStatus}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="status" 
+                <XAxis
+                  dataKey="status"
                   tick={{ fontSize: 12 }}
                   tickFormatter={(value) => STATUS_LABELS[value as keyof typeof STATUS_LABELS] || value}
                 />
                 <YAxis />
-                <Tooltip 
+                <Tooltip
                   labelFormatter={(label) => STATUS_LABELS[label as keyof typeof STATUS_LABELS] || label}
                 />
                 <Bar dataKey="count" fill="#8884d8" />
@@ -321,14 +317,14 @@ export default function Analytics() {
               </div>
               <p className="text-sm text-muted-foreground">{t('analytics.deliveryRate')}</p>
             </div>
-            
+
             <div className="text-center">
               <div className="text-3xl font-bold text-blue-600">
                 {data.totalSent > 0 ? (data.totalCost / data.totalSent).toFixed(4) : '0.0000'}
               </div>
               <p className="text-sm text-muted-foreground">{t('analytics.costPerMessage')}</p>
             </div>
-            
+
             <div className="text-center">
               <div className="text-3xl font-bold text-purple-600">
                 {data.totalContacts > 0 ? (data.totalSent / data.totalContacts).toFixed(1) : '0.0'}

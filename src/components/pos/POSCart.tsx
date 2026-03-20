@@ -3,20 +3,21 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
+import { formatCurrency } from "@/utils/currency";
 interface POSCartProps {
-    t: (key: string) => string;
-    cartItems: { product: { id: string; name: string; sell_price: number }; quantity: number }[];
-    cartTotal: number;
-    cartItemCount: number;
-    selectedTable: string | null;
-    setSelectedTable: (id: string | null) => void;
-    tables: { id: string; name: string }[];
-    updateQuantity: (id: string, quantity: number) => void;
-    removeItem: (id: string) => void;
-    clearCart: () => void;
-    processCheckout: { isPending: boolean };
-    handleCheckout: (method: 'cash' | 'credit' | 'pix' | 'none') => void;
+    readonly t: (key: string) => string;
+    readonly cartItems: ReadonlyArray<{ readonly product: { readonly id: string; readonly name: string; readonly sell_price: number }; readonly quantity: number }>;
+    readonly cartTotal: number;
+    readonly cartItemCount: number;
+    readonly selectedTable: string | null;
+    readonly setSelectedTable: (id: string | null) => void;
+    readonly tables: ReadonlyArray<{ readonly id: string; readonly name: string }>;
+    readonly updateQuantity: (id: string, quantity: number) => void;
+    readonly removeItem: (id: string) => void;
+    readonly clearCart: () => void;
+    readonly processCheckout: { readonly isPending: boolean };
+    readonly handleCheckout: (method: 'cash' | 'credit' | 'pix' | 'none') => void;
+    readonly effectiveRole: string;
 }
 
 export function POSCart({
@@ -31,7 +32,8 @@ export function POSCart({
     removeItem,
     clearCart,
     processCheckout,
-    handleCheckout
+    handleCheckout,
+    effectiveRole
 }: POSCartProps) {
     return (
         <div className="w-[380px] flex flex-col bg-background border-l shrink-0 shadow-[-4px_0_24px_-12px_rgba(0,0,0,0.1)] z-20">
@@ -80,10 +82,10 @@ export function POSCart({
                             <div key={item.product.id} className="group flex items-center p-2 hover:bg-muted/50 rounded-lg transition-colors">
                                 <div className="flex-1 min-w-0 pr-2">
                                     <p className="font-semibold text-sm truncate">{item.product.name}</p>
-                                    <p className="text-xs text-muted-foreground font-medium mt-0.5">R$ {item.product.sell_price.toFixed(2).replace('.', ',')} {t('pos.un')}</p>
+                                    <p className="text-xs text-muted-foreground font-medium mt-0.5">{formatCurrency(item.product.sell_price)} {t('pos.un')}</p>
                                 </div>
                                 <div className="flex flex-col items-end shrink-0">
-                                    <p className="font-bold text-sm mb-2">R$ {(item.product.sell_price * item.quantity).toFixed(2).replace('.', ',')}</p>
+                                    <p className="font-bold text-sm mb-2">{formatCurrency(item.product.sell_price * item.quantity)}</p>
                                     <div className="flex items-center bg-background border rounded-md shadow-sm">
                                         <button
                                             className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground rounded-l-md transition-colors disabled:opacity-50"
@@ -110,33 +112,35 @@ export function POSCart({
                 <div className="space-y-1 mb-2">
                     <div className="flex justify-between text-sm text-muted-foreground">
                         <span>{t('pos.subtotal')}</span>
-                        <span>R$ {cartTotal.toFixed(2).replace('.', ',')}</span>
+                        <span>{formatCurrency(cartTotal)}</span>
                     </div>
                     <div className="flex justify-between text-sm text-emerald-600">
                         <span>{t('pos.discount')}</span>
-                        <span>R$ 0,00</span>
+                        <span>{formatCurrency(0)}</span>
                     </div>
                     <Separator className="my-2" />
                     <div className="flex justify-between font-black text-2xl tracking-tight">
                         <span>{t('pos.total')}</span>
-                        <span className="text-primary">R$ {cartTotal.toFixed(2).replace('.', ',')}</span>
+                        <span className="text-primary">{formatCurrency(cartTotal)}</span>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2">
-                    <Button variant="outline" className="flex flex-col h-14 bg-background hover:border-primary/50" disabled={cartItems.length === 0 || processCheckout.isPending} onClick={() => handleCheckout('cash')}>
-                        <Banknote className="w-4 h-4 mb-1 text-emerald-600" />
-                        <span className="text-[10px]">{t('pos.cash')}</span>
-                    </Button>
-                    <Button variant="outline" className="flex flex-col h-14 bg-background hover:border-primary/50" disabled={cartItems.length === 0 || processCheckout.isPending} onClick={() => handleCheckout('credit')}>
-                        <CreditCard className="w-4 h-4 mb-1 text-blue-600" />
-                        <span className="text-[10px]">{t('pos.card')}</span>
-                    </Button>
-                    <Button variant="outline" className="flex flex-col h-14 bg-background hover:border-primary/50" disabled={cartItems.length === 0 || processCheckout.isPending} onClick={() => handleCheckout('pix')}>
-                        <QrCode className="w-4 h-4 mb-1 text-teal-600" />
-                        <span className="text-[10px]">{t('pos.pix')}</span>
-                    </Button>
-                </div>
+                {effectiveRole !== 'waiter' && (
+                    <div className="grid grid-cols-3 gap-2">
+                        <Button variant="outline" className="flex flex-col h-14 bg-background hover:border-primary/50" disabled={cartItems.length === 0 || processCheckout.isPending} onClick={() => handleCheckout('cash')}>
+                            <Banknote className="w-4 h-4 mb-1 text-emerald-600" />
+                            <span className="text-[10px]">{t('pos.cash')}</span>
+                        </Button>
+                        <Button variant="outline" className="flex flex-col h-14 bg-background hover:border-primary/50" disabled={cartItems.length === 0 || processCheckout.isPending} onClick={() => handleCheckout('credit')}>
+                            <CreditCard className="w-4 h-4 mb-1 text-blue-600" />
+                            <span className="text-[10px]">{t('pos.card')}</span>
+                        </Button>
+                        <Button variant="outline" className="flex flex-col h-14 bg-background hover:border-primary/50" disabled={cartItems.length === 0 || processCheckout.isPending} onClick={() => handleCheckout('pix')}>
+                            <QrCode className="w-4 h-4 mb-1 text-teal-600" />
+                            <span className="text-[10px]">{t('pos.pix')}</span>
+                        </Button>
+                    </div>
+                )}
 
                 <div className="grid grid-cols-[1fr_2fr] gap-2 pt-2">
                     <Button
@@ -154,7 +158,7 @@ export function POSCart({
                         disabled={cartItems.length === 0 || !selectedTable || processCheckout.isPending}
                         onClick={() => handleCheckout('none')}
                     >
-                        {processCheckout.isPending ? <Loader2 className="animate-spin w-5 h-5" /> : t('pos.sendOrder')}
+                        {processCheckout.isPending ? <Loader2 className="animate-spin w-5 h-5" /> : t('pos.saveToTable')}
                     </Button>
                 </div>
             </div>

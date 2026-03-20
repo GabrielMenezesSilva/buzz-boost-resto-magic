@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useReports } from "@/hooks/useReports";
+import { formatCurrency } from "@/utils/currency";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
@@ -41,12 +42,6 @@ export default function Reports() {
     if (!reports) return null;
 
     // Formatadores dinâmicos para os gráficos e Cards
-    const formatCurrency = (value: number) => {
-        return new Intl.NumberFormat(language === 'pt' ? 'pt-BR' : language, {
-            style: 'currency',
-            currency: language === 'pt' ? 'BRL' : language === 'en' ? 'USD' : 'EUR'
-        }).format(value);
-    };
     const formatDate = (dateStr: string) => {
         try {
             return format(parseISO(dateStr), 'dd/MM');
@@ -163,11 +158,7 @@ export default function Reports() {
                                         dy={10}
                                     />
                                     <YAxis
-                                        tickFormatter={(val) => {
-                                            if (language === 'pt') return `R$ ${val}`;
-                                            if (language === 'en') return `$ ${val}`;
-                                            return `€ ${val}`;
-                                        }}
+                                        tickFormatter={(val) => `CHF ${val}`}
                                         axisLine={false}
                                         tickLine={false}
                                         tick={{ fill: '#6b7280', fontSize: 12 }}

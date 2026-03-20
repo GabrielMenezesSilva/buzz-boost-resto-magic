@@ -71,7 +71,7 @@ export const useQRScanner = ({ onScan, onError }: UseQRScannerProps) => {
       setIsScanning(false);
 
       if (onError) {
-        onError(error instanceof Error ? error : new Error(String(error)));
+        onError(error instanceof Error ? error : new Error(typeof error === 'string' ? error : 'An error occurred'));
       }
 
       toast({

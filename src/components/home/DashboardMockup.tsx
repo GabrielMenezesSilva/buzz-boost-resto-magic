@@ -160,8 +160,8 @@ export function DashboardMockup() {
                                                         { id: '#1044', items: '1x Med Pizza, 2x Beer', status: 'Ready', color: 'bg-green-500/10 text-green-500 border border-green-500/20', time: '2 min' },
                                                         { id: '#1043', items: 'Sparkling Water, Salad', status: 'Delivered', color: 'bg-muted/50 text-muted-foreground border border-border/50', time: '15 min' },
                                                         { id: '#1042', items: 'Steak Special + Fries', status: 'Delivered', color: 'bg-muted/50 text-muted-foreground border border-border/50', time: '32 min' },
-                                                    ].map((order, i) => (
-                                                        <div key={i} className="flex justify-between items-center p-3 rounded-xl hover:bg-muted/30 transition-colors border border-transparent hover:border-border/50 shadow-sm bg-muted/10">
+                                                    ].map((order) => (
+                                                        <div key={order.id} className="flex justify-between items-center p-3 rounded-xl hover:bg-muted/30 transition-colors border border-transparent hover:border-border/50 shadow-sm bg-muted/10">
                                                             <div>
                                                                 <div className="flex gap-2 items-center">
                                                                     <span className="font-bold text-sm text-foreground">{order.id}</span>

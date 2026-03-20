@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { Employee } from "@/types/pos";
 import { usePosSession } from "@/hooks/usePosSession";
 import { useTables } from "@/hooks/useTables";
 import { useOrders } from "@/hooks/useOrders";
@@ -16,13 +17,17 @@ import { POSHeader } from "@/components/pos/POSHeader";
 import { POSCart } from "@/components/pos/POSCart";
 import { POSProductsGrid } from "@/components/pos/POSProductsGrid";
 import { POSTablesGrid } from "@/components/pos/POSTablesGrid";
+import { POSOrdersGrid } from "@/components/pos/POSOrdersGrid";
+import { OrderPaymentModal } from "@/components/pos/OrderPaymentModal";
+import { Order } from "@/types/pos";
 
 export default function POS() {
-    const { user } = useAuth();
+    const { user, profile, activeEmployee } = useAuth();
+    const effectiveRole = activeEmployee?.role || profile?.role || 'user';
     const { t } = useLanguage();
     const { session, isLoading: sessionLoading, openSession, closeSession } = usePosSession();
 
-    const { activeOrders, processCheckout } = useOrders(session?.id);
+    const { activeOrders, processCheckout, processPayment } = useOrders(session?.id);
     const { tables, isLoading: isLoadingTables } = useTables();
     const { products = [], isLoading: productsLoading } = useProducts();
     const { categories = [] } = useCategories();
@@ -33,6 +38,8 @@ export default function POS() {
     const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'tables'>('products');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [selectedTable, setSelectedTable] = useState<string | null>(null);
+    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
     // Derived State
     const filteredProducts = useMemo(() => {
@@ -51,6 +58,30 @@ export default function POS() {
             return;
         }
         addItem(product);
+    };
+
+    const handleSelectOrder = (order: Order) => {
+        setSelectedOrder(order);
+        setIsPaymentModalOpen(true);
+    };
+
+    const handleConfirmPayment = async (method: 'cash' | 'credit' | 'debit' | 'pix') => {
+        if (!selectedOrder) return;
+        try {
+            await processPayment.mutateAsync({
+                order_id: selectedOrder.id,
+                method: method,
+                amount: selectedOrder.total,
+                change_given: 0,
+                reference: null,
+                total_order: selectedOrder.total
+            });
+            setIsPaymentModalOpen(false);
+            setSelectedOrder(null);
+            if (activeTab === 'orders') setActiveTab('tables');
+        } catch (error) {
+            console.error('Error processing payment:', error);
+        }
     };
 
     const handleCheckout = async (method: 'cash' | 'credit' | 'pix' | 'none') => {
@@ -107,7 +138,7 @@ export default function POS() {
         <div className="h-screen w-full flex flex-col overflow-hidden bg-background">
             <POSHeader
                 t={t}
-                user={user as any}
+                user={user}
                 session={session}
                 tables={tables}
                 activeTab={activeTab}
@@ -137,6 +168,15 @@ export default function POS() {
                             setActiveTab={setActiveTab}
                         />
                     )}
+
+                    {activeTab === 'orders' && (
+                        <POSOrdersGrid
+                            t={t}
+                            activeOrders={activeOrders}
+                            tables={tables}
+                            handleSelectOrder={handleSelectOrder}
+                        />
+                    )}
                 </div>
 
                 <POSCart
@@ -152,8 +192,18 @@ export default function POS() {
                     clearCart={clearCart}
                     processCheckout={processCheckout}
                     handleCheckout={handleCheckout}
+                    effectiveRole={effectiveRole}
                 />
             </div>
+
+            <OrderPaymentModal
+                isOpen={isPaymentModalOpen}
+                onClose={() => setIsPaymentModalOpen(false)}
+                order={selectedOrder}
+                onConfirmPayment={handleConfirmPayment}
+                t={t}
+                isProcessing={processPayment.isPending}
+            />
         </div>
     );
 }

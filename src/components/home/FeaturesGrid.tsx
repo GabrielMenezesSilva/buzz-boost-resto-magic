@@ -80,10 +80,10 @@ export function FeaturesGrid() {
                 </FadeIn>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {features.map((feature, idx) => {
+                    {features.map((feature) => {
                         const Icon = feature.icon;
                         return (
-                            <FadeIn key={idx} delay={feature.delay}>
+                            <FadeIn key={feature.title} delay={feature.delay}>
                                 <Card className="h-full bg-card/60 backdrop-blur border-border/50 hover:border-primary/50 transition-all duration-500 hover:shadow-[0_10px_40px_-10px_rgba(var(--primary),0.2)] group overflow-hidden relative">
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-bl-full translate-x-1/2 -translate-y-1/2 group-hover:bg-primary/20 transition-colors duration-500"></div>
                                     <CardContent className="p-8 relative z-10">

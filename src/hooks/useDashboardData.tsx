@@ -86,7 +86,7 @@ export const useDashboardData = () => {
       setRecentCampaigns(recentCampaignsDataRes.data || []);
 
     } catch (error: unknown) {
-      const err = error instanceof Error ? error : new Error(String(error));
+      const err = error instanceof Error ? error : new Error(typeof error === 'string' ? error : 'An error occurred');
       console.error('Error fetching dashboard data:', err);
       setError(err);
       toast.error('Erro ao carregar dados do painel', { description: err.message });

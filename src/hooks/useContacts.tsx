@@ -48,7 +48,7 @@ export const useContacts = () => {
       if (error) throw error;
       setContacts(data || []);
     } catch (error: unknown) {
-      const err = error instanceof Error ? error : new Error(String(error));
+      const err = error instanceof Error ? error : new Error(typeof error === 'string' ? error : 'An error occurred');
       console.error('Error fetching contacts:', err);
       toast({
         title: "Erro ao carregar contatos",
@@ -83,7 +83,7 @@ export const useContacts = () => {
 
       return { success: true, data };
     } catch (error: unknown) {
-      const err = error instanceof Error ? error : new Error(String(error));
+      const err = error instanceof Error ? error : new Error(typeof error === 'string' ? error : 'An error occurred');
       toast({
         title: "Erro ao adicionar contato",
         description: err.message || "Não foi possível adicionar o contato.",
@@ -118,7 +118,7 @@ export const useContacts = () => {
 
       return { success: true, data };
     } catch (error: unknown) {
-      const err = error instanceof Error ? error : new Error(String(error));
+      const err = error instanceof Error ? error : new Error(typeof error === 'string' ? error : 'An error occurred');
       toast({
         title: "Erro ao atualizar contato",
         description: err.message || "Não foi possível atualizar o contato.",
@@ -148,7 +148,7 @@ export const useContacts = () => {
 
       return { success: true };
     } catch (error: unknown) {
-      const err = error instanceof Error ? error : new Error(String(error));
+      const err = error instanceof Error ? error : new Error(typeof error === 'string' ? error : 'An error occurred');
       toast({
         title: "Erro ao remover contato",
         description: err.message || "Não foi possível remover o contato.",
@@ -196,7 +196,7 @@ export const useContacts = () => {
       });
       return { success: true };
     } catch (error: unknown) {
-      const err = error instanceof Error ? error : new Error(String(error));
+      const err = error instanceof Error ? error : new Error(typeof error === 'string' ? error : 'An error occurred');
       toast({
         title: t('contacts.exportError'),
         description: err.message || t('contacts.exportErrorDesc'),

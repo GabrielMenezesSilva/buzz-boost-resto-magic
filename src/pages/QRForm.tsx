@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { QrParsedData } from "@/types/pos";
 import { ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { QRScannerCard } from "@/components/qr/QRScannerCard";
@@ -97,6 +98,44 @@ export default function QRForm() {
     }
   };
 
+  const handleParsedData = (parsedData: QrParsedData) => {
+    if (parsedData.phone) {
+      setContactForm(prev => ({
+        ...prev,
+        phone: parsedData.phone,
+        name: parsedData.name || prev.name,
+        email: parsedData.email || prev.email
+      }));
+    }
+  };
+
+  const handleRawData = (codeData: string) => {
+    const phoneMatch = codeData.match(/\+?\d{10,15}/);
+    if (phoneMatch) {
+      setContactForm(prev => ({
+        ...prev,
+        phone: phoneMatch[0]
+      }));
+    }
+  };
+
+  const processQrCode = (codeData: string) => {
+    toast.success(t('qrForm.qrReadSuccess'));
+    setScannedData(codeData);
+
+    try {
+      const parsedData = JSON.parse(codeData);
+      handleParsedData(parsedData);
+    } catch (err: unknown) {
+      console.error(err);
+      console.log("Not a JSON QR code, using raw data");
+      handleRawData(codeData);
+    }
+
+    setShowForm(true);
+    stopCamera();
+  };
+
   const tick = () => {
     const video = videoRef.current;
 
@@ -115,32 +154,7 @@ export default function QRForm() {
         });
 
         if (code) {
-          toast.success(t('qrForm.qrReadSuccess'));
-          setScannedData(code.data);
-
-          try {
-            const parsedData = JSON.parse(code.data);
-            if (parsedData.phone) {
-              setContactForm(prev => ({
-                ...prev,
-                phone: parsedData.phone,
-                name: parsedData.name || prev.name,
-                email: parsedData.email || prev.email
-              }));
-            }
-          } catch (e) {
-            console.log("Not a JSON QR code, using raw data");
-            const phoneMatch = code.data.match(/\+?\d{10,15}/);
-            if (phoneMatch) {
-              setContactForm(prev => ({
-                ...prev,
-                phone: phoneMatch[0]
-              }));
-            }
-          }
-
-          setShowForm(true);
-          stopCamera();
+          processQrCode(code.data);
           return;
         }
       }
@@ -177,7 +191,7 @@ export default function QRForm() {
     setIsSubmitting(true);
 
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('contacts')
         .insert([{
           user_id: user.id,

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { formatCurrency } from '@/utils/currency';
 import { useProducts } from '@/hooks/useProducts';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
@@ -230,7 +231,7 @@ export default function Products() {
                                                     </span>
                                                 ) : '-'}
                                             </TableCell>
-                                            <TableCell>R$ {Number(prod.sell_price).toFixed(2)}</TableCell>
+                                            <TableCell>{formatCurrency(Number(prod.sell_price))}</TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-2">
                                                     <span className={Number(prod.current_stock) <= Number(prod.min_stock) ? 'text-destructive font-bold' : ''}>

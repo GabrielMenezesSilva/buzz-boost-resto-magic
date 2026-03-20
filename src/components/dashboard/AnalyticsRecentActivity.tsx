@@ -4,11 +4,11 @@ import { Activity, MessageSquare, Users } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AnalyticsRecentActivityProps {
-    recentActivity: Array<{
-        id: string;
-        type: 'campaign' | 'contact';
-        description: string;
-        date: string;
+    readonly recentActivity: ReadonlyArray<{
+        readonly id: string;
+        readonly type: 'campaign' | 'contact';
+        readonly description: string;
+        readonly date: string;
     }>;
 }
 

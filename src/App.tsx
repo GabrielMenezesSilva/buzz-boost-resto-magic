@@ -54,27 +54,27 @@ const App = () => (
                 <Route path="/plans" element={<Plans />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
-                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="/contacts" element={<ProtectedRoute><Contacts /></ProtectedRoute>} />
-                <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
-                <Route path="/templates" element={<ProtectedRoute><Templates /></ProtectedRoute>} />
+                <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager']}><Dashboard /></ProtectedRoute>} />
+                <Route path="/contacts" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager']}><Contacts /></ProtectedRoute>} />
+                <Route path="/campaigns" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager']}><Campaigns /></ProtectedRoute>} />
+                <Route path="/templates" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager']}><Templates /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                 <Route path="/support" element={<Support />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />
-                <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
-                <Route path="/categories" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
-                <Route path="/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
-                <Route path="/suppliers" element={<ProtectedRoute><Suppliers /></ProtectedRoute>} />
-                <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
+                <Route path="/admin" element={<ProtectedRoute allowedRoles={['super_admin']}><Admin /></ProtectedRoute>} />
+                <Route path="/categories" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager']}><Categories /></ProtectedRoute>} />
+                <Route path="/products" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager']}><Products /></ProtectedRoute>} />
+                <Route path="/suppliers" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager']}><Suppliers /></ProtectedRoute>} />
+                <Route path="/inventory" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager']}><Inventory /></ProtectedRoute>} />
                 <Route path="/print/:qrCode" element={<PrintQR />} />
-                <Route path="/pos" element={<ProtectedRoute><POS /></ProtectedRoute>} />
-                <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
-                <Route path="/tables" element={<ProtectedRoute><Tables /></ProtectedRoute>} />
-                <Route path="/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
-                <Route path="/cashflow" element={<ProtectedRoute><CashFlow /></ProtectedRoute>} />
-                <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+                <Route path="/pos" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager', 'cashier', 'waiter']}><POS /></ProtectedRoute>} />
+                <Route path="/orders" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager', 'cashier']}><Orders /></ProtectedRoute>} />
+                <Route path="/tables" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager']}><Tables /></ProtectedRoute>} />
+                <Route path="/employees" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager']}><Employees /></ProtectedRoute>} />
+                <Route path="/cashflow" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager', 'cashier']}><CashFlow /></ProtectedRoute>} />
+                <Route path="/reports" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager']}><Reports /></ProtectedRoute>} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

@@ -218,26 +218,73 @@ export const useOrders = (sessionId?: string) => {
         }) => {
             if (!user) throw new Error('Not authenticated');
 
-            // 1. Criar o Pedido
-            const { data: order, error: orderErr } = await supabaseDb
-                .from('orders')
-                .insert([{
-                    user_id: user.id,
-                    status: vars.method === 'none' ? 'open' : 'completed',
-                    order_type: 'dine_in',
-                    total: vars.total,
-                    subtotal: vars.total,
-                    table_id: vars.table_id || null,
-                    completed_at: vars.method !== 'none' ? new Date().toISOString() : null
-                }])
-                .select()
-                .single();
+            // 1. Criar ou Atualizar o Pedido
+            let orderId: string;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            let orderToReturn: any;
 
-            if (orderErr) throw orderErr;
+            if (vars.method === 'none' && vars.table_id) {
+                // Check if there is an open order for this table
+                const { data: existingOrder } = await supabaseDb
+                    .from('orders')
+                    .select('*')
+                    .eq('table_id', vars.table_id)
+                    .eq('status', 'open')
+                    .maybeSingle();
+
+                if (existingOrder) {
+                    orderId = existingOrder.id;
+                    orderToReturn = existingOrder;
+                    // Update order totals
+                    await supabaseDb
+                        .from('orders')
+                        .update({
+                            total: Number(existingOrder.total || 0) + vars.total,
+                            subtotal: Number(existingOrder.subtotal || 0) + vars.total
+                        })
+                        .eq('id', orderId);
+                } else {
+                    const { data: order, error: orderErr } = await supabaseDb
+                        .from('orders')
+                        .insert([{
+                            user_id: user.id,
+                            status: 'open',
+                            order_type: 'dine_in',
+                            total: vars.total,
+                            subtotal: vars.total,
+                            table_id: vars.table_id,
+                            completed_at: null
+                        }])
+                        .select()
+                        .single();
+
+                    if (orderErr) throw orderErr;
+                    orderId = order.id;
+                    orderToReturn = order;
+                }
+            } else {
+                const { data: order, error: orderErr } = await supabaseDb
+                    .from('orders')
+                    .insert([{
+                        user_id: user.id,
+                        status: vars.method === 'none' ? 'open' : 'completed',
+                        order_type: 'dine_in',
+                        total: vars.total,
+                        subtotal: vars.total,
+                        table_id: vars.table_id || null,
+                        completed_at: vars.method !== 'none' ? new Date().toISOString() : null
+                    }])
+                    .select()
+                    .single();
+
+                if (orderErr) throw orderErr;
+                orderId = order.id;
+                orderToReturn = order;
+            }
 
             // 2. Inserir Itens do Pedido
             const orderItems = vars.cartItems.map(c => ({
-                order_id: order.id,
+                order_id: orderId,
                 product_id: c.product.id,
                 product_name: c.product.name,
                 unit_price: c.product.sell_price,
@@ -252,7 +299,7 @@ export const useOrders = (sessionId?: string) => {
             if (vars.method !== 'none') {
                 // Pagamento
                 await supabaseDb.from('payments').insert([{
-                    order_id: order.id,
+                    order_id: orderId,
                     method: vars.method,
                     amount: vars.total,
                     change_given: 0
@@ -276,8 +323,8 @@ export const useOrders = (sessionId?: string) => {
                             user_id: user.id,
                             type: 'exit',
                             quantity: Number(item.quantity),
-                            reason: `Venda PDV - Pedido #${order.id.substring(0, 8)}`,
-                            reference_id: order.id,
+                            reason: `Venda PDV - Pedido #${orderId.substring(0, 8)}`,
+                            reference_id: orderId,
                             reference_type: 'order'
                         }]);
                     }
@@ -301,16 +348,16 @@ export const useOrders = (sessionId?: string) => {
                     user_id: user.id,
                     type: 'income',
                     amount: vars.total,
-                    description: `Venda PDV - #${order.id.substring(0, 8)}`,
+                    description: `Venda PDV - #${orderId.substring(0, 8)}`,
                     entry_date: new Date().toISOString().split('T')[0],
                     payment_method: vars.method === 'pix' ? 'pix' : vars.method === 'credit' || vars.method === 'debit' ? 'card' : 'cash',
                     category_id: categoryId,
                     reference_type: 'order',
-                    reference_id: order.id
+                    reference_id: orderId
                 }]);
             }
 
-            return order;
+            return orderToReturn;
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['activeOrders'] });

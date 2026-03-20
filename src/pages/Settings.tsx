@@ -337,8 +337,9 @@ export default function Settings() {
                     downloadAnchorNode.click();
                     downloadAnchorNode.remove();
                     toast({ title: t('settings.exportSuccess') || "Exportação Concluída", description: "Seus dados foram exportados com sucesso." });
-                  } catch (error) {
-                    toast({ title: "Erro na Exportação", description: "Não foi possível exportar os dados.", variant: "destructive" });
+                  } catch (error: unknown) {
+                    console.error('Export error:', error);
+                    toast({ title: "Erro na Exportação", description: error instanceof Error ? error.message : "Não foi possível exportar os dados.", variant: "destructive" });
                   }
                 }}>
                   <Database className="w-4 h-4 mr-2" />

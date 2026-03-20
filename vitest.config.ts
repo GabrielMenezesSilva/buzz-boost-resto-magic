@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react-swc';
-import path from 'path';
+import path from 'node:path';
 
 export default defineConfig({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

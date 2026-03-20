@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { formatCurrency } from '@/utils/currency';
 import {
   Calendar,
   RefreshCw,
@@ -31,12 +32,7 @@ export default function DashboardAnalytics() {
     { value: '365d', label: t('analytics.timeRange.365d') }
   ];
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
+
 
   const formatPercentage = (value: number) => {
     return `${value.toFixed(1)}%`;

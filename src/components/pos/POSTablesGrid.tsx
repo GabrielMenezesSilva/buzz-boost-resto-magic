@@ -1,11 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 
 interface POSTablesGridProps {
-    t: (key: string) => string;
-    tables: { id: string; name: string; status: string; capacity: number;[key: string]: unknown }[];
-    selectedTable: string | null;
-    setSelectedTable: (id: string | null) => void;
-    setActiveTab: (tab: 'products' | 'orders' | 'tables') => void;
+    readonly t: (key: string) => string;
+    readonly tables: { id: string; name: string; status: string; capacity: number;[key: string]: unknown }[];
+    readonly selectedTable: string | null;
+    readonly setSelectedTable: (id: string | null) => void;
+    readonly setActiveTab: (tab: 'products' | 'orders' | 'tables') => void;
 }
 
 export function POSTablesGrid({
@@ -15,6 +15,16 @@ export function POSTablesGrid({
     setSelectedTable,
     setActiveTab
 }: POSTablesGridProps) {
+    const getTableClassName = (tableId: string, status: string) => {
+        if (selectedTable === tableId) {
+            return 'border-primary bg-primary/10 ring-2 ring-primary ring-offset-2';
+        }
+        if (status === 'occupied') {
+            return 'border-amber-500/50 bg-amber-500/10';
+        }
+        return 'border-muted bg-card hover:border-primary/40';
+    };
+
     return (
         <div className="flex-1 p-6 overflow-auto">
             <h2 className="text-lg font-bold mb-4">{t('pos.chooseTable')}</h2>
@@ -22,16 +32,20 @@ export function POSTablesGrid({
                 {tables.map(table => (
                     <div
                         key={table.id}
+                        role="button"
+                        tabIndex={0}
                         onClick={() => {
                             setSelectedTable(table.id);
                             setActiveTab('products');
                         }}
-                        className={`h-24 rounded-xl border-2 flex flex-col items-center justify-center cursor-pointer transition-all hover:scale-[1.02] active:scale-95 ${selectedTable === table.id
-                            ? 'border-primary bg-primary/10 ring-2 ring-primary ring-offset-2'
-                            : table.status === 'occupied'
-                                ? 'border-amber-500/50 bg-amber-500/10'
-                                : 'border-muted bg-card hover:border-primary/40'
-                            }`}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                setSelectedTable(table.id);
+                                setActiveTab('products');
+                            }
+                        }}
+                        className={`h-24 rounded-xl border-2 flex flex-col items-center justify-center cursor-pointer transition-all hover:scale-[1.02] active:scale-95 ${getTableClassName(table.id, table.status)}`}
                     >
                         <p className="font-bold text-lg">{table.name}</p>
                         <div className="flex items-center space-x-2 mt-1">

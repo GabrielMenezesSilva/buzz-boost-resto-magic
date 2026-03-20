@@ -83,3 +83,20 @@ export type Payment = {
     reference: string | null;
     created_at: string;
 };
+
+// Order with nested relations (returned by Supabase select with order_items and payments)
+export type OrderWithItems = Order & {
+    order_items: OrderItem[];
+    payments: Payment[];
+    table?: { name: string } | null;
+    pos_sessions?: { employee_id: string | null } | null;
+};
+
+// Shape of data parsed from a QR Code JSON payload
+export type QrParsedData = {
+    phone?: string;
+    name?: string;
+    email?: string;
+    [key: string]: string | undefined;
+};
+

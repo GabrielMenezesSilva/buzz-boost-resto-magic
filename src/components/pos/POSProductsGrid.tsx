@@ -1,14 +1,14 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-
+import { formatCurrency } from "@/utils/currency";
 interface POSProductsGridProps {
-    t: (key: string) => string;
-    categories: { id: string; name: string; color?: string; icon?: string;[key: string]: unknown }[];
-    selectedCategory: string | null;
-    setSelectedCategory: (id: string | null) => void;
-    filteredProducts: { id: string; name: string; sell_price: number; image_url?: string; current_stock: number; min_stock: number; category?: { icon?: string;[key: string]: unknown };[key: string]: unknown }[];
-    handleProductClick: (product: { id: string; name: string; sell_price: number; image_url?: string; current_stock: number; min_stock: number; category?: { icon?: string;[key: string]: unknown };[key: string]: unknown }) => void;
+    readonly t: (key: string) => string;
+    readonly categories: { id: string; name: string; color?: string; icon?: string;[key: string]: unknown }[];
+    readonly selectedCategory: string | null;
+    readonly setSelectedCategory: (id: string | null) => void;
+    readonly filteredProducts: { id: string; name: string; sell_price: number; image_url?: string; current_stock: number; min_stock: number; category?: { icon?: string;[key: string]: unknown };[key: string]: unknown }[];
+    readonly handleProductClick: (product: { id: string; name: string; sell_price: number; image_url?: string; current_stock: number; min_stock: number; category?: { icon?: string;[key: string]: unknown };[key: string]: unknown }) => void;
 }
 
 export function POSProductsGrid({
@@ -50,8 +50,16 @@ export function POSProductsGrid({
                     {filteredProducts.map((product) => (
                         <div
                             key={product.id}
-                            className="group bg-card border rounded-xl overflow-hidden cursor-pointer hover:border-primary/50 hover:shadow-md transition-all flex flex-col active:scale-95"
+                            role="button"
+                            tabIndex={0}
+                            className="group bg-card border rounded-xl overflow-hidden cursor-pointer hover:border-primary/50 hover:shadow-md transition-all flex flex-col active:scale-95 text-left"
                             onClick={() => handleProductClick(product)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    handleProductClick(product);
+                                }
+                            }}
                         >
                             <div className="aspect-video bg-muted/50 relative overflow-hidden flex items-center justify-center">
                                 {product.image_url ? (
@@ -68,7 +76,7 @@ export function POSProductsGrid({
                             <div className="p-3 flex-1 flex flex-col">
                                 <p className="font-medium text-sm leading-tight line-clamp-2">{product.name}</p>
                                 <div className="mt-auto pt-2 flex items-center justify-between">
-                                    <p className="text-primary font-bold">R$ {product.sell_price.toFixed(2).replace('.', ',')}</p>
+                                    <p className="text-primary font-bold">{formatCurrency(product.sell_price)}</p>
                                 </div>
                             </div>
                         </div>

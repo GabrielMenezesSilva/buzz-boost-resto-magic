@@ -3,7 +3,7 @@ import { Float, Environment } from "@react-three/drei";
 import { useMemo, useRef, Suspense } from "react";
 import * as THREE from "three";
 
-function Particle({ position, scale, color, speed }: { position: [number, number, number], scale: number, color: string, speed: number }) {
+function Particle({ position, scale, color, speed }: Readonly<{ position: readonly [number, number, number], scale: number, color: string, speed: number }>) {
     const meshRef = useRef<THREE.Mesh>(null);
 
     useFrame((state) => {
@@ -50,7 +50,7 @@ function Scene() {
             const scale = Math.random() * 0.6 + 0.2;
             const color = colors[Math.floor(Math.random() * colors.length)];
             const speed = Math.random() * 2 + 1;
-            temp.push({ position: [x, y, z], scale, color, speed, id: i });
+            temp.push({ position: [x, y, z] as [number, number, number], scale, color, speed, id: i });
         }
         return temp;
     }, []);
@@ -74,7 +74,7 @@ export default function HeroCanvas() {
             <Canvas
                 camera={{ position: [0, 0, 10], fov: 50 }}
                 dpr={1}
-                eventSource={document.getElementById('root') as HTMLElement}
+                eventSource={document.getElementById('root')!}
                 eventPrefix="client"
             >
                 <Suspense fallback={null}>

@@ -107,8 +107,8 @@ export function QRContactForm({
                                 </Button>
                             </div>
                             <div className="flex flex-wrap gap-1">
-                                {contactForm.tags.map((tag, index) => (
-                                    <Badge key={index} variant="secondary" className="text-xs">
+                                {contactForm.tags.map((tag) => (
+                                    <Badge key={tag} variant="secondary" className="text-xs">
                                         {tag}
                                         <Button
                                             type="button"

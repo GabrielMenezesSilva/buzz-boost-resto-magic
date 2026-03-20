@@ -3,6 +3,7 @@ import { useState, useEffect, createContext, useContext, ReactNode } from 'react
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import type { User, Session } from '@supabase/supabase-js';
+import { Employee } from '@/types/pos';
 
 interface UserProfile {
   id: string;
@@ -19,6 +20,8 @@ interface AuthContextType {
   profile: UserProfile | null;
   session: Session | null;
   loading: boolean;
+  activeEmployee: Employee | null;
+  loginAsEmployee: (employee: Employee | null) => void;
   signUp: (email: string, password: string, restaurantName: string, ownerName: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -31,6 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeEmployee, setActiveEmployee] = useState<Employee | null>(null);
   const { toast } = useToast();
 
   // Function to fetch user profile
@@ -125,7 +129,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       return { error: null };
     } catch (error: unknown) {
-      const authError = error instanceof Error ? error : new Error(String(error));
+      const authError = error instanceof Error ? error : new Error(typeof error === 'string' ? error : 'An error occurred');
       const errorMessage = authError.message || "Erro no cadastro";
       toast({
         title: "Erro no cadastro",
@@ -154,7 +158,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       return { error: null };
     } catch (error: unknown) {
-      const authError = error instanceof Error ? error : new Error(String(error));
+      const authError = error instanceof Error ? error : new Error(typeof error === 'string' ? error : 'An error occurred');
       const errorMessage = authError.message || "Erro no login";
       toast({
         title: "Erro no login",
@@ -168,6 +172,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
+      setActiveEmployee(null);
 
       toast({
         title: "Logout realizado",
@@ -178,12 +183,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const loginAsEmployee = (employee: Employee | null) => {
+    setActiveEmployee(employee);
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
       profile,
       session,
       loading,
+      activeEmployee,
+      loginAsEmployee,
       signUp,
       signIn,
       signOut

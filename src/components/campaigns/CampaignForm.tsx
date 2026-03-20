@@ -12,8 +12,8 @@ import { useTemplates } from '@/hooks/useTemplates';
 import { Plus, Loader2 } from 'lucide-react';
 
 interface CampaignFormProps {
-    onSuccess: () => void;
-    onCancel: () => void;
+    readonly onSuccess: () => void;
+    readonly onCancel: () => void;
 }
 
 export default function CampaignForm({ onSuccess, onCancel }: CampaignFormProps) {
@@ -61,10 +61,11 @@ export default function CampaignForm({ onSuccess, onCancel }: CampaignFormProps)
                 description: t('campaigns.campaignCreated'),
             });
             onSuccess();
-        } catch (error) {
+        } catch (error: unknown) {
+            console.error('Error creating campaign:', error);
             toast({
                 title: t('campaigns.error'),
-                description: t('campaigns.cannotCreate'),
+                description: error instanceof Error ? error.message : t('campaigns.cannotCreate'),
                 variant: "destructive",
             });
         }

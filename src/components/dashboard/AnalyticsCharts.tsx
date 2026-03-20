@@ -5,9 +5,9 @@ import { useLanguage } from '@/contexts/LanguageContext';
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8dd1e1'];
 
 interface AnalyticsChartsProps {
-    data: {
-        sentTrend: { date: string; sent: number; delivered: number }[];
-        campaignsByType: { type: string; count: number }[];
+    readonly data: {
+        readonly sentTrend: Array<{ readonly date: string; readonly sent: number; readonly delivered: number }>;
+        readonly campaignsByType: Array<{ readonly type: string; readonly count: number }>;
     };
 }
 
@@ -80,8 +80,8 @@ export function AnalyticsCharts({ data }: AnalyticsChartsProps) {
                                 fill="#8884d8"
                                 dataKey="count"
                             >
-                                {data.campaignsByType.map((_, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                {data.campaignsByType.map((campaign, index) => (
+                                    <Cell key={`cell-${campaign.type}`} fill={COLORS[index % COLORS.length]} />
                                 ))}
                             </Pie>
                             <Tooltip />

@@ -169,7 +169,7 @@ export function useAnalytics(timeRange: string = '30d') {
 
     } catch (error: unknown) {
       console.error('Error fetching analytics:', error);
-      setError(error instanceof Error ? error : new Error(String(error)));
+      setError(error instanceof Error ? error : new Error(typeof error === 'string' ? error : 'An error occurred'));
     } finally {
       setIsLoading(false);
     }

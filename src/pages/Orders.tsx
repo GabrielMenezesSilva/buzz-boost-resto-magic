@@ -1,6 +1,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Order, OrderWithItems } from "@/types/pos";
 
 import { format } from "date-fns";
 import { ptBR, enUS } from "date-fns/locale";
@@ -19,14 +20,13 @@ import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { toast } from "sonner";
 
 export default function Orders() {
     const { user } = useAuth();
     const { t, language } = useLanguage();
     const [searchTerm, setSearchTerm] = useState("");
     const [daysFilter, setDaysFilter] = useState<number | null>(7);
-    const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
+    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
     const dateLocale = language === 'pt' ? ptBR : enUS;
 
     // Fetch Completed Orders
@@ -55,7 +55,7 @@ export default function Orders() {
             const { data, error } = await query;
 
             if (error) throw error;
-            return data as any[];
+            return data as Order[];
         },
         enabled: !!user,
     });
@@ -182,7 +182,7 @@ export default function Orders() {
                                     <span>{t('orders.qtdItem')}</span>
                                     <span>{t('orders.currency')}</span>
                                 </div>
-                                {(selectedOrder.order_items as any[])?.map((item: any) => (
+                                {(selectedOrder as OrderWithItems).order_items?.map((item) => (
                                     <div key={item.id as string} className="flex justify-between">
                                         <span>{item.quantity}x {item.product_name}</span>
                                         <span>{Number(item.subtotal || 0).toFixed(2).replace('.', ',')}</span>
