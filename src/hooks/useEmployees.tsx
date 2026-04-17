@@ -1,11 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const supabaseDb = supabase as any;
 import { useAuth } from '@/hooks/useAuth';
 import { Employee } from '@/types/pos';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
+
+// Campos retornados ao client — PIN excluído por segurança
+const EMPLOYEE_SAFE_FIELDS = 'id, user_id, auth_user_id, name, role, phone, active, created_at, updated_at';
 
 export const useEmployees = () => {
     const { user } = useAuth();
@@ -15,10 +16,9 @@ export const useEmployees = () => {
     const getEmployees = async (): Promise<Employee[]> => {
         if (!user) return [];
 
-        // Admins/Owners podem listar todos os funcionários do restaurante deles
-        const { data, error } = await supabaseDb
+        const { data, error } = await supabase
             .from('employees')
-            .select('*')
+            .select(EMPLOYEE_SAFE_FIELDS)
             .order('name', { ascending: true });
 
         if (error) throw error;
@@ -35,34 +35,31 @@ export const useEmployees = () => {
         mutationFn: async () => {
             if (!user) throw new Error('Not authenticated');
 
-            // Buscar se já existe alguém
-            const { data: existing } = await supabaseDb
+            const { data: existing } = await supabase
                 .from('employees')
                 .select('id')
                 .limit(1);
 
             if (existing && existing.length > 0) return existing[0];
 
-            // Se não, busca o Profile
-            const { data: profile } = await supabaseDb
+            const { data: profile } = await supabase
                 .from('profiles')
-                .select('full_name, phone')
+                .select('owner_name, phone')
                 .eq('user_id', user.id)
                 .single();
 
-            // Cria o Employee inicial associado ao usuário principal de auth
-            const { data, error } = await supabaseDb
+            const { data, error } = await supabase
                 .from('employees')
                 .insert([{
                     user_id: user.id,
                     auth_user_id: user.id,
-                    name: profile?.full_name || 'Admin',
+                    name: profile?.owner_name || 'Admin',
                     role: 'owner',
                     phone: profile?.phone || '',
-                    pin: '1234', // default pin
+                    pin: '1234',
                     active: true
                 }])
-                .select()
+                .select(EMPLOYEE_SAFE_FIELDS)
                 .single();
 
             if (error) throw error;
@@ -77,13 +74,13 @@ export const useEmployees = () => {
         mutationFn: async (employeeInput: Partial<Employee>) => {
             if (!user) throw new Error('Not authenticated');
 
-            const { data, error } = await supabaseDb
+            const { data, error } = await supabase
                 .from('employees')
                 .insert([{
                     ...employeeInput,
                     user_id: user.id,
                 }])
-                .select()
+                .select(EMPLOYEE_SAFE_FIELDS)
                 .single();
 
             if (error) throw error;
@@ -101,11 +98,11 @@ export const useEmployees = () => {
     const updateEmployee = useMutation({
         mutationFn: async (employee: Partial<Employee> & { id: string }) => {
             const { id, ...updates } = employee;
-            const { data, error } = await supabaseDb
+            const { data, error } = await supabase
                 .from('employees')
                 .update(updates)
                 .eq('id', id)
-                .select()
+                .select(EMPLOYEE_SAFE_FIELDS)
                 .single();
 
             if (error) throw error;
@@ -122,11 +119,11 @@ export const useEmployees = () => {
 
     const deleteEmployee = useMutation({
         mutationFn: async (id: string) => {
-            const { data, error } = await supabaseDb
+            const { data, error } = await supabase
                 .from('employees')
-                .update({ active: false }) // Soft delete recomendado para não quebrar orders
+                .update({ active: false })
                 .eq('id', id)
-                .select();
+                .select('id');
 
             if (error) throw error;
             if (!data || data.length === 0) {
@@ -135,11 +132,10 @@ export const useEmployees = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['employees'] });
-            // Remove permanently currently not implemented to preserve DB constraints
-            toast.success('Funcionário desativado');
+            toast.success(t('toast.empDisabled'));
         },
         onError: (error) => {
-            toast.error('Erro ao remover: ' + error.message);
+            toast.error(t('toast.empDisError') + error.message);
         }
     });
 

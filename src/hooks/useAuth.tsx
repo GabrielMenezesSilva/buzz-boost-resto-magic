@@ -2,6 +2,7 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 import type { User, Session } from '@supabase/supabase-js';
 import { Employee } from '@/types/pos';
 
@@ -36,6 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [activeEmployee, setActiveEmployee] = useState<Employee | null>(null);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   // Function to fetch user profile
   const fetchUserProfile = async (userId: string) => {
@@ -115,7 +117,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (error) {
         toast({
-          title: "Erro no cadastro",
+          title: t('auth.signupError'),
           description: error.message,
           variant: "destructive"
         });
@@ -123,16 +125,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       toast({
-        title: "Cadastro realizado!",
-        description: "Conta criada com sucesso."
+        title: t('auth.signupSuccess'),
+        description: t('auth.signupSuccessDesc')
       });
 
       return { error: null };
     } catch (error: unknown) {
       const authError = error instanceof Error ? error : new Error(typeof error === 'string' ? error : 'An error occurred');
-      const errorMessage = authError.message || "Erro no cadastro";
+      const errorMessage = authError.message || t('auth.signupError');
       toast({
-        title: "Erro no cadastro",
+        title: t('auth.signupError'),
         description: errorMessage,
         variant: "destructive"
       });
@@ -149,7 +151,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (error) {
         toast({
-          title: "Erro no login",
+          title: t('auth.loginError'),
           description: error.message,
           variant: "destructive"
         });
@@ -159,9 +161,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return { error: null };
     } catch (error: unknown) {
       const authError = error instanceof Error ? error : new Error(typeof error === 'string' ? error : 'An error occurred');
-      const errorMessage = authError.message || "Erro no login";
+      const errorMessage = authError.message || t('auth.loginError');
       toast({
-        title: "Erro no login",
+        title: t('auth.loginError'),
         description: errorMessage,
         variant: "destructive"
       });
@@ -175,8 +177,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setActiveEmployee(null);
 
       toast({
-        title: "Logout realizado",
-        description: "Você foi desconectado com sucesso."
+        title: t('auth.logoutTitle'),
+        description: t('auth.logoutDesc')
       });
     } catch (error) {
       console.error('Logout error:', error);

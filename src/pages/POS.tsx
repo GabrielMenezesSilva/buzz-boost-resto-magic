@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Employee } from "@/types/pos";
@@ -9,6 +9,7 @@ import { useCart } from "@/hooks/useCart";
 import { useProducts } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { usePinTimeout } from "@/hooks/usePinTimeout";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid } from "lucide-react";
 import { toast } from 'sonner';
@@ -22,10 +23,22 @@ import { OrderPaymentModal } from "@/components/pos/OrderPaymentModal";
 import { Order } from "@/types/pos";
 
 export default function POS() {
-    const { user, profile, activeEmployee } = useAuth();
+    const { user, profile, activeEmployee, loginAsEmployee } = useAuth();
     const effectiveRole = activeEmployee?.role || profile?.role || 'user';
     const { t } = useLanguage();
     const { session, isLoading: sessionLoading, openSession, closeSession } = usePosSession();
+
+    // PIN timeout — auto-logout after 15 min of inactivity when an employee is active
+    const handlePinTimeout = useCallback(() => {
+        loginAsEmployee(null);
+        toast.warning(t('kitchen.pinTimeout'), { description: t('kitchen.pinTimeoutDesc') });
+    }, [loginAsEmployee, t]);
+
+    usePinTimeout({
+        enabled: !!activeEmployee,
+        timeoutMs: 15 * 60 * 1000,
+        onTimeout: handlePinTimeout,
+    });
 
     const { activeOrders, processCheckout, processPayment } = useOrders(session?.id);
     const { tables, isLoading: isLoadingTables } = useTables();

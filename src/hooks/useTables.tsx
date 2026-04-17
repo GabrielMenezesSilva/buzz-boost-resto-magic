@@ -1,7 +1,6 @@
+import { useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const supabaseDb = supabase as any;
 import { useAuth } from '@/hooks/useAuth';
 import { RestaurantTable } from '@/types/pos';
 import { toast } from 'sonner';
@@ -12,10 +11,29 @@ export const useTables = () => {
     const queryClient = useQueryClient();
     const { t } = useLanguage();
 
+    // Realtime — atualiza mesas automaticamente (ocupação, status)
+    useEffect(() => {
+        if (!user) return;
+
+        const channel = supabase
+            .channel('tables-realtime')
+            .on('postgres_changes', {
+                event: '*',
+                schema: 'public',
+                table: 'restaurant_tables',
+                filter: `user_id=eq.${user.id}`
+            }, () => {
+                queryClient.invalidateQueries({ queryKey: ['tables'] });
+            })
+            .subscribe();
+
+        return () => { supabase.removeChannel(channel); };
+    }, [user, queryClient]);
+
     const getTables = async (): Promise<RestaurantTable[]> => {
         if (!user) return [];
 
-        const { data, error } = await supabaseDb
+        const { data, error } = await supabase
             .from('restaurant_tables')
             .select('*')
             .order('sort_order', { ascending: true })
@@ -43,7 +61,7 @@ export const useTables = () => {
                 status: 'available' as const,
             }));
 
-            const { data, error } = await supabaseDb
+            const { data, error } = await supabase
                 .from('restaurant_tables')
                 .insert(newTables)
                 .select();
@@ -53,10 +71,10 @@ export const useTables = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tables'] });
-            toast.success('Default tables generated successfully');
+            toast.success(t('toast.tableGenerated'));
         },
         onError: (error) => {
-            toast.error('Failed to generate tables: ' + error.message);
+            toast.error(t('toast.tableGenError') + error.message);
         }
     });
 
@@ -64,7 +82,7 @@ export const useTables = () => {
         mutationFn: async (tableInfo: Partial<RestaurantTable>) => {
             if (!user) throw new Error('Not authenticated');
 
-            const { data, error } = await supabaseDb
+            const { data, error } = await supabase
                 .from('restaurant_tables')
                 .insert([{
                     ...tableInfo,
@@ -78,17 +96,17 @@ export const useTables = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tables'] });
-            toast.success('Table added successfully');
+            toast.success(t('toast.tableAdded'));
         },
         onError: (error) => {
-            toast.error('Failed to add table: ' + error.message);
+            toast.error(t('toast.tableAddError') + error.message);
         }
     });
 
     const updateTable = useMutation({
         mutationFn: async (table: Partial<RestaurantTable> & { id: string }) => {
             const { id, ...updates } = table;
-            const { data, error } = await supabaseDb
+            const { data, error } = await supabase
                 .from('restaurant_tables')
                 .update(updates)
                 .eq('id', id)
@@ -100,16 +118,16 @@ export const useTables = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tables'] });
-            toast.success('Table updated successfully');
+            toast.success(t('toast.tableUpdated'));
         },
         onError: (error) => {
-            toast.error('Failed to update table: ' + error.message);
+            toast.error(t('toast.tableUpdError') + error.message);
         }
     });
 
     const deleteTable = useMutation({
         mutationFn: async (id: string) => {
-            const { data, error } = await supabaseDb
+            const { data, error } = await supabase
                 .from('restaurant_tables')
                 .delete()
                 .eq('id', id)
@@ -117,17 +135,16 @@ export const useTables = () => {
 
             if (error) throw error;
             if (!data || data.length === 0) {
-                // Table doesn't exist or RLS prevented deletion
                 throw new Error("Mesa não encontrada ou você não tem permissão para excluí-la.");
             }
             return data;
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tables'] });
-            toast.success('Table deleted successfully');
+            toast.success(t('toast.tableDeleted'));
         },
         onError: (error) => {
-            toast.error('Failed to delete table: ' + error.message);
+            toast.error(t('toast.tableDelError') + error.message);
         }
     });
 

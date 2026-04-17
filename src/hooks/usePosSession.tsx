@@ -1,7 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const supabaseDb = supabase as any;
 import { useAuth } from '@/hooks/useAuth';
 import { PosSession } from '@/types/pos';
 import { toast } from 'sonner';
@@ -15,7 +13,7 @@ export const usePosSession = () => {
     const getActiveSession = async (): Promise<PosSession | null> => {
         if (!user) return null;
 
-        const { data, error } = await supabaseDb
+        const { data, error } = await supabase
             .from('pos_sessions')
             .select('*')
             .eq('status', 'open')
@@ -37,7 +35,7 @@ export const usePosSession = () => {
         mutationFn: async (openingBalance: number) => {
             if (!user) throw new Error('Not authenticated');
 
-            const { data, error } = await supabaseDb
+            const { data, error } = await supabase
                 .from('pos_sessions')
                 .insert([{
                     user_id: user.id,
@@ -52,10 +50,10 @@ export const usePosSession = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['activePosSession'] });
-            toast.success('Caixa aberto com sucesso');
+            toast.success(t('pos.sessionOpened') || 'Caixa aberto com sucesso');
         },
         onError: (error) => {
-            toast.error('Erro ao abrir caixa: ' + error.message);
+            toast.error((t('pos.sessionOpenError') || 'Erro ao abrir caixa: ') + error.message);
         }
     });
 
@@ -63,12 +61,45 @@ export const usePosSession = () => {
         mutationFn: async ({ id, closingBalance }: { id: string; closingBalance: number }) => {
             if (!user) throw new Error('Not authenticated');
 
-            const { data, error } = await supabaseDb
+            // 1. Buscar todos os pagamentos das ordens desta sessão
+            const { data: sessionOrders } = await supabase
+                .from('orders')
+                .select('id, total, payments(method, amount)')
+                .eq('session_id', id)
+                .eq('status', 'completed');
+
+            // 2. Agregar totais por método de pagamento
+            let total_cash = 0;
+            let total_card = 0;
+            let total_pix = 0;
+            let total_sales = 0;
+            const total_orders = sessionOrders?.length ?? 0;
+
+            if (sessionOrders) {
+                for (const order of sessionOrders) {
+                    total_sales += Number(order.total ?? 0);
+                    const payments = (order as { payments: { method: string; amount: number }[] }).payments ?? [];
+                    for (const p of payments) {
+                        const amount = Number(p.amount ?? 0);
+                        if (p.method === 'cash') total_cash += amount;
+                        else if (p.method === 'credit' || p.method === 'debit') total_card += amount;
+                        else if (p.method === 'pix') total_pix += amount;
+                    }
+                }
+            }
+
+            // 3. Fechar sessão com totais agregados
+            const { data, error } = await supabase
                 .from('pos_sessions')
                 .update({
                     status: 'closed',
                     closing_balance: closingBalance,
-                    closed_at: new Date().toISOString()
+                    closed_at: new Date().toISOString(),
+                    total_sales,
+                    total_cash,
+                    total_card,
+                    total_pix,
+                    total_orders,
                 })
                 .eq('id', id)
                 .select()
@@ -77,12 +108,18 @@ export const usePosSession = () => {
             if (error) throw error;
             return data;
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['activePosSession'] });
-            toast.success('Caixa fechado com sucesso');
+            const s = data as {
+                total_sales: number; total_cash: number;
+                total_card: number; total_pix: number; total_orders: number;
+            };
+            toast.success(
+                `${t('pos.sessionClosed')} · ${s.total_orders} cmd · CHF ${Number(s.total_sales).toFixed(2)}`
+            );
         },
         onError: (error) => {
-            toast.error('Erro ao fechar caixa: ' + error.message);
+            toast.error((t('pos.sessionCloseError') || 'Erreur à la fermeture : ') + error.message);
         }
     });
 

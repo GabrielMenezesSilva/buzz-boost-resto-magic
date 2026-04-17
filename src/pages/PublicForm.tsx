@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { isValidPhoneNumber } from 'libphonenumber-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,12 +16,20 @@ import { Loader2, Utensils, Gift } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const formSchema = z.object({
-  name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
-  phone: z.string().min(8, 'Telefone deve ter pelo menos 8 dígitos').regex(
-    /^(\+41|0041|\+55|0055|\(\d{2}\)|\d{2}|\d{1,4})[0-9\s\-()]{6,15}$/,
-    'Formato de telefone inválido (aceita Brasil, Suíça e outros formatos internacionais)'
+  name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
+  phone: z.string().min(7, 'Numéro de téléphone invalide').refine(
+    (val) => {
+      // Tenter avec indicatif international, puis Suisse (+41) et Brésil (+55) par défaut
+      const withPlus = val.startsWith('+') ? val : `+${val}`;
+      return (
+        isValidPhoneNumber(withPlus) ||
+        isValidPhoneNumber(val, 'CH') ||
+        isValidPhoneNumber(val, 'BR')
+      );
+    },
+    'Format de téléphone invalide (accepte Suisse, Brésil et formats internationaux)'
   ),
-  email: z.string().min(1, 'Email é obrigatório').email('Email inválido'),
+  email: z.string().min(1, "L'email est obligatoire").email('Email invalide'),
   notes: z.string().optional(),
   privacyConsent: z.boolean().refine(val => val === true, {
     message: 'Required',
@@ -84,9 +93,7 @@ export default function PublicForm() {
       try {
         // Fetch restaurant info from Supabase using the QR code
         const { data, error } = await supabase
-          .from('profiles')
-          .select('restaurant_name, owner_name, user_id, qr_promotional_title, qr_promotional_text')
-          .eq('qr_code', qrCode.trim())
+          .rpc('get_restaurant_by_qr', { p_qr_code: qrCode.trim() })
           .single();
 
         if (error) {

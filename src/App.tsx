@@ -35,6 +35,7 @@ import Tables from "./pages/Tables";
 import Employees from "./pages/Employees";
 import CashFlow from "./pages/CashFlow";
 import Reports from "./pages/Reports";
+import Kitchen from "./pages/Kitchen";
 
 const queryClient = new QueryClient();
 
@@ -75,6 +76,7 @@ const App = () => (
                 <Route path="/employees" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager']}><Employees /></ProtectedRoute>} />
                 <Route path="/cashflow" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager', 'cashier']}><CashFlow /></ProtectedRoute>} />
                 <Route path="/reports" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager']}><Reports /></ProtectedRoute>} />
+                <Route path="/kitchen" element={<ProtectedRoute allowedRoles={['super_admin', 'user', 'manager', 'cashier', 'waiter']}><Kitchen /></ProtectedRoute>} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

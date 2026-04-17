@@ -6,10 +6,19 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { useCampaigns } from '@/hooks/useCampaigns';
 import { useTemplates } from '@/hooks/useTemplates';
-import { Plus, Loader2 } from 'lucide-react';
+import { Plus, Loader2, Users, CalendarDays, Tag } from 'lucide-react';
+
+type RecipientType = 'all' | 'by_date' | 'by_tag';
+
+interface CampaignFilters {
+    type: RecipientType;
+    since?: string;
+    tag?: string;
+}
 
 interface CampaignFormProps {
     readonly onSuccess: () => void;
@@ -24,12 +33,21 @@ export default function CampaignForm({ onSuccess, onCancel }: CampaignFormProps)
 
     const [selectedTemplate, setSelectedTemplate] = useState<string>('');
     const [templateVariables, setTemplateVariables] = useState<Record<string, string>>({});
+    const [recipientType, setRecipientType] = useState<RecipientType>('all');
+    const [recipientSince, setRecipientSince] = useState('');
+    const [recipientTag, setRecipientTag] = useState('');
+
+    const buildFilters = (): CampaignFilters => {
+        if (recipientType === 'by_date') return { type: 'by_date', since: recipientSince };
+        if (recipientType === 'by_tag') return { type: 'by_tag', tag: recipientTag };
+        return { type: 'all' };
+    };
+
     const [formData, setFormData] = useState({
         name: '',
         message: '',
         campaign_type: 'sms',
         scheduled_at: '',
-        filters: {}
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -54,7 +72,8 @@ export default function CampaignForm({ onSuccess, onCancel }: CampaignFormProps)
         try {
             await createCampaign({
                 ...formData,
-                message: finalMessage
+                message: finalMessage,
+                filters: buildFilters(),
             });
             toast({
                 title: t('campaigns.success'),
@@ -238,7 +257,70 @@ export default function CampaignForm({ onSuccess, onCancel }: CampaignFormProps)
                         </p>
                     </div>
 
-                    {/* Twilio Configuration Info */}
+                    {/* Sélection des destinataires */}
+                    <div className="space-y-4 p-4 border rounded-lg">
+                        <div>
+                            <Label className="font-medium flex items-center gap-2">
+                                <Users className="w-4 h-4" />
+                                {t('campaigns.recipients')}
+                            </Label>
+                            <p className="text-sm text-muted-foreground mt-1">{t('campaigns.recipientsDesc')}</p>
+                        </div>
+                        <RadioGroup
+                            value={recipientType}
+                            onValueChange={(v) => setRecipientType(v as RecipientType)}
+                            className="space-y-3"
+                        >
+                            <div className="flex items-start space-x-3 rounded-md border p-3">
+                                <RadioGroupItem value="all" id="rec-all" className="mt-0.5" />
+                                <div className="space-y-0.5">
+                                    <Label htmlFor="rec-all" className="flex items-center gap-2 cursor-pointer font-medium">
+                                        <Users className="w-3.5 h-3.5" />
+                                        {t('campaigns.recipientsAll')}
+                                    </Label>
+                                    <p className="text-xs text-muted-foreground">{t('campaigns.recipientsAllDesc')}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-start space-x-3 rounded-md border p-3">
+                                <RadioGroupItem value="by_date" id="rec-date" className="mt-0.5" />
+                                <div className="space-y-2 flex-1">
+                                    <Label htmlFor="rec-date" className="flex items-center gap-2 cursor-pointer font-medium">
+                                        <CalendarDays className="w-3.5 h-3.5" />
+                                        {t('campaigns.recipientsByDate')}
+                                    </Label>
+                                    <p className="text-xs text-muted-foreground">{t('campaigns.recipientsByDateDesc')}</p>
+                                    {recipientType === 'by_date' && (
+                                        <Input
+                                            type="date"
+                                            value={recipientSince}
+                                            onChange={(e) => setRecipientSince(e.target.value)}
+                                            className="mt-2 max-w-xs"
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                            <div className="flex items-start space-x-3 rounded-md border p-3">
+                                <RadioGroupItem value="by_tag" id="rec-tag" className="mt-0.5" />
+                                <div className="space-y-2 flex-1">
+                                    <Label htmlFor="rec-tag" className="flex items-center gap-2 cursor-pointer font-medium">
+                                        <Tag className="w-3.5 h-3.5" />
+                                        {t('campaigns.recipientsByTag')}
+                                    </Label>
+                                    <p className="text-xs text-muted-foreground">{t('campaigns.recipientsByTagDesc')}</p>
+                                    {recipientType === 'by_tag' && (
+                                        <Input
+                                            placeholder={t('campaigns.tagFilterPlaceholder')}
+                                            value={recipientTag}
+                                            onChange={(e) => setRecipientTag(e.target.value)}
+                                            className="mt-2 max-w-xs"
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        </RadioGroup>
+                    </div>
+
+                    {/* WhatsApp / SMS Info */}
                     {(formData.campaign_type === 'sms' || formData.campaign_type === 'whatsapp') && (
                         <div className="space-y-2 p-4 border rounded-lg bg-blue-50 dark:bg-blue-950/20">
                             <div className="flex items-center space-x-2">

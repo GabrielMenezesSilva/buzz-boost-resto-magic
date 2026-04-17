@@ -27,11 +27,14 @@ const Contacts = () => {
   const { t } = useLanguage();
   const {
     contacts,
+    allTags,
     loading,
     searchTerm,
     setSearchTerm,
     filterSource,
     setFilterSource,
+    filterTag,
+    setFilterTag,
     addContact,
     updateContact,
     deleteContact,
@@ -200,7 +203,7 @@ const Contacts = () => {
                 </div>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex gap-3 flex-wrap">
                 <Select value={filterSource} onValueChange={setFilterSource}>
                   <SelectTrigger className="w-40">
                     <Filter className="w-4 h-4 mr-2" />
@@ -211,6 +214,21 @@ const Contacts = () => {
                     <SelectItem value="qr_scan">{t('contacts.filter.qrCode')}</SelectItem>
                     <SelectItem value="manual">{t('contacts.filter.manual')}</SelectItem>
                     <SelectItem value="import">{t('contacts.filter.import')}</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select value={filterTag} onValueChange={setFilterTag}>
+                  <SelectTrigger className="w-44">
+                    <SelectValue placeholder={t('contacts.filterByTag')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('contacts.allTags')}</SelectItem>
+                    <SelectItem value="__none__">{t('contacts.noTags')}</SelectItem>
+                    {allTags.map(tag => (
+                      <SelectItem key={tag} value={tag}>
+                        {t('contacts.taggedWith')} {tag}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
 

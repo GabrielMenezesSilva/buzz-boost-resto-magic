@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -21,6 +21,13 @@ export default function Onboarding() {
         { id: 'done', title: t('onboarding.titleDone'), icon: CheckCircle2, description: t('onboarding.descDone') }
     ];
 
+    // Guard: se onboarding já foi concluído, redirecionar imediatamente
+    useEffect(() => {
+        if (profile?.onboarding_completed === true) {
+            navigate('/dashboard', { replace: true });
+        }
+    }, [profile, navigate]);
+
     const [currentStep, setCurrentStep] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -28,8 +35,8 @@ export default function Onboarding() {
     const [restaurantName, setRestaurantName] = useState(profile?.restaurant_name || '');
     const [productName, setProductName] = useState('');
     const [productPrice, setProductPrice] = useState('0');
-    const [qrTitle, setQrTitle] = useState('Ganhe um brinde!');
-    const [qrText, setQrText] = useState('Cadastre-se na nossa lista e receba novidades.');
+    const [qrTitle, setQrTitle] = useState(t('onboarding.defaultQrTitle') || 'Recevez un cadeau!');
+    const [qrText, setQrText] = useState(t('onboarding.defaultQrText') || 'Inscrivez-vous et recevez nos offres exclusives.');
 
     const handleNext = () => {
         if (currentStep < STEPS.length - 1) setCurrentStep(s => s + 1);

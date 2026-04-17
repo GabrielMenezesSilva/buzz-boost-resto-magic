@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 
 interface DashboardStats {
@@ -31,6 +32,7 @@ interface Campaign {
 
 export const useDashboardData = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [stats, setStats] = useState<DashboardStats>({
     totalContacts: 0,
     totalCampaigns: 0,
@@ -89,7 +91,7 @@ export const useDashboardData = () => {
       const err = error instanceof Error ? error : new Error(typeof error === 'string' ? error : 'An error occurred');
       console.error('Error fetching dashboard data:', err);
       setError(err);
-      toast.error('Erro ao carregar dados do painel', { description: err.message });
+      toast.error(t('dashboard.loadError'), { description: err.message });
     } finally {
       setLoading(false);
     }

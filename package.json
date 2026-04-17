@@ -57,6 +57,7 @@
     "gsap": "^3.14.2",
     "input-otp": "^1.2.4",
     "jsqr": "^1.4.0",
+    "libphonenumber-js": "^1.11.4",
     "lucide-react": "^0.462.0",
     "next-themes": "^0.3.0",
     "qr-scanner": "^1.4.2",

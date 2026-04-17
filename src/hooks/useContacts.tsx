@@ -25,6 +25,7 @@ export const useContacts = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSource, setFilterSource] = useState<string>('all');
+  const [filterTag, setFilterTag] = useState<string>('all');
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -51,8 +52,8 @@ export const useContacts = () => {
       const err = error instanceof Error ? error : new Error(typeof error === 'string' ? error : 'An error occurred');
       console.error('Error fetching contacts:', err);
       toast({
-        title: "Erro ao carregar contatos",
-        description: err.message || "Não foi possível carregar os contatos.",
+        title: t('contacts.loadError'),
+        description: err.message,
         variant: "destructive"
       });
     } finally {
@@ -77,16 +78,16 @@ export const useContacts = () => {
 
       setContacts(prev => [data, ...prev]);
       toast({
-        title: "Contato adicionado",
-        description: "Contato foi adicionado com sucesso."
+        title: t('contacts.added'),
+        description: t('contacts.addedDesc')
       });
 
       return { success: true, data };
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(typeof error === 'string' ? error : 'An error occurred');
       toast({
-        title: "Erro ao adicionar contato",
-        description: err.message || "Não foi possível adicionar o contato.",
+        title: t('contacts.addError'),
+        description: err.message,
         variant: "destructive"
       });
       return { success: false, error: err };
@@ -112,16 +113,16 @@ export const useContacts = () => {
       ));
 
       toast({
-        title: "Contato atualizado",
-        description: "Contato foi atualizado com sucesso."
+        title: t('contacts.updated'),
+        description: t('contacts.updatedDesc')
       });
 
       return { success: true, data };
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(typeof error === 'string' ? error : 'An error occurred');
       toast({
-        title: "Erro ao atualizar contato",
-        description: err.message || "Não foi possível atualizar o contato.",
+        title: t('contacts.updateError'),
+        description: err.message,
         variant: "destructive"
       });
       return { success: false, error: err };
@@ -142,16 +143,16 @@ export const useContacts = () => {
 
       setContacts(prev => prev.filter(contact => contact.id !== contactId));
       toast({
-        title: "Contato removido",
-        description: "Contato foi removido com sucesso."
+        title: t('contacts.removed'),
+        description: t('contacts.removedDesc')
       });
 
       return { success: true };
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(typeof error === 'string' ? error : 'An error occurred');
       toast({
-        title: "Erro ao remover contato",
-        description: err.message || "Não foi possível remover o contato.",
+        title: t('contacts.removeError'),
+        description: err.message,
         variant: "destructive"
       });
       return { success: false, error: err };
@@ -206,24 +207,39 @@ export const useContacts = () => {
     }
   };
 
-  // Filtros
+  // Derive unique tag list for the filter dropdown
+  const allTags: string[] = Array.from(
+    new Set(contacts.flatMap(c => c.tags ?? []))
+  ).sort();
+
+  // Filtros: search + source + tag
   const filteredContacts = contacts.filter(contact => {
-    const matchesSearch = contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch =
+      contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contact.phone.includes(searchTerm) ||
       (contact.email && contact.email.toLowerCase().includes(searchTerm.toLowerCase()));
 
-    const matchesFilter = filterSource === 'all' || contact.source === filterSource;
+    const matchesSource = filterSource === 'all' || contact.source === filterSource;
 
-    return matchesSearch && matchesFilter;
+    const matchesTag =
+      filterTag === 'all' ||
+      (filterTag === '__none__'
+        ? !contact.tags || contact.tags.length === 0
+        : contact.tags?.includes(filterTag) ?? false);
+
+    return matchesSearch && matchesSource && matchesTag;
   });
 
   return {
     contacts: filteredContacts,
+    allTags,
     loading,
     searchTerm,
     setSearchTerm,
     filterSource,
     setFilterSource,
+    filterTag,
+    setFilterTag,
     addContact,
     updateContact,
     deleteContact,

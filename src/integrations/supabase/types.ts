@@ -186,7 +186,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          amount: number
+          amount?: number
           category_id?: string | null
           created_at?: string | null
           description: string
@@ -196,9 +196,9 @@ export type Database = {
           payment_method?: string | null
           reference_id?: string | null
           reference_type?: string | null
-          type?: string
+          type: string
           updated_at?: string | null
-          user_id?: string
+          user_id: string
         }
         Update: {
           amount?: number
@@ -222,62 +222,15 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "expense_categories"
             referencedColumns: ["id"]
-          }
+          },
+          {
+            foreignKeyName: "cash_flow_entries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
         ]
-      }
-      expense_categories: {
-        Row: {
-          color: string | null
-          created_at: string | null
-          id: string
-          name: string
-          type: string
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          color?: string | null
-          created_at?: string | null
-          id?: string
-          name: string
-          type: string
-          updated_at?: string | null
-          user_id?: string
-        }
-        Update: {
-          color?: string | null
-          created_at?: string | null
-          id?: string
-          name?: string
-          type?: string
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      orders: {
-        Row: {
-          id: string
-          total: number
-          created_at: string
-          status: string
-          user_id: string
-        }
-        Insert: {
-          id?: string
-          total: number
-          created_at?: string
-          status?: string
-          user_id: string
-        }
-        Update: {
-          id?: string
-          total?: number
-          created_at?: string
-          status?: string
-          user_id?: string
-        }
-        Relationships: []
       }
       categories: {
         Row: {
@@ -320,6 +273,7 @@ export type Database = {
       }
       contacts: {
         Row: {
+          consent_date: string | null
           country_code: string | null
           created_at: string
           email: string | null
@@ -334,6 +288,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          consent_date?: string | null
           country_code?: string | null
           created_at?: string
           email?: string | null
@@ -348,6 +303,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          consent_date?: string | null
           country_code?: string | null
           created_at?: string
           email?: string | null
@@ -389,6 +345,354 @@ export type Database = {
           status?: string | null
         }
         Relationships: []
+      }
+      employees: {
+        Row: {
+          active: boolean | null
+          auth_user_id: string | null
+          created_at: string | null
+          id: string
+          name: string
+          phone: string | null
+          pin: string | null
+          role: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          active?: boolean | null
+          auth_user_id?: string | null
+          created_at?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          pin?: string | null
+          role?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          active?: boolean | null
+          auth_user_id?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          pin?: string | null
+          role?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employees_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      expense_categories: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          id: string
+          is_system: boolean | null
+          name: string
+          type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          id?: string
+          is_system?: boolean | null
+          name: string
+          type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          id?: string
+          is_system?: boolean | null
+          name?: string
+          type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expense_categories_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          notes: string | null
+          order_id: string
+          product_id: string | null
+          product_name: string
+          quantity: number
+          subtotal: number
+          unit_price: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          order_id: string
+          product_id?: string | null
+          product_name: string
+          quantity?: number
+          subtotal: number
+          unit_price: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          order_id?: string
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          subtotal?: number
+          unit_price?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          completed_at: string | null
+          contact_id: string | null
+          created_at: string | null
+          discount_amount: number | null
+          discount_percent: number | null
+          employee_id: string | null
+          id: string
+          notes: string | null
+          order_number: number
+          order_type: string
+          session_id: string | null
+          status: string
+          subtotal: number | null
+          table_id: string | null
+          total: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          discount_amount?: number | null
+          discount_percent?: number | null
+          employee_id?: string | null
+          id?: string
+          notes?: string | null
+          order_number?: number
+          order_type?: string
+          session_id?: string | null
+          status?: string
+          subtotal?: number | null
+          table_id?: string | null
+          total?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          discount_amount?: number | null
+          discount_percent?: number | null
+          employee_id?: string | null
+          id?: string
+          notes?: string | null
+          order_number?: number
+          order_type?: string
+          session_id?: string | null
+          status?: string
+          subtotal?: number | null
+          table_id?: string | null
+          total?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "pos_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_table_id_fkey"
+            columns: ["table_id"]
+            isOneToOne: false
+            referencedRelation: "restaurant_tables"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          change_given: number | null
+          created_at: string | null
+          id: string
+          method: string
+          order_id: string
+          reference: string | null
+        }
+        Insert: {
+          amount: number
+          change_given?: number | null
+          created_at?: string | null
+          id?: string
+          method: string
+          order_id: string
+          reference?: string | null
+        }
+        Update: {
+          amount?: number
+          change_given?: number | null
+          created_at?: string | null
+          id?: string
+          method?: string
+          order_id?: string
+          reference?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pos_sessions: {
+        Row: {
+          closed_at: string | null
+          closing_balance: number | null
+          created_at: string | null
+          employee_id: string | null
+          id: string
+          notes: string | null
+          opened_at: string | null
+          opening_balance: number | null
+          status: string
+          total_card: number | null
+          total_cash: number | null
+          total_orders: number | null
+          total_pix: number | null
+          total_sales: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          closed_at?: string | null
+          closing_balance?: number | null
+          created_at?: string | null
+          employee_id?: string | null
+          id?: string
+          notes?: string | null
+          opened_at?: string | null
+          opening_balance?: number | null
+          status?: string
+          total_card?: number | null
+          total_cash?: number | null
+          total_orders?: number | null
+          total_pix?: number | null
+          total_sales?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          closed_at?: string | null
+          closing_balance?: number | null
+          created_at?: string | null
+          employee_id?: string | null
+          id?: string
+          notes?: string | null
+          opened_at?: string | null
+          opening_balance?: number | null
+          status?: string
+          total_card?: number | null
+          total_cash?: number | null
+          total_orders?: number | null
+          total_pix?: number | null
+          total_sales?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pos_sessions_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pos_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       products: {
         Row: {
@@ -472,8 +776,8 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          owner_name: string | null
           onboarding_completed: boolean | null
+          owner_name: string | null
           phone: string | null
           qr_code: string
           qr_promotional_text: string | null
@@ -486,8 +790,8 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          owner_name?: string | null
           onboarding_completed?: boolean | null
+          owner_name?: string | null
           phone?: string | null
           qr_code?: string
           qr_promotional_text?: string | null
@@ -500,8 +804,8 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
-          owner_name?: string | null
           onboarding_completed?: boolean | null
+          owner_name?: string | null
           phone?: string | null
           qr_code?: string
           qr_promotional_text?: string | null
@@ -512,6 +816,47 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      restaurant_tables: {
+        Row: {
+          capacity: number | null
+          created_at: string | null
+          id: string
+          name: string
+          sort_order: number | null
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          capacity?: number | null
+          created_at?: string | null
+          id?: string
+          name: string
+          sort_order?: number | null
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          capacity?: number | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          sort_order?: number | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "restaurant_tables_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       stock_movements: {
         Row: {
@@ -624,6 +969,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      verify_employee_pin: {
+        Args: { p_employee_id: string; p_pin: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
@@ -640,116 +989,116 @@ type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-  | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-  : never = never,
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
-  ? R
-  : never
+    ? R
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-    DefaultSchema["Views"])
-  ? (DefaultSchema["Tables"] &
-    DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-      Row: infer R
-    }
-  ? R
-  : never
-  : never
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-  | keyof DefaultSchema["Tables"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-    Insert: infer I
-  }
-  ? I
-  : never
+      Insert: infer I
+    }
+    ? I
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-    Insert: infer I
-  }
-  ? I
-  : never
-  : never
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-  | keyof DefaultSchema["Tables"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-    Update: infer U
-  }
-  ? U
-  : never
+      Update: infer U
+    }
+    ? U
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-    Update: infer U
-  }
-  ? U
-  : never
-  : never
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-  | keyof DefaultSchema["Enums"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-  ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-  : never
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-  | keyof DefaultSchema["CompositeTypes"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-  ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-  : never
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
 
 export const Constants = {
   public: {

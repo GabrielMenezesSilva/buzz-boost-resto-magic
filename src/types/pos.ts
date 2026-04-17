@@ -5,7 +5,7 @@ export type Employee = {
     name: string;
     role: 'owner' | 'manager' | 'cashier' | 'waiter';
     phone: string | null;
-    pin: string | null;
+    pin?: string | null;
     active: boolean;
     created_at: string;
     updated_at: string;

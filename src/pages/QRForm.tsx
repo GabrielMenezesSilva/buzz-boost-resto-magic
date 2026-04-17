@@ -184,7 +184,7 @@ export default function QRForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-      toast.error("User not authenticated");
+      toast.error(t('auth.loginError'));
       return;
     }
 

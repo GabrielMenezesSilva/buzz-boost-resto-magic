@@ -1,9 +1,9 @@
+import { useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const supabaseDb = supabase as any;
 import { useAuth } from '@/hooks/useAuth';
-import { Order, OrderItem, Payment } from '@/types/pos';
+import { Order, OrderItem, Payment, OrderWithItems } from '@/types/pos';
+import { CartItem } from '@/hooks/useCart';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -12,11 +12,30 @@ export const useOrders = (sessionId?: string) => {
     const queryClient = useQueryClient();
     const { t } = useLanguage();
 
+    // Realtime — atualiza ordens automaticamente quando há mudanças no DB
+    useEffect(() => {
+        if (!user) return;
+
+        const channel = supabase
+            .channel('orders-realtime')
+            .on('postgres_changes', {
+                event: '*',
+                schema: 'public',
+                table: 'orders',
+                filter: `user_id=eq.${user.id}`
+            }, () => {
+                queryClient.invalidateQueries({ queryKey: ['activeOrders'] });
+            })
+            .subscribe();
+
+        return () => { supabase.removeChannel(channel); };
+    }, [user, queryClient]);
+
     // Buscar todos os pedidos abertos/em andamento
-    const getActiveOrders = async (): Promise<Order[]> => {
+    const getActiveOrders = async (): Promise<OrderWithItems[]> => {
         if (!user) return [];
 
-        let query = supabaseDb
+        let query = supabase
             .from('orders')
             .select('*, order_items(*), payments(*)')
             .neq('status', 'completed')
@@ -30,8 +49,7 @@ export const useOrders = (sessionId?: string) => {
         const { data, error } = await query;
 
         if (error) throw error;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return data as any[];
+        return (data ?? []) as OrderWithItems[];
     };
 
     const { data: activeOrders = [], isLoading: isLoadingActive } = useQuery({
@@ -45,7 +63,7 @@ export const useOrders = (sessionId?: string) => {
         mutationFn: async (orderInput: Partial<Order>) => {
             if (!user) throw new Error('Not authenticated');
 
-            const { data, error } = await supabaseDb
+            const { data, error } = await supabase
                 .from('orders')
                 .insert([{
                     ...orderInput,
@@ -70,7 +88,7 @@ export const useOrders = (sessionId?: string) => {
     // Adicionar Item a um Pedido
     const addOrderItem = useMutation({
         mutationFn: async (item: Omit<OrderItem, 'id' | 'created_at' | 'updated_at'>) => {
-            const { data, error } = await supabaseDb
+            const { data, error } = await supabase
                 .from('order_items')
                 .insert([item])
                 .select()
@@ -79,9 +97,8 @@ export const useOrders = (sessionId?: string) => {
             if (error) throw error;
             return data;
         },
-        onSuccess: (_, variables) => {
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['activeOrders'] });
-            toast.success('Item adicionado');
         }
     });
 
@@ -91,13 +108,13 @@ export const useOrders = (sessionId?: string) => {
             const { total_order, ...payment } = paymentData;
 
             // 0. Fetch items to deduct stock
-            const { data: items } = await supabaseDb
+            const { data: items } = await supabase
                 .from('order_items')
                 .select('product_id, quantity, product_name')
                 .eq('order_id', payment.order_id);
 
             // 1. Registra pagamento
-            const { data: payData, error: payError } = await supabaseDb
+            const { data: payData, error: payError } = await supabase
                 .from('payments')
                 .insert([payment])
                 .select()
@@ -106,66 +123,71 @@ export const useOrders = (sessionId?: string) => {
             if (payError) throw payError;
 
             // 2. Fecha o Pedido
-            const { error: orderError } = await supabaseDb
+            const { error: orderError } = await supabase
                 .from('orders')
                 .update({ status: 'completed', completed_at: new Date().toISOString() })
                 .eq('id', payment.order_id);
 
             if (orderError) throw orderError;
 
-            // 3. Dá baixa no estoque
+            // 3. Dá baixa no estoque (FEFO: deduz lotes por validade + actualiza current_stock)
             if (items && items.length > 0 && user) {
                 for (const item of items) {
                     if (!item.product_id) continue;
 
-                    // Pega o estoque atual
-                    const { data: prod } = await supabaseDb
+                    const qty = Number(item.quantity);
+
+                    // FEFO: deduz dos lotes com menor expiry_date primeiro
+                    await supabase.rpc('deduct_stock_fefo', {
+                        p_product_id: item.product_id,
+                        p_user_id: user.id,
+                        p_quantity: qty,
+                    });
+
+                    // Actualiza current_stock em products (contador para alertas/UI)
+                    const { data: prod } = await supabase
                         .from('products')
                         .select('current_stock')
                         .eq('id', item.product_id)
                         .single();
 
                     if (prod && prod.current_stock !== null) {
-                        const newStock = Number(prod.current_stock) - Number(item.quantity);
-
-                        // Atualiza produto
-                        await supabaseDb
+                        await supabase
                             .from('products')
-                            .update({ current_stock: newStock })
+                            .update({ current_stock: Math.max(0, Number(prod.current_stock) - qty) })
                             .eq('id', item.product_id);
-
-                        // Registra a movimentação
-                        await supabaseDb
-                            .from('stock_movements')
-                            .insert([{
-                                product_id: item.product_id,
-                                user_id: user.id,
-                                type: 'exit',
-                                quantity: Number(item.quantity),
-                                reason: `Venda PDV - Pedido #${payment.order_id.substring(0, 8)}`,
-                                reference_id: payment.order_id,
-                                reference_type: 'order'
-                            }]);
                     }
+
+                    await supabase
+                        .from('stock_movements')
+                        .insert([{
+                            product_id: item.product_id,
+                            user_id: user.id,
+                            type: 'exit',
+                            quantity: qty,
+                            reason: `Venda PDV - Pedido #${payment.order_id.substring(0, 8)}`,
+                            reference_id: payment.order_id,
+                            reference_type: 'order'
+                        }]);
                 }
             }
 
-            // 4. Integração Financeira: Obtenha ou Crie Categoria de Venda
-            let categoryId = null;
+            // 4. Obtém ou cria categoria de venda
+            let categoryId: string | null = null;
             if (user) {
-                const { data: existingCat } = await supabaseDb
+                const { data: existingCat } = await supabase
                     .from('expense_categories')
                     .select('id')
                     .eq('user_id', user.id)
                     .eq('type', 'income')
                     .ilike('name', '%Venda%')
                     .limit(1)
-                    .single();
+                    .maybeSingle();
 
                 if (existingCat) {
                     categoryId = existingCat.id;
                 } else {
-                    const { data: newCat } = await supabaseDb
+                    const { data: newCat } = await supabase
                         .from('expense_categories')
                         .insert([{
                             user_id: user.id,
@@ -179,9 +201,9 @@ export const useOrders = (sessionId?: string) => {
                 }
             }
 
-            // 5. Integração Financeira: Injete diretamente no Fluxo de Caixa
+            // 5. Injeta no Fluxo de Caixa
             if (user) {
-                await supabaseDb
+                await supabase
                     .from('cash_flow_entries')
                     .insert([{
                         user_id: user.id,
@@ -210,22 +232,18 @@ export const useOrders = (sessionId?: string) => {
     // Process Checkout Completo
     const processCheckout = useMutation({
         mutationFn: async (vars: {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            cartItems: any[],
-            total: number,
-            method: 'cash' | 'credit' | 'debit' | 'pix' | 'none',
-            table_id?: string
+            cartItems: CartItem[];
+            total: number;
+            method: 'cash' | 'credit' | 'debit' | 'pix' | 'none';
+            table_id?: string;
         }) => {
             if (!user) throw new Error('Not authenticated');
 
-            // 1. Criar ou Atualizar o Pedido
             let orderId: string;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            let orderToReturn: any;
+            let orderToReturn: Order;
 
             if (vars.method === 'none' && vars.table_id) {
-                // Check if there is an open order for this table
-                const { data: existingOrder } = await supabaseDb
+                const { data: existingOrder } = await supabase
                     .from('orders')
                     .select('*')
                     .eq('table_id', vars.table_id)
@@ -234,9 +252,8 @@ export const useOrders = (sessionId?: string) => {
 
                 if (existingOrder) {
                     orderId = existingOrder.id;
-                    orderToReturn = existingOrder;
-                    // Update order totals
-                    await supabaseDb
+                    orderToReturn = existingOrder as Order;
+                    await supabase
                         .from('orders')
                         .update({
                             total: Number(existingOrder.total || 0) + vars.total,
@@ -244,7 +261,7 @@ export const useOrders = (sessionId?: string) => {
                         })
                         .eq('id', orderId);
                 } else {
-                    const { data: order, error: orderErr } = await supabaseDb
+                    const { data: order, error: orderErr } = await supabase
                         .from('orders')
                         .insert([{
                             user_id: user.id,
@@ -260,10 +277,10 @@ export const useOrders = (sessionId?: string) => {
 
                     if (orderErr) throw orderErr;
                     orderId = order.id;
-                    orderToReturn = order;
+                    orderToReturn = order as Order;
                 }
             } else {
-                const { data: order, error: orderErr } = await supabaseDb
+                const { data: order, error: orderErr } = await supabase
                     .from('orders')
                     .insert([{
                         user_id: user.id,
@@ -271,7 +288,7 @@ export const useOrders = (sessionId?: string) => {
                         order_type: 'dine_in',
                         total: vars.total,
                         subtotal: vars.total,
-                        table_id: vars.table_id || null,
+                        table_id: vars.table_id ?? null,
                         completed_at: vars.method !== 'none' ? new Date().toISOString() : null
                     }])
                     .select()
@@ -279,7 +296,7 @@ export const useOrders = (sessionId?: string) => {
 
                 if (orderErr) throw orderErr;
                 orderId = order.id;
-                orderToReturn = order;
+                orderToReturn = order as Order;
             }
 
             // 2. Inserir Itens do Pedido
@@ -292,65 +309,73 @@ export const useOrders = (sessionId?: string) => {
                 subtotal: c.quantity * c.product.sell_price
             }));
 
-            const { error: itemsErr } = await supabaseDb.from('order_items').insert(orderItems);
+            const { error: itemsErr } = await supabase.from('order_items').insert(orderItems);
             if (itemsErr) throw itemsErr;
 
-            // 3. Se for pagamento à vista, registrar em payments, dar baixa no estoque e no fluxo de caixa
+            // 3. Se pagamento à vista: payments, stock, cash flow
             if (vars.method !== 'none') {
-                // Pagamento
-                await supabaseDb.from('payments').insert([{
+                await supabase.from('payments').insert([{
                     order_id: orderId,
                     method: vars.method,
                     amount: vars.total,
                     change_given: 0
                 }]);
 
-                // Baixa de estoque
                 for (const item of vars.cartItems) {
-                    const { data: prod } = await supabaseDb
+                    const qty = Number(item.quantity);
+
+                    // FEFO: deduz lotes por data de validade
+                    await supabase.rpc('deduct_stock_fefo', {
+                        p_product_id: item.product.id,
+                        p_user_id: user.id,
+                        p_quantity: qty,
+                    });
+
+                    // Actualiza current_stock (contador para alertas/UI)
+                    const { data: prod } = await supabase
                         .from('products')
                         .select('current_stock')
                         .eq('id', item.product.id)
                         .single();
 
                     if (prod && prod.current_stock !== null) {
-                        const newStock = Number(prod.current_stock) - Number(item.quantity);
-                        await supabaseDb.from('products').update({ current_stock: newStock }).eq('id', item.product.id);
-
-                        // Movement log
-                        await supabaseDb.from('stock_movements').insert([{
-                            product_id: item.product.id,
-                            user_id: user.id,
-                            type: 'exit',
-                            quantity: Number(item.quantity),
-                            reason: `Venda PDV - Pedido #${orderId.substring(0, 8)}`,
-                            reference_id: orderId,
-                            reference_type: 'order'
-                        }]);
+                        await supabase
+                            .from('products')
+                            .update({ current_stock: Math.max(0, Number(prod.current_stock) - qty) })
+                            .eq('id', item.product.id);
                     }
+
+                    await supabase.from('stock_movements').insert([{
+                        product_id: item.product.id,
+                        user_id: user.id,
+                        type: 'exit',
+                        quantity: qty,
+                        reason: `Venda PDV - Pedido #${orderId.substring(0, 8)}`,
+                        reference_id: orderId,
+                        reference_type: 'order'
+                    }]);
                 }
 
-                // Fluxo de Caixa
-                let categoryId = null;
-                const { data: existingCat } = await supabaseDb.from('expense_categories')
+                let categoryId: string | null = null;
+                const { data: existingCat } = await supabase.from('expense_categories')
                     .select('id').eq('user_id', user.id).eq('type', 'income').ilike('name', '%Venda%').limit(1).maybeSingle();
 
                 if (existingCat) {
                     categoryId = existingCat.id;
                 } else {
-                    const { data: newCat } = await supabaseDb.from('expense_categories')
+                    const { data: newCat } = await supabase.from('expense_categories')
                         .insert([{ user_id: user.id, name: 'Vendas PDV', type: 'income', color: '#10b981' }])
                         .select().single();
                     if (newCat) categoryId = newCat.id;
                 }
 
-                await supabaseDb.from('cash_flow_entries').insert([{
+                await supabase.from('cash_flow_entries').insert([{
                     user_id: user.id,
                     type: 'income',
                     amount: vars.total,
                     description: `Venda PDV - #${orderId.substring(0, 8)}`,
                     entry_date: new Date().toISOString().split('T')[0],
-                    payment_method: vars.method === 'pix' ? 'pix' : vars.method === 'credit' || vars.method === 'debit' ? 'card' : 'cash',
+                    payment_method: vars.method === 'pix' ? 'pix' : (vars.method === 'credit' || vars.method === 'debit') ? 'card' : 'cash',
                     category_id: categoryId,
                     reference_type: 'order',
                     reference_id: orderId

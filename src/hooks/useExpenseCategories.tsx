@@ -27,8 +27,7 @@ export function useExpenseCategories() {
             if (!user) return [];
 
             const { data, error } = await supabase
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                .from('expense_categories' as any)
+                .from('expense_categories')
                 .select('*')
                 .eq('user_id', user.id)
                 .order('name');
@@ -45,8 +44,7 @@ export function useExpenseCategories() {
             if (!user) throw new Error('Não autenticado');
 
             const { data, error } = await supabase
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                .from('expense_categories' as any)
+                .from('expense_categories')
                 .insert([{ ...newCategory, user_id: user.id }])
                 .select()
                 .single();
@@ -66,8 +64,7 @@ export function useExpenseCategories() {
     const updateCategory = useMutation({
         mutationFn: async ({ id, ...updates }: Partial<ExpenseCategoryInsert> & { id: string }) => {
             const { data, error } = await supabase
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                .from('expense_categories' as any)
+                .from('expense_categories')
                 .update(updates)
                 .eq('id', id)
                 .select()
@@ -88,8 +85,7 @@ export function useExpenseCategories() {
     const deleteCategory = useMutation({
         mutationFn: async (id: string) => {
             const { data, error } = await supabase
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                .from('expense_categories' as any)
+                .from('expense_categories')
                 .delete()
                 .eq('id', id)
                 .select();

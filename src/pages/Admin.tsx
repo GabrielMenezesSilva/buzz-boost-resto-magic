@@ -5,17 +5,35 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Store, Users, MessageSquare, AlertTriangle, Loader2, ArrowUpRight } from 'lucide-react';
+import { Store, Users, MessageSquare, AlertTriangle, Loader2, ArrowUpRight, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { Badge } from '@/components/ui/badge'; // Added for the new TableBody content
+import { Badge } from '@/components/ui/badge';
+import { formatCHF } from '@/utils/currency';
+
+interface RestaurantRow {
+    id: string;
+    name: string | null;
+    owner_name: string | null;
+    user_id: string;
+    created_at: string;
+    contacts_count: number;
+    campaigns_count: number;
+}
+
+interface AdminStats {
+    restaurants: number;
+    contacts: number;
+    campaigns: number;
+    deletions: number;
+}
 
 export default function Admin() {
     const { profile, loading: authLoading } = useAuth();
     const { t } = useLanguage();
-    const [stats, setStats] = useState({ restaurants: 0, contacts: 0, campaigns: 0, deletions: 0 });
-    const [restaurants, setRestaurants] = useState<Record<string, unknown>[]>([]);
-    const [isLoading, setIsLoading] = useState(true); // Kept original name, assuming user's snippet had a typo
+    const [stats, setStats] = useState<AdminStats>({ restaurants: 0, contacts: 0, campaigns: 0, deletions: 0 });
+    const [restaurants, setRestaurants] = useState<RestaurantRow[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if (authLoading || !profile || profile.role !== 'super_admin') return;
@@ -26,33 +44,49 @@ export default function Admin() {
                     { count: restCount, data: restData },
                     { count: contactsCount },
                     { count: campaignsCount },
-                    { count: deletionsCount }
+                    { count: deletionsCount },
                 ] = await Promise.all([
-                    // Modified select to match new table structure in the provided snippet
-                    supabase.from('profiles').select('id, restaurant_name, owner_name, user_id, created_at', { count: 'exact' }),
+                    supabase
+                        .from('profiles')
+                        .select('id, restaurant_name, owner_name, user_id, created_at', { count: 'exact' }),
                     supabase.from('contacts').select('*', { count: 'exact', head: true }),
                     supabase.from('campaigns').select('*', { count: 'exact', head: true }),
-                    supabase.from('deletion_requests').select('*', { count: 'exact', head: true })
+                    supabase.from('deletion_requests').select('*', { count: 'exact', head: true }),
                 ]);
 
                 setStats({
-                    restaurants: restCount || 0,
-                    contacts: contactsCount || 0,
-                    campaigns: campaignsCount || 0,
-                    deletions: deletionsCount || 0
+                    restaurants: restCount ?? 0,
+                    contacts: contactsCount ?? 0,
+                    campaigns: campaignsCount ?? 0,
+                    deletions: deletionsCount ?? 0,
                 });
 
                 if (restData) {
-                    // Extra fetch to get email from users would require service_role, so for now we just show what's in profiles
-                    // Assuming 'status' is now part of the data or will be added
-                    setRestaurants(restData.map(r => ({
-                        id: r.id,
-                        name: r.restaurant_name,
-                        owner_name: r.owner_name,
-                        email: r.user_id,
-                        created_at: r.created_at,
-                        status: 'Active'
-                    }))); // Added dummy status for rendering
+                    // Fetch per-restaurant counts in parallel
+                    const enriched = await Promise.all(
+                        restData.map(async (r) => {
+                            const [{ count: cc }, { count: camp }] = await Promise.all([
+                                supabase
+                                    .from('contacts')
+                                    .select('*', { count: 'exact', head: true })
+                                    .eq('user_id', r.user_id),
+                                supabase
+                                    .from('campaigns')
+                                    .select('*', { count: 'exact', head: true })
+                                    .eq('user_id', r.user_id),
+                            ]);
+                            return {
+                                id: r.id as string,
+                                name: r.restaurant_name as string | null,
+                                owner_name: r.owner_name as string | null,
+                                user_id: r.user_id as string,
+                                created_at: r.created_at as string,
+                                contacts_count: cc ?? 0,
+                                campaigns_count: camp ?? 0,
+                            } satisfies RestaurantRow;
+                        }),
+                    );
+                    setRestaurants(enriched);
                 }
             } catch (error) {
                 console.error('Error fetching admin data:', error);
@@ -159,8 +193,19 @@ export default function Admin() {
                                 <TableHeader>
                                     <TableRow className="bg-muted/50">
                                         <TableHead>{t('admin.tableRestaurant')}</TableHead>
-                                        <TableHead>Email</TableHead> {/* Changed from Owner to Email */}
-                                        <TableHead>Status</TableHead> {/* Added Status column */}
+                                        <TableHead>{t('admin.tableOwner')}</TableHead>
+                                        <TableHead className="text-center">
+                                            <div className="flex items-center justify-center gap-1">
+                                                <Users className="w-3.5 h-3.5" />
+                                                Contacts
+                                            </div>
+                                        </TableHead>
+                                        <TableHead className="text-center">
+                                            <div className="flex items-center justify-center gap-1">
+                                                <MessageSquare className="w-3.5 h-3.5" />
+                                                Campagnes
+                                            </div>
+                                        </TableHead>
                                         <TableHead>{t('admin.tableEntryDate')}</TableHead>
                                         <TableHead className="text-right">{t('admin.tableActions')}</TableHead>
                                     </TableRow>
@@ -168,30 +213,41 @@ export default function Admin() {
                                 <TableBody>
                                     {restaurants.length === 0 ? (
                                         <TableRow>
-                                            <TableCell colSpan={5} className="h-24 text-center"> {/* Colspan adjusted */}
+                                            <TableCell colSpan={6} className="h-24 text-center">
                                                 {t('admin.noRestaurantsFound')}
                                             </TableCell>
                                         </TableRow>
                                     ) : (
                                         restaurants.map((restaurant) => (
-                                            <TableRow key={restaurant.id as string} className="hover:bg-muted/30">
+                                            <TableRow key={restaurant.id} className="hover:bg-muted/30">
                                                 <TableCell className="font-medium">
                                                     <div className="flex items-center space-x-2">
                                                         <Store className="w-4 h-4 text-muted-foreground" />
-                                                        <span>{restaurant.name as string || t('admin.unnamedRestaurant')}</span>
+                                                        <span>{restaurant.name ?? t('admin.unnamedRestaurant')}</span>
                                                     </div>
                                                 </TableCell>
-                                                <TableCell>{restaurant.email as string || '-'}</TableCell>
-                                                <TableCell>
-                                                    <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600">
-                                                        {restaurant.status as string || 'Active'}
+                                                <TableCell className="text-muted-foreground">
+                                                    {restaurant.owner_name ?? '—'}
+                                                </TableCell>
+                                                <TableCell className="text-center">
+                                                    <Badge variant="secondary">
+                                                        {restaurant.contacts_count}
+                                                    </Badge>
+                                                </TableCell>
+                                                <TableCell className="text-center">
+                                                    <Badge variant="outline">
+                                                        {restaurant.campaigns_count}
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell>
-                                                    {new Date(restaurant.created_at as string).toLocaleDateString()}
+                                                    {new Date(restaurant.created_at).toLocaleDateString('fr-CH')}
                                                 </TableCell>
                                                 <TableCell className="text-right">
-                                                    <Button variant="ghost" size="sm" onClick={() => toast.info(`Viewing details for: ${restaurant.name as string || t('admin.unnamedRestaurant')}`)}>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => toast.info(`${restaurant.name ?? t('admin.unnamedRestaurant')} — ${restaurant.contacts_count} contacts · ${restaurant.campaigns_count} campagnes`)}
+                                                    >
                                                         {t('admin.actionView')}
                                                     </Button>
                                                 </TableCell>

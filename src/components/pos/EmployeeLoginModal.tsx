@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useEmployees } from '@/hooks/useEmployees';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Employee } from '@/types/pos';
 import { Lock, User } from 'lucide-react';
@@ -16,25 +18,40 @@ interface EmployeeLoginModalProps {
 export function EmployeeLoginModal({ isOpen, onClose }: EmployeeLoginModalProps) {
     const { employees, isLoading } = useEmployees();
     const { loginAsEmployee } = useAuth();
+    const { t } = useLanguage();
     const [selectedEmpId, setSelectedEmpId] = useState<string | null>(null);
     const [pin, setPin] = useState('');
+    const [isVerifying, setIsVerifying] = useState(false);
 
     const activeEmployees = employees.filter(e => e.active);
     const selectedEmp = activeEmployees.find(e => e.id === selectedEmpId);
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         if (!selectedEmp) return;
 
-        // In a real app we should verify the PIN securely on the backend, 
-        // but for now we verify it against the local state since we fetched the employees.
-        if (selectedEmp.pin === pin) {
-            loginAsEmployee(selectedEmp);
-            toast.success(`Logado como ${selectedEmp.name}`);
-            setPin('');
-            setSelectedEmpId(null);
-            onClose();
-        } else {
-            toast.error('PIN incorreto');
+        setIsVerifying(true);
+        try {
+            const { data: isValid, error } = await supabase.rpc('verify_employee_pin', {
+                p_employee_id: selectedEmp.id,
+                p_pin: pin,
+            });
+
+            if (error) throw error;
+
+            if (isValid) {
+                loginAsEmployee(selectedEmp);
+                toast.success(`${t('pos.employeeLoggedIn')} ${selectedEmp.name}`);
+                setPin('');
+                setSelectedEmpId(null);
+                onClose();
+            } else {
+                toast.error(t('pos.pinIncorrect'));
+                setPin('');
+            }
+        } catch (err) {
+            toast.error(t('pos.pinVerifyError'));
+        } finally {
+            setIsVerifying(false);
         }
     };
 
@@ -42,18 +59,18 @@ export function EmployeeLoginModal({ isOpen, onClose }: EmployeeLoginModalProps)
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Acesso de Colaborador</DialogTitle>
+                    <DialogTitle>{t('pos.employeeAccess')}</DialogTitle>
                     <DialogDescription>
-                        Selecione seu perfil e digite seu PIN para acessar o sistema.
+                        {t('pos.employeeAccessDesc')}
                     </DialogDescription>
                 </DialogHeader>
 
                 {!selectedEmpId ? (
                     <div className="grid grid-cols-2 gap-4 py-4">
                         {isLoading ? (
-                            <div className="col-span-2 text-center text-muted-foreground">Carregando...</div>
+                            <div className="col-span-2 text-center text-muted-foreground">{t('common.loading')}</div>
                         ) : (
-                            activeEmployees.map(emp => (
+                            activeEmployees.map((emp: Employee) => (
                                 <Button
                                     key={emp.id}
                                     variant="outline"
@@ -75,27 +92,32 @@ export function EmployeeLoginModal({ isOpen, onClose }: EmployeeLoginModalProps)
                                 <span className="font-medium">{selectedEmp?.name}</span>
                             </div>
                             <Button variant="ghost" size="sm" onClick={() => { setSelectedEmpId(null); setPin(''); }}>
-                                Trocar
+                                {t('pos.changeEmployee')}
                             </Button>
                         </div>
 
                         <div className="space-y-2">
                             <label className="text-sm font-medium flex items-center">
-                                <Lock className="w-4 h-4 mr-2" /> Digite seu PIN
+                                <Lock className="w-4 h-4 mr-2" /> {t('pos.enterPin')}
                             </label>
                             <Input
                                 type="password"
                                 maxLength={4}
                                 value={pin}
                                 onChange={(e) => setPin(e.target.value.replace(/[^0-9]/g, ''))}
+                                onKeyDown={(e) => { if (e.key === 'Enter' && pin.length >= 4) handleLogin(); }}
                                 placeholder="****"
                                 className="text-center text-2xl tracking-widest"
                                 autoFocus
                             />
                         </div>
 
-                        <Button className="w-full" onClick={handleLogin} disabled={pin.length < 4}>
-                            Entrar
+                        <Button
+                            className="w-full"
+                            onClick={handleLogin}
+                            disabled={pin.length < 4 || isVerifying}
+                        >
+                            {isVerifying ? t('pos.verifying') : t('pos.enter')}
                         </Button>
                     </div>
                 )}

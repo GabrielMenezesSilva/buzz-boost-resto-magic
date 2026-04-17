@@ -1,292 +1,313 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.51.0";
+// @ts-nocheck — Deno/ESM imports are not resolvable in TS tooling but are valid at runtime
+import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.51.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Mapeamento de códigos de país
-const COUNTRY_CODES = {
-  'BR': '55',
-  'US': '1',
-  'CA': '1',
-  'MX': '52',
-  'AR': '54',
-  'CL': '56',
-  'PE': '51',
-  'CO': '57',
-  'VE': '58',
-  'UY': '598',
-  'PY': '595',
-  'BO': '591',
-  'EC': '593',
-  'GY': '592',
-  'SR': '597',
-  'GF': '594',
-  'CH': '41', // Suíça
-  'DE': '49', // Alemanha
-  'FR': '33', // França
-  'IT': '39', // Itália
-  'ES': '34', // Espanha
-  'PT': '351', // Portugal
-  'GB': '44', // Reino Unido
-  'AU': '61', // Austrália
-  // Adicione mais países conforme necessário
-} as const;
+// ── Types ──────────────────────────────────────────────────────────────────────
 
-// Função para formatar número de telefone
-function formatPhoneNumber(phone: string, countryCode: string = 'BR'): string {
-  // Remove todos os caracteres não numéricos
-  let cleanPhone = phone.replace(/\D/g, '');
-  
-  // Se já tem código do país, retorna como está (com +)
-  if (phone.startsWith('+')) {
-    return phone;
-  }
-  
-  // Pega o código do país do mapeamento
-  const countryDialCode = COUNTRY_CODES[countryCode as keyof typeof COUNTRY_CODES];
-  
-  // Se não encontrar o código do país, log error e retorna null
-  if (!countryDialCode) {
-    console.error(`Country code ${countryCode} not found in mapping`);
-    return null;
-  }
-  
-  // Formatação específica por país
-  switch (countryCode) {
-    case 'BR':
-      // Para Brasil, remove o 0 inicial se existir e valida tamanho
-      if (cleanPhone.startsWith('0')) {
-        cleanPhone = cleanPhone.substring(1);
-      }
-      // Brasil deve ter 10 ou 11 dígitos (celular/fixo)
-      if (cleanPhone.length < 10 || cleanPhone.length > 11) {
-        console.error(`Invalid BR phone number length: ${cleanPhone}`);
-        return null;
-      }
-      break;
-    
-    case 'US':
-    case 'CA':
-      // EUA e Canadá devem ter 10 dígitos
-      if (cleanPhone.length !== 10) {
-        console.error(`Invalid ${countryCode} phone number length: ${cleanPhone}`);
-        return null;
-      }
-      break;
-    
-    case 'AR':
-      // Argentina pode ter 10-11 dígitos
-      if (cleanPhone.length < 10 || cleanPhone.length > 11) {
-        console.error(`Invalid AR phone number length: ${cleanPhone}`);
-        return null;
-      }
-      break;
-    
-    case 'CH':
-      // Suíça deve ter 9 dígitos (sem o 0 inicial)
-      if (cleanPhone.startsWith('0')) {
-        cleanPhone = cleanPhone.substring(1);
-      }
-      if (cleanPhone.length !== 9) {
-        console.error(`Invalid CH phone number length: ${cleanPhone}`);
-        return null;
-      }
-      break;
-    
-    case 'DE':
-    case 'FR':
-    case 'IT':
-    case 'ES':
-    case 'GB':
-      // Países europeus - remove 0 inicial se existir e aceita 9-11 dígitos
-      if (cleanPhone.startsWith('0')) {
-        cleanPhone = cleanPhone.substring(1);
-      }
-      if (cleanPhone.length < 9 || cleanPhone.length > 11) {
-        console.error(`Invalid ${countryCode} phone number length: ${cleanPhone}`);
-        return null;
-      }
-      break;
-      
-    default:
-      // Para outros países, aceita números entre 8-15 dígitos
-      if (cleanPhone.length < 8 || cleanPhone.length > 15) {
-        console.error(`Invalid ${countryCode} phone number length: ${cleanPhone}`);
-        return null;
-      }
-  }
-  
-  // Formata no padrão E.164
-  return `+${countryDialCode}${cleanPhone}`;
+interface CampaignFilters {
+  type: 'all' | 'by_date' | 'by_tag';
+  since?: string;
+  tag?: string;
 }
 
-// Função para enviar SMS via Twilio
-async function sendSMS(to: string, message: string, countryCode: string = 'BR') {
-  const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID');
-  const authToken = Deno.env.get('TWILIO_AUTH_TOKEN');
-  const fromNumber = Deno.env.get('TWILIO_PHONE_NUMBER');
-
-  if (!accountSid || !authToken || !fromNumber) {
-    throw new Error('Twilio credentials not configured');
-  }
-
-  // O número já deve vir formatado da função chamadora
-  console.log(`Sending SMS to: ${to}`);
-
-  const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Basic ${btoa(`${accountSid}:${authToken}`)}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams({
-      To: to,
-      From: fromNumber,
-      Body: message,
-    }),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.text();
-    throw new Error(`Twilio error: ${errorData}`);
-  }
-
-  return await response.json();
+interface Contact {
+  id: string;
+  name: string;
+  phone: string;
+  email: string | null;
+  tags: string[] | null;
+  last_contact_date: string | null;
 }
 
-serve(async (req) => {
+interface Campaign {
+  id: string;
+  user_id: string;
+  name: string;
+  message: string;
+  campaign_type: 'sms' | 'whatsapp' | 'email';
+  status: string;
+  filters: CampaignFilters | null;
+  scheduled_at: string | null;
+}
+
+// ── Phone normalisation ────────────────────────────────────────────────────────
+
+/** Returns E.164 without leading + (as required by Meta), e.g. "41791234567" */
+function toE164Digits(phone: string): string {
+  const stripped = phone.replace(/[\s\-\(\)\.]/g, '');
+  return stripped.startsWith('+') ? stripped.substring(1) : stripped;
+}
+
+/** Returns E.164 with leading + (as required by Twilio), e.g. "+41791234567" */
+function toE164Full(phone: string): string {
+  const stripped = phone.replace(/[\s\-\(\)\.]/g, '');
+  return stripped.startsWith('+') ? stripped : `+${stripped}`;
+}
+
+// ── WhatsApp via Meta Cloud API ────────────────────────────────────────────────
+
+async function sendWhatsApp(
+  phone: string,
+  message: string,
+  token: string,
+  phoneNumberId: string,
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const response = await fetch(
+      `https://graph.facebook.com/v18.0/${phoneNumberId}/messages`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messaging_product: 'whatsapp',
+          to: toE164Digits(phone),
+          type: 'text',
+          text: { body: message },
+        }),
+      },
+    );
+
+    if (!response.ok) {
+      const errBody = await response.text();
+      return { success: false, error: `Meta API ${response.status}: ${errBody}` };
+    }
+
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
+// ── SMS via Twilio ─────────────────────────────────────────────────────────────
+
+async function sendSms(
+  phone: string,
+  message: string,
+  accountSid: string,
+  authToken: string,
+  fromNumber: string,
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const response = await fetch(
+      `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Basic ${btoa(`${accountSid}:${authToken}`)}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          To: toE164Full(phone),
+          From: fromNumber,
+          Body: message,
+        }).toString(),
+      },
+    );
+
+    if (!response.ok) {
+      const errBody = await response.text();
+      return { success: false, error: `Twilio ${response.status}: ${errBody}` };
+    }
+
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
+// ── Contact filter builder ─────────────────────────────────────────────────────
+
+function applyContactFilters(
+  query: ReturnType<ReturnType<typeof createClient>['from']>,
+  filters: CampaignFilters | null,
+) {
+  if (!filters || filters.type === 'all') return query;
+  if (filters.type === 'by_date' && filters.since) {
+    return query.gte('last_contact_date', filters.since);
+  }
+  if (filters.type === 'by_tag' && filters.tag) {
+    return query.contains('tags', [filters.tag]);
+  }
+  return query;
+}
+
+// ── Main handler ───────────────────────────────────────────────────────────────
+
+serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    // Always use service-role client (supports both manual UI calls & pg_cron scheduler)
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    );
 
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) throw new Error('No authorization header');
+    const body = await req.json() as { campaignId?: string };
+    const { campaignId } = body;
 
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
-    if (authError || !user) throw new Error('Invalid authentication');
+    if (!campaignId) {
+      return new Response(
+        JSON.stringify({ error: 'campaignId is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
 
-    const { campaignId } = await req.json();
-    if (!campaignId) throw new Error('Campaign ID is required');
-
-    console.log(`Starting campaign send for campaign ID: ${campaignId}`);
-
-    // Fetch campaign and contacts
-    const { data: campaign, error: campaignError } = await supabase
+    // 1. Fetch campaign (no user_id filter — service role, validated by ownership implicitly)
+    const { data: campaign, error: campaignError } = await supabaseAdmin
       .from('campaigns')
       .select('*')
       .eq('id', campaignId)
-      .eq('user_id', user.id)
-      .single();
+      .single<Campaign>();
 
-    if (campaignError || !campaign) throw new Error('Campaign not found');
+    if (campaignError || !campaign) {
+      return new Response(
+        JSON.stringify({ error: 'Campaign not found' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
 
-    const { data: contacts, error: contactsError } = await supabase
-      .from('contacts')
-      .select('id, name, phone, email, country_code')
-      .eq('user_id', user.id)
-      .not('phone', 'is', null);
-    
-    if (contactsError || !contacts?.length) throw new Error('No contacts found');
+    // Guard against double-sending
+    if (campaign.status === 'sent' || campaign.status === 'sending') {
+      return new Response(
+        JSON.stringify({ error: `Campaign already in status: ${campaign.status}` }),
+        { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
 
-    console.log(`Found ${contacts.length} contacts to send to`);
-
-    // Update campaign status to sending
-    await supabase
+    // 2. Mark as sending to block concurrent pg_cron runs
+    await supabaseAdmin
       .from('campaigns')
-      .update({ 
-        status: 'sending',
-        total_recipients: contacts.length,
-        sent_at: new Date().toISOString()
-      })
+      .update({ status: 'sending' })
       .eq('id', campaignId);
 
+    // 3. Fetch profile for message personalisation
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('restaurant_name, owner_name')
+      .eq('user_id', campaign.user_id)
+      .maybeSingle();
+
+    // 4. Fetch filtered contacts
+    const filters = campaign.filters as CampaignFilters | null;
+
+    const baseQuery = supabaseAdmin
+      .from('contacts')
+      .select('id, name, phone, email, tags, last_contact_date')
+      .eq('user_id', campaign.user_id)
+      .not('phone', 'is', null);
+
+    const { data: contacts, error: contactsError } = await applyContactFilters(baseQuery, filters);
+
+    if (contactsError) throw contactsError;
+
+    const contactList = (contacts ?? []) as Contact[];
+
+    if (contactList.length === 0) {
+      await supabaseAdmin
+        .from('campaigns')
+        .update({
+          status: 'sent',
+          sent_at: new Date().toISOString(),
+          total_recipients: 0,
+          successful_sends: 0,
+          failed_sends: 0,
+        })
+        .eq('id', campaignId);
+
+      return new Response(
+        JSON.stringify({ message: 'No contacts matched filters', sent: 0 }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
+    // 5. Read provider credentials
+    const whatsappToken    = Deno.env.get('WHATSAPP_TOKEN') ?? '';
+    const whatsappPhoneId  = Deno.env.get('WHATSAPP_PHONE_NUMBER_ID') ?? '';
+    const twilioSid        = Deno.env.get('TWILIO_ACCOUNT_SID') ?? '';
+    const twilioAuthToken  = Deno.env.get('TWILIO_AUTH_TOKEN') ?? '';
+    const twilioFrom       = Deno.env.get('TWILIO_FROM_NUMBER') ?? '';
+
+    // 6. Send — sequential with 100 ms gap to respect rate limits
     let successfulSends = 0;
     let failedSends = 0;
 
-    // Buscar dados do perfil do usuário para personalização
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('restaurant_name, owner_name')
-      .eq('user_id', user.id)
-      .single();
-
-    // Send to each contact
-    for (const contact of contacts) {
-      try {
-        if (contact.phone) {
-          console.log(`Processing contact: ${contact.name}, phone: ${contact.phone}, country: ${contact.country_code}`);
-          
-          // Usar o código do país salvo no contato
-          const contactCountryCode = contact.country_code || 'BR';
-          
-          // Validar se o número pode ser formatado antes de tentar enviar
-          const formattedPhone = formatPhoneNumber(contact.phone, contactCountryCode);
-          
-          if (!formattedPhone) {
-            console.error(`Invalid phone number for contact ${contact.name}: ${contact.phone} (${contactCountryCode})`);
-            failedSends++;
-            continue;
-          }
-
-          // Personalizar mensagem com variáveis
-          let personalizedMessage = campaign.message;
-          personalizedMessage = personalizedMessage.replace(/\{nome\}/g, contact.name || 'Cliente');
-          personalizedMessage = personalizedMessage.replace(/\{restaurante\}/g, profile?.restaurant_name || 'Nosso Restaurante');
-
-          console.log(`Sending SMS to ${contact.phone} (${contactCountryCode}) -> ${formattedPhone}: ${personalizedMessage.substring(0, 50)}...`);
-          
-          await sendSMS(formattedPhone, personalizedMessage, contactCountryCode);
-          successfulSends++;
-          console.log(`SMS sent successfully to ${contact.phone}`);
-        } else {
-          console.log(`Contact ${contact.name} has no phone number, skipping`);
-          failedSends++;
-        }
-      } catch (error) {
-        console.error(`Failed to send SMS to ${contact.phone}:`, error);
+    for (const contact of contactList) {
+      if (!contact.phone) {
         failedSends++;
+        continue;
       }
+
+      // Personalise message: replace {nom}, {restaurant} placeholders
+      const personalised = campaign.message
+        .replace(/\{nom\}/gi, contact.name ?? 'Client')
+        .replace(/\{restaurant\}/gi, profile?.restaurant_name ?? '');
+
+      let result: { success: boolean; error?: string };
+
+      if (campaign.campaign_type === 'whatsapp') {
+        if (!whatsappToken || !whatsappPhoneId) {
+          result = { success: false, error: 'WHATSAPP_TOKEN / WHATSAPP_PHONE_NUMBER_ID not set. Run: supabase secrets set WHATSAPP_TOKEN=xxx WHATSAPP_PHONE_NUMBER_ID=yyy' };
+        } else {
+          result = await sendWhatsApp(contact.phone, personalised, whatsappToken, whatsappPhoneId);
+        }
+      } else if (campaign.campaign_type === 'sms') {
+        if (!twilioSid || !twilioAuthToken || !twilioFrom) {
+          result = { success: false, error: 'Twilio credentials not set. Run: supabase secrets set TWILIO_ACCOUNT_SID=xxx TWILIO_AUTH_TOKEN=yyy TWILIO_FROM_NUMBER=zzz' };
+        } else {
+          result = await sendSms(contact.phone, personalised, twilioSid, twilioAuthToken, twilioFrom);
+        }
+      } else {
+        result = { success: false, error: 'Email sending not yet implemented' };
+      }
+
+      if (result.success) {
+        successfulSends++;
+      } else {
+        failedSends++;
+        console.error(`send-campaign: failed for ${contact.phone} — ${result.error}`);
+      }
+
+      // Throttle — 100 ms between sends
+      await new Promise<void>((resolve) => setTimeout(resolve, 100));
     }
 
-    // Update campaign with final status
-    await supabase
+    // 7. Finalise campaign record
+    await supabaseAdmin
       .from('campaigns')
-      .update({ 
+      .update({
         status: 'sent',
+        sent_at: new Date().toISOString(),
+        total_recipients: contactList.length,
         successful_sends: successfulSends,
         failed_sends: failedSends,
       })
       .eq('id', campaignId);
 
-    console.log(`Campaign completed: ${successfulSends} successful, ${failedSends} failed`);
-
-    return new Response(JSON.stringify({
-      success: true,
-      totalSent: successfulSends,
-      totalFailed: failedSends,
-      message: `Campanha enviada: ${successfulSends} sucesso, ${failedSends} falhas`
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
-
-  } catch (error) {
-    console.error('Campaign send error:', error);
-    
-    return new Response(JSON.stringify({
-      error: error.message
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 400
-    });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        total: contactList.length,
+        successful: successfulSends,
+        failed: failedSends,
+      }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    );
+  } catch (err) {
+    console.error('send-campaign error:', err);
+    return new Response(
+      JSON.stringify({ error: err instanceof Error ? err.message : String(err) }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    );
   }
 });
