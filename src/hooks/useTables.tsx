@@ -79,7 +79,7 @@ export const useTables = () => {
     });
 
     const addTable = useMutation({
-        mutationFn: async (tableInfo: Partial<RestaurantTable>) => {
+        mutationFn: async (tableInfo: Partial<RestaurantTable> & { name: string }) => {
             if (!user) throw new Error('Not authenticated');
 
             const { data, error } = await supabase

@@ -2,9 +2,11 @@ import { Link } from "react-router-dom";
 import { ChevronLeft, LayoutGrid, Coffee } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+import type { User } from '@supabase/supabase-js';
+
 interface POSHeaderProps {
     readonly t: (key: string) => string;
-    readonly user: { readonly user_metadata?: { readonly first_name?: string }; readonly [key: string]: unknown } | null;
+    readonly user: User | null;
     readonly session: { readonly id: string; readonly [key: string]: unknown };
     readonly tables: ReadonlyArray<{ readonly id: string; readonly status: string; readonly [key: string]: unknown }>;
     readonly activeTab: 'products' | 'orders' | 'tables';

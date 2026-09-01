@@ -26,7 +26,7 @@ export default function Orders() {
     const { t, language } = useLanguage();
     const [searchTerm, setSearchTerm] = useState("");
     const [daysFilter, setDaysFilter] = useState<number | null>(7);
-    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    const [selectedOrder, setSelectedOrder] = useState<OrderWithItems | null>(null);
     const dateLocale = language === 'pt' ? ptBR : enUS;
 
     // Fetch Completed Orders
@@ -55,7 +55,7 @@ export default function Orders() {
             const { data, error } = await query;
 
             if (error) throw error;
-            return data as Order[];
+            return (data || []) as OrderWithItems[];
         },
         enabled: !!user,
     });

@@ -9,6 +9,7 @@ export type Product = Database['public']['Tables']['products']['Row'] & {
     supplier: Pick<Database['public']['Tables']['suppliers']['Row'], 'name'> | null;
 };
 type ProductInsert = Database['public']['Tables']['products']['Insert'];
+type ProductUpdate = Database['public']['Tables']['products']['Update'];
 
 export function useProducts() {
     const { user } = useAuth();
@@ -117,7 +118,7 @@ export function useProducts() {
             const newStock = Number(prod?.current_stock || 0) + Number(amount);
 
             // 2. Update stock & expiry/batch if provided
-            const updatePayload: Record<string, unknown> = { current_stock: newStock };
+            const updatePayload: ProductUpdate = { current_stock: newStock };
             if (expiryDate) updatePayload.expiry_date = expiryDate;
             if (batch) updatePayload.sku = batch; // Saving batch in SKU column for now
 

@@ -201,9 +201,7 @@ export default function QRForm() {
           notes: contactForm.notes || null,
           tags: contactForm.tags.length > 0 ? contactForm.tags : null,
           country_code: contactForm.country_code,
-          status: 'active',
-          source: 'qr_scan',
-          opt_in: true
+          source: 'qr_scan'
         }])
         .select()
         .single();

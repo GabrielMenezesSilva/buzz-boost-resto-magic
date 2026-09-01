@@ -20,7 +20,7 @@ import { POSProductsGrid } from "@/components/pos/POSProductsGrid";
 import { POSTablesGrid } from "@/components/pos/POSTablesGrid";
 import { POSOrdersGrid } from "@/components/pos/POSOrdersGrid";
 import { OrderPaymentModal } from "@/components/pos/OrderPaymentModal";
-import { Order } from "@/types/pos";
+import { Order, OrderWithItems } from "@/types/pos";
 
 export default function POS() {
     const { user, profile, activeEmployee, loginAsEmployee } = useAuth();
@@ -51,7 +51,7 @@ export default function POS() {
     const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'tables'>('products');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [selectedTable, setSelectedTable] = useState<string | null>(null);
-    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    const [selectedOrder, setSelectedOrder] = useState<OrderWithItems | null>(null);
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
     // Derived State
@@ -73,7 +73,7 @@ export default function POS() {
         addItem(product);
     };
 
-    const handleSelectOrder = (order: Order) => {
+    const handleSelectOrder = (order: OrderWithItems) => {
         setSelectedOrder(order);
         setIsPaymentModalOpen(true);
     };
