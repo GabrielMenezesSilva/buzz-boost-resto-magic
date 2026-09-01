@@ -20,7 +20,7 @@ import { POSProductsGrid } from "@/components/pos/POSProductsGrid";
 import { POSTablesGrid } from "@/components/pos/POSTablesGrid";
 import { POSOrdersGrid } from "@/components/pos/POSOrdersGrid";
 import { OrderPaymentModal } from "@/components/pos/OrderPaymentModal";
-import { Order } from "@/types/pos";
+import { Order, OrderWithItems } from "@/types/pos";
 
 export default function POS() {
     const { user, profile, activeEmployee, loginAsEmployee } = useAuth();
