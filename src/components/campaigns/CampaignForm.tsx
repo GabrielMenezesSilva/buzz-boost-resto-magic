@@ -73,7 +73,7 @@ export default function CampaignForm({ onSuccess, onCancel }: CampaignFormProps)
             await createCampaign({
                 ...formData,
                 message: finalMessage,
-                filters: buildFilters(),
+                filters: buildFilters() as unknown as import('@/integrations/supabase/types').Json,
             });
             toast({
                 title: t('campaigns.success'),

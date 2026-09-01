@@ -71,7 +71,7 @@ export const useEmployees = () => {
     });
 
     const addEmployee = useMutation({
-        mutationFn: async (employeeInput: Partial<Employee>) => {
+        mutationFn: async (employeeInput: Partial<Employee> & { name: string }) => {
             if (!user) throw new Error('Not authenticated');
 
             const { data, error } = await supabase

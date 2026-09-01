@@ -51,7 +51,7 @@ export default function POS() {
     const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'tables'>('products');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [selectedTable, setSelectedTable] = useState<string | null>(null);
-    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    const [selectedOrder, setSelectedOrder] = useState<OrderWithItems | null>(null);
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
     // Derived State
@@ -73,7 +73,7 @@ export default function POS() {
         addItem(product);
     };
 
-    const handleSelectOrder = (order: Order) => {
+    const handleSelectOrder = (order: OrderWithItems) => {
         setSelectedOrder(order);
         setIsPaymentModalOpen(true);
     };
